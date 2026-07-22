@@ -218,9 +218,6 @@
       <a class="btn btn-ghost" href="#proof">See the results</a>
     </div>
   </div>
-  <div class="wrap">
-    <div class="wave" aria-hidden="true"></div>
-  </div>
 </header>
 
 <div class="band">
@@ -377,19 +374,6 @@
 </footer>
 
 <script>
-  // waveform bars
-  (function(){
-    var wave=document.querySelector('.wave');
-    if(!wave)return;
-    var n=90;
-    for(var i=0;i<n;i++){
-      var b=document.createElement('i');
-      var h=18+Math.abs(Math.sin(i*0.35))*70+Math.random()*12;
-      b.style.height=Math.min(h,100)+'%';
-      b.style.animationDelay=(i*0.03)+'s';
-      wave.appendChild(b);
-    }
-  })();
   // scroll reveals
   (function(){
     var els=document.querySelectorAll('.reveal');

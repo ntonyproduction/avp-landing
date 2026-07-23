@@ -158,6 +158,16 @@
   .meter li b{color:var(--ink);font-weight:700;font-size:14px;}
   @media(max-width:820px){.meters{grid-template-columns:1fr;}}
 
+  /* ---------- Testimonial ---------- */
+  .testi{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .testi-grid{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:44px;align-items:center;}
+  .testi video{width:100%;border-radius:var(--radius);display:block;background:#000;box-shadow:0 10px 40px rgba(0,0,0,.12);}
+  .testi blockquote{font-size:clamp(24px,3.2vw,36px);font-weight:800;line-height:1.24;letter-spacing:-.015em;margin-bottom:20px;}
+  .testi blockquote span{color:var(--blue);}
+  .testi .attrib{font-size:15px;color:var(--gray);font-weight:600;}
+  .testi .clarify{margin-top:18px;font-size:14.5px;color:var(--gray);padding-top:16px;border-top:1px solid var(--line);max-width:520px;}
+  @media(max-width:820px){.testi-grid{grid-template-columns:1fr;gap:26px;}.testi video{max-width:300px;margin:0 auto;}}
+
   /* ---------- Offer ---------- */
   .offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:56px;}
   .offer{
@@ -292,6 +302,20 @@
           <li>Interactions <b>15,100</b></li>
           <li>Follows <b>+472</b></li>
         </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testi">
+  <div class="wrap">
+    <span class="eyebrow">Unprompted, live on stream</span>
+    <div class="testi-grid" style="margin-top:34px;">
+      <video controls preload="metadata" playsinline src="Testimonial.mp4"></video>
+      <div>
+        <blockquote>&ldquo;One of my clippers got 1.4 million views his first month. <span>I didn&rsquo;t do anything.</span>&rdquo;</blockquote>
+        <div class="attrib">Steven, co-founder of Cymatics &middot; speaking to his livestream audience</div>
+        <p class="clarify">The 1.4M Steven mentions is TikTok alone. Across all three channels that month, the total was 1.86M.</p>
       </div>
     </div>
   </div>

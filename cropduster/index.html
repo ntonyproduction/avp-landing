@@ -141,19 +141,6 @@
     background:var(--panel-2); border:1px solid var(--edge); border-radius:2px; padding:1px 5px;
   }
 
-  /* ---------------- install steps (a real sequence, so numbered) ---------------- */
-  .steps{counter-reset:s; display:grid; gap:2px; max-width:74ch; margin:0; padding:0}
-  .steps li{
-    counter-increment:s; list-style:none; display:grid; grid-template-columns:38px 1fr;
-    gap:14px; align-items:baseline; padding:12px 0; border-bottom:1px solid var(--edge); color:var(--ink-dim);
-  }
-  .steps li::before{
-    content:counter(s,decimal-leading-zero);
-    font-family:"IBM Plex Mono",monospace; font-size:.82rem; font-weight:600;
-    color:var(--brand); letter-spacing:.06em;
-  }
-  .steps b{color:var(--ink); font-weight:600}
-
   /* ---------------- closing capture ---------------- */
   .close{background:var(--panel)}
   .close .shell{display:grid; grid-template-columns:1fr auto; gap:clamp(24px,4vw,52px); align-items:center}
@@ -296,22 +283,6 @@
         </ul>
       </div>
     </div>
-  </div>
-</section>
-
-<section>
-  <div class="shell">
-    <div class="head">
-      <p class="tag">In Resolve, about a minute</p>
-      <h2>Install, then forget it's there.</h2>
-    </div>
-    <ol class="steps">
-      <li><span>Double-click <b>Cropduster-1.0.drfx</b>. Resolve opens if it isn't already running, and asks whether to install for you or for everyone on the machine.</span></li>
-      <li><span>Find <b>Cropduster</b> under Audio Vision Productions in the Effects panel. If it isn't there yet, restart Resolve once.</span></li>
-      <li><span>Drop an <b>adjustment clip</b> over the stretch you want to check, and drag Cropduster onto it.</span></li>
-      <li><span>Pick your platform in the Inspector. Keep anything that matters inside the green box.</span></li>
-      <li><span><b>Disable the adjustment clip before you export.</b> It's a guide, not part of the video.</span></li>
-    </ol>
   </div>
 </section>
 

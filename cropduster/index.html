@@ -9,7 +9,7 @@
     --ground:#0A0E12; --panel:#10161C; --panel-2:#161E25; --edge:#24303A;
     --safe:#3BD97A; --safe-dim:#1E6B3F; --amber:#E9A227;
     /* the house blue is #0D5592; it needs lifting to stay legible on a dark ground */
-    --brand:#62A3DA;
+    --brand:#62A3DA; --brand-dim:#35719F;
     --ink:#EAEDF0; --ink-dim:#9DA9B4; --ink-faint:#70818F;
     --step:clamp(1rem,0.6rem + 1.6vw,1.35rem);
     --shell:1120px;
@@ -49,7 +49,7 @@
     font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; letter-spacing:.08em;
     border:1px solid var(--edge); border-radius:2px; padding:4px 8px; color:var(--ink-dim);
   }
-  .chip.free{border-color:var(--safe-dim); color:var(--safe)}
+  .chip.free{border-color:var(--brand-dim); color:var(--brand)}
 
   /* ---------------- hero ---------------- */
   .hero{padding-block:clamp(40px,6vw,76px)}
@@ -193,23 +193,14 @@
       <p class="lede">Cropduster overlays exactly what each app's interface covers on a vertical video, and draws a green box around the part that stays clear. <b>Every layout measured from real screenshots</b> &mdash; not from a spec sheet, not from guesswork.</p>
 
       <div class="capture">
-        <!-- ================================================================
-             EMAIL PROVIDER SLOT
-             Replace action="" below with the form endpoint from Kit or
-             MailerLite, and rename the email input to match:
-               Kit         action="https://app.kit.com/forms/<id>/subscriptions"
-                           name="email_address"
-               MailerLite  action="https://assets.mailerlite.com/jsonp/<id>/forms/<id>/subscribe"
-                           name="fields[email]"
-             Leave the rest of the markup as it is.
-             ================================================================ -->
-        <form action="" method="post" id="signup">
+        <!-- Posts to Kit form 9901490 ("Cropduster download"). Kit requires the
+             field to be named email_address. -->
+        <form action="https://app.kit.com/forms/9901490/subscriptions" method="post" id="signup">
           <label class="tag" for="email">Where should I send it?</label>
           <input type="email" id="email" name="email_address" required autocomplete="email" placeholder="you@studio.com">
           <button class="btn" type="submit">Send the download</button>
         </form>
         <p class="consent">Both versions, one download. I'll email you when a platform moves its interface and the measurements get updated &mdash; that's it, and you can unsubscribe from any message.</p>
-        <p class="note" id="formnote" hidden>Not wired up yet: connect this form to your email provider to start collecting addresses.</p>
       </div>
     </div>
 
@@ -325,14 +316,12 @@
       <p>Resolve and Premiere versions, plus the install guide, in one download.</p>
     </div>
     <div class="capture">
-      <!-- Same provider slot as above: set action and the input name to match. -->
-      <form action="" method="post" id="signup2">
+      <form action="https://app.kit.com/forms/9901490/subscriptions" method="post" id="signup2">
         <label class="tag" for="email2">Where should I send it?</label>
         <input type="email" id="email2" name="email_address" required autocomplete="email" placeholder="you@studio.com">
         <button class="btn" type="submit">Send the download</button>
       </form>
       <p class="consent">One email when the measurements change. Unsubscribe from any message.</p>
-      <p class="note" id="formnote2" hidden>Not wired up yet: connect this form to your email provider to start collecting addresses.</p>
     </div>
   </div>
 </section>
@@ -349,14 +338,3 @@
   </div>
 </footer>
 
-<script>
-  // Until the provider slot above is filled in, keep the form from posting nowhere.
-  for (const [f, n] of [["signup", "formnote"], ["signup2", "formnote2"]]) {
-    const form = document.getElementById(f);
-    form.addEventListener("submit", (e) => {
-      if (form.getAttribute("action")) return;   // real endpoint set: let it post
-      e.preventDefault();
-      document.getElementById(n).hidden = false;
-    });
-  }
-</script>

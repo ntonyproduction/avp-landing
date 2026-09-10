@@ -13,6 +13,8 @@
     /* the house blue is #0D5592; it needs lifting to stay legible on a dark ground */
     --brand:#62A3DA; --brand-dim:#35719F;
     --ink:#EAEDF0; --ink-dim:#9DA9B4; --ink-faint:#70818F;
+    /* consent copy: a step back from --ink-dim, still 6.3:1 on the ground */
+    --ink-soft:#8695A2;
     --step:clamp(1rem,0.6rem + 1.6vw,1.35rem);
     --shell:1120px;
   }
@@ -85,7 +87,7 @@
   }
   .btn:hover{filter:brightness(1.09)}
   .btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
-  .consent{margin-top:11px; font-size:.85rem; color:var(--ink-dim); line-height:1.55}
+  .consent{margin-top:11px; font-size:.82rem; color:var(--ink-soft); line-height:1.55}
   .note{
     margin-top:11px; font-size:.87rem; border-left:2px solid var(--amber);
     padding:8px 0 8px 11px; color:var(--ink-dim);

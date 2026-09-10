@@ -128,17 +128,6 @@
   .spec dd small{display:block; font-family:Montserrat,sans-serif; font-weight:400;
     font-size:.8rem; color:var(--ink-faint); letter-spacing:0; margin-top:4px}
 
-  /* ---------------- which editors ---------------- */
-  .editors{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px}
-  .editor{border-top:2px solid var(--brand-dim); padding-top:14px}
-  .editor b{display:block; font-family:Montserrat,sans-serif; font-weight:800;
-    font-size:clamp(1.15rem,.9rem + .8vw,1.5rem); letter-spacing:-.015em}
-  .editor span{display:block; margin-top:5px; color:var(--ink-dim); font-size:.92rem}
-  .editor code{
-    font-family:"IBM Plex Mono",monospace; font-size:.85em; color:var(--ink);
-    background:var(--panel-2); border:1px solid var(--edge); border-radius:2px; padding:1px 5px;
-  }
-
   /* ---------------- closing capture ---------------- */
   .close{background:var(--panel)}
   .close .shell{display:grid; grid-template-columns:1fr auto; gap:clamp(24px,4vw,52px); align-items:center}
@@ -159,7 +148,7 @@
     .absent{flex:0 0 210px; border-left:none; padding-left:0; align-self:flex-start}
   }
   @media (max-width:860px){
-    .hero .shell,.editors,.close .shell{grid-template-columns:1fr}
+    .hero .shell,.close .shell{grid-template-columns:1fr}
     /* on a phone the form is the point, so it comes before the render rather than
        being pushed under a screen-filling image */
     .render{max-width:300px; margin-inline:auto}
@@ -246,26 +235,10 @@
       <div><dt class="tag">Platforms</dt><dd>6<small>TikTok, Instagram, YouTube, LinkedIn, Facebook, X</small></dd></div>
       <div><dt class="tag">Views</dt><dd>2<small>Full screen, and Feed where the app has one</small></dd></div>
       <div><dt class="tag">Built for</dt><dd>1080 &times; 1920<small>Scales to other timeline resolutions</small></dd></div>
-      <div><dt class="tag">Resolve</dt><dd>Free or Studio<small>No Studio-only nodes in the effect</small></dd></div>
-      <div><dt class="tag">Premiere</dt><dd>2020 or newer<small>Essential Graphics template</small></dd></div>
+      <div><dt class="tag">Resolve</dt><dd>Free or Studio<small>A .drfx installer, no Studio-only nodes</small></dd></div>
+      <div><dt class="tag">Premiere</dt><dd>2020 or newer<small>A .mogrt for Essential Graphics</small></dd></div>
       <div><dt class="tag">Measured</dt><dd>Sept 2026<small>On a physical iPhone, re-checked when apps change</small></dd></div>
     </dl>
-  </div>
-</section>
-
-<section>
-  <div class="shell">
-    <p class="tag">Works in</p>
-    <div class="editors">
-      <div class="editor">
-        <b>DaVinci Resolve</b>
-        <span>Free or Studio, installed from a <code>.drfx</code></span>
-      </div>
-      <div class="editor">
-        <b>Premiere Pro</b>
-        <span>2020 or newer, a <code>.mogrt</code> template</span>
-      </div>
-    </div>
   </div>
 </section>
 

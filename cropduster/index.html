@@ -177,10 +177,12 @@
 
       <div class="capture">
         <!-- Posts to Kit form 9901490 ("Cropduster download"). Kit requires the
-             field to be named email_address. -->
+             field to be named email_address. fields[source] fills Kit's "Source"
+             custom field from the link's ?from= tag (script at the end). -->
         <form action="https://app.kit.com/forms/9901490/subscriptions" method="post" id="signup">
           <label class="tag" for="email">Where should I send it?</label>
           <input type="email" id="email" name="email_address" required autocomplete="email" placeholder="you@studio.com">
+          <input type="hidden" name="fields[source]" value="">
           <button class="btn" type="submit">Send the download</button>
         </form>
         <p class="consent">Updates when I re-measure, plus whatever I build next. Unsubscribe from any message.</p>
@@ -255,6 +257,7 @@
       <form action="https://app.kit.com/forms/9901490/subscriptions" method="post" id="signup2">
         <label class="tag" for="email2">Where should I send it?</label>
         <input type="email" id="email2" name="email_address" required autocomplete="email" placeholder="you@studio.com">
+        <input type="hidden" name="fields[source]" value="">
         <button class="btn" type="submit">Send the download</button>
       </form>
       <p class="consent">Updates when the measurements change, plus whatever I build next. Unsubscribe from any message.</p>
@@ -274,4 +277,40 @@
     <p style="max-width:40ch">Cropduster 1.2 &middot; &copy; 2026 Audio Vision Productions. Layouts measured on an iPhone in September 2026; apps move things, so they get re-checked.</p>
   </div>
 </footer>
+
+<script>
+  // Tags each signup with where the visitor came from, in Kit's "Source" custom field. Links carry
+  // ?from=tiktok (or youtube, instagram, reddit...); an untagged visit falls back to the referring
+  // site, or "direct". The tag is kept for the tab's session so it survives a reload.
+  // referrer, host and search are what Kit's own form script sends; they fill the subscriber's
+  // "How they first found you" panel, where the tag shows as the UTM source.
+  (function () {
+    var tag = "", site = "";
+    try {
+      var q = new URLSearchParams(location.search);
+      tag = (q.get("from") || q.get("utm_source") || "").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 40);
+      if (tag) sessionStorage.setItem("cropduster_source", tag);
+      else tag = sessionStorage.getItem("cropduster_source") || "";
+    } catch (e) {}
+    try { site = document.referrer ? new URL(document.referrer).hostname.replace(/^(www|l|m)\./, "") : ""; } catch (e) {}
+    var values = {
+      "fields[source]": tag || site || "direct",
+      referrer: document.referrer,
+      host: location.href,
+      search: tag && !/[?&]utm_source=/.test(location.search) ? "?utm_source=" + tag : location.search
+    };
+    var forms = document.querySelectorAll('form[action*="app.kit.com/forms/"]');
+    for (var i = 0; i < forms.length; i++) {
+      for (var name in values) {
+        var input = forms[i].querySelector('input[name="' + name + '"]');
+        if (!input) {
+          input = forms[i].appendChild(document.createElement("input"));
+          input.type = "hidden";
+          input.name = name;
+        }
+        input.value = values[name];
+      }
+    }
+  })();
+</script>
 

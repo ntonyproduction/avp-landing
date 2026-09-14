@@ -13,7 +13,7 @@ guessable URL with nothing checking who is asking.
 | Path | What it is |
 |---|---|
 | `index.html` | The tools hub. The site's front page, listing every tool. Written by hand, here. |
-| `art/` | Images the hub uses. Plain files, not inlined. |
+| `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. `chatterbox.jpg` is waiting for Chatterbox (the comment card tool, listed on the hub as Comment Generator until it ships); nothing shows it yet. |
 | `cropduster/index.html` | Cropduster's product page. **Generated**, see below. |
 | `cropduster/thanks/index.html` | The page people land on after subscribing. **Generated.** |
 | `cropduster/Cropduster.zip` | The download itself. |

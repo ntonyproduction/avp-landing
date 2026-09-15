@@ -14,6 +14,7 @@ guessable URL with nothing checking who is asking.
 |---|---|
 | `index.html` | The tools hub. The site's front page, listing every tool. Written by hand, here. |
 | `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. |
+| `art/youtube-banner/` | The channel banner, one render per tool from `art/`. `python render.py` writes `banner.png` (2560×1440, uploaded to YouTube by hand) and `banner-preview.png` (the desktop, phone and TV crops). Moved here from the Cropduster repo because it covers every tool; fonts are fetched on the first run and not committed. |
 | `cropduster/index.html` | Cropduster's product page. **Generated**, see below. |
 | `cropduster/thanks/index.html` | The page people land on after subscribing. **Generated.** |
 | `cropduster/Cropduster.zip` | The download itself. |

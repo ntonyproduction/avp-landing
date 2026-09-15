@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AVP YouTube banner</title>
+<style>
+  /* Google serves Montserrat as one variable file, so one face covers every weight */
+  @font-face{font-family:"Montserrat";font-weight:100 900;src:url(fonts/montserrat-900.woff2) format("woff2")}
+  :root{
+    --ground:#0A0E12; --edge:#24303A; --brand:#62A3DA;
+    --ink:#EAEDF0; --ink-dim:#9DA9B4;
+  }
+  html,body{margin:0; width:2560px; height:1440px; overflow:hidden; background:var(--ground)}
+  body{position:relative; color:var(--ink); font-family:Montserrat,sans-serif; -webkit-font-smoothing:antialiased}
+
+  /* YouTube: the whole 2560x1440 shows on TV, a 2560x423 strip on desktop, and only the
+     1546x423 centre on phones. Everything that matters sits in that centre box.
+     Every accent is the house blue, like the site: no gold, orange or yellow. */
+  .glow{position:absolute; inset:0;
+    background:
+      radial-gradient(760px 380px at 1700px 720px, rgba(98,163,218,.13), transparent 72%),
+      radial-gradient(1100px 520px at 850px 720px, rgba(98,163,218,.07), transparent 70%)}
+  .grid{position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(52,68,82,.42) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(52,68,82,.42) 2px, transparent 2px);
+    background-size:96px 96px; background-position:16px 44px;
+    -webkit-mask-image:linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 16%, transparent 34%, transparent 70%, rgba(0,0,0,.55) 86%, #000 100%);
+            mask-image:linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 16%, transparent 34%, transparent 70%, rgba(0,0,0,.55) 86%, #000 100%)}
+
+  .safe{position:absolute; left:507px; top:508px; width:1546px; height:423px;
+    display:grid; grid-template-columns:1fr auto; column-gap:56px; align-items:center;
+    padding:0 64px 0 66px; box-sizing:border-box}
+  h1{margin:0; font-weight:900; font-size:92px; line-height:.97; letter-spacing:-.026em}
+  h1 em{font-style:normal; color:var(--brand)}
+  .cta{margin:26px 0 0; display:flex; align-items:center; gap:16px;
+    font-weight:700; font-size:42px; letter-spacing:-.012em; color:var(--ink-dim)}
+  .cta b{color:var(--ink); font-weight:800}
+  .cta svg{width:32px; height:38px; flex:none}
+
+  /* one render per tool; a third tool is a third figure and a narrower gap */
+  .renders{display:flex; gap:24px}
+  .render{margin:0; width:330px; height:330px; border:2px solid var(--edge); border-radius:6px;
+    overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.55)}
+  .render img{display:block; width:100%; height:100%}
+</style>
+
+<div class="glow"></div>
+<div class="grid"></div>
+
+<div class="safe">
+  <div>
+    <h1><em>Free</em> tools<br>for video<br>editors.</h1>
+    <p class="cta"><span><b>Download free</b>, link below</span>
+      <svg viewBox="0 0 34 40" aria-hidden="true"><path d="M17 3v31M5 23l12 12 12-12" fill="none" stroke="#62A3DA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </p>
+  </div>
+  <div class="renders">
+    <figure class="render"><img src="../cropduster.jpg" alt=""></figure>
+    <figure class="render"><img src="../chatterbox.jpg" alt=""></figure>
+  </div>
+</div>

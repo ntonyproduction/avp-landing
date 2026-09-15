@@ -13,11 +13,15 @@ guessable URL with nothing checking who is asking.
 | Path | What it is |
 |---|---|
 | `index.html` | The tools hub. The site's front page, listing every tool. Written by hand, here. |
-| `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. `chatterbox.jpg` is waiting for Chatterbox (the comment card tool, listed on the hub as Comment Generator until it ships); nothing shows it yet. |
+| `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. |
 | `cropduster/index.html` | Cropduster's product page. **Generated**, see below. |
 | `cropduster/thanks/index.html` | The page people land on after subscribing. **Generated.** |
 | `cropduster/Cropduster.zip` | The download itself. |
 | `cd/yt/`, `cd/tt/` | Short links that redirect to the Cropduster page carrying `?from=youtube` and `?from=tiktok`, for pasting into comments. |
+| `chatterbox/index.html` | Chatterbox's product page. **Generated**, see below. |
+| `chatterbox/thanks/index.html` | Where Chatterbox's Kit form sends people after they subscribe. **Generated.** |
+| `chatterbox/Chatterbox.zip` | The download: `Chatterbox-<version>-Complete.zip` from the Chatterbox repo's `release.py`, renamed. |
+| `cb/yt/`, `cb/tt/` | The same short links for Chatterbox. |
 | `clipping/` | The old clipping-service page, kept after the tools hub took over the root. Nothing links to it; it is reachable only by its URL. |
 
 ## Do not hand-edit the generated pages
@@ -26,6 +30,13 @@ guessable URL with nothing checking who is asking.
 the **Cropduster** repo, which inlines every image as a data URI and then gets copied here. Editing
 them here works until the next release, which silently overwrites the change. Edit
 `web/landing.template.html` or `web/thanks.template.html` in that repo instead.
+
+The same goes for `chatterbox/index.html` and `chatterbox/thanks/index.html`, built by
+`web/build_landing.py` in the **Chatterbox** repo. Its example cards are rendered there too, from
+the template's own layouts, with the avatar photos in `web/avatars/`. Its Kit form ID is
+`KIT_FORM_ID` at the top of that script.
+
+Every accent on these pages is the house blue. No gold, orange or yellow.
 
 The hub is the exception. It belongs to no single tool, so it is written and edited directly here.
 

@@ -116,14 +116,22 @@
     font-size:.88rem; line-height:1.5; padding-left:16px; border-left:1px solid var(--edge)}
   .absent code{font-family:"IBM Plex Mono",monospace; font-size:.85em; color:var(--brand)}
 
-  /* ---------------- demo: the organic Short, embedded ---------------- */
-  /* youtube-nocookie and loading=lazy: nothing from YouTube loads until the visitor scrolls here,
-     so the form above stays as fast as before */
+  /* ---------------- demo: a cut of the organic Short, hosted here ---------------- */
+  /* demo.mp4 and demo.jpg sit next to the page in avp-landing/cropduster/. Muted, looping and
+     inline so phones autoplay it; preload=metadata keeps it from slowing the form above */
   .demo .shell{display:grid; grid-template-columns:1fr auto; gap:clamp(28px,5vw,72px); align-items:center}
   .demo .head{margin-bottom:0}
-  .short{width:min(340px,100%); aspect-ratio:9/16; margin:0; border:1px solid var(--edge);
+  .short{position:relative; width:min(340px,100%); aspect-ratio:9/16; margin:0; border:1px solid var(--edge);
     border-radius:6px; overflow:hidden; background:var(--panel)}
-  .short iframe{display:block; width:100%; height:100%; border:0}
+  .short video{display:block; width:100%; height:100%; object-fit:cover}
+  .sound{
+    position:absolute; right:10px; bottom:10px; cursor:pointer;
+    font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink); background:rgba(13,16,20,.82);
+    border:1px solid var(--edge); border-radius:2px; padding:6px 10px; backdrop-filter:blur(6px);
+  }
+  .sound:hover{border-color:var(--brand-dim)}
+  .sound:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
 
   /* ---------------- spec readout ---------------- */
   .spec{
@@ -214,7 +222,9 @@
       <p>The overlay on an actual vertical cut, before it goes out. Turn it on, move anything that sits under the interface into the green box, turn it off, export.</p>
     </div>
     <figure class="short">
-      <iframe src="https://www.youtube-nocookie.com/embed/PH-MA8xxFeU?rel=0&amp;modestbranding=1&amp;playsinline=1" title="This free plugin saves me so much time on vertical edits" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      <video id="demo" src="demo.mp4" poster="demo.jpg" autoplay muted loop playsinline preload="metadata"
+             aria-label="Cropduster's overlay on a vertical edit in DaVinci Resolve"></video>
+      <button class="sound" type="button" id="demo-sound" aria-pressed="false">Sound on</button>
     </figure>
   </div>
 </section>
@@ -302,6 +312,23 @@
 </footer>
 
 <script>
+  // The demo plays muted (browsers only autoplay silent video); the button turns sound on and off.
+  // With reduced motion asked for, it does not autoplay: the poster shows and controls appear.
+  (function () {
+    var v = document.getElementById("demo"), b = document.getElementById("demo-sound");
+    if (!v || !b) return;
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      v.removeAttribute("autoplay"); v.pause(); v.controls = true; b.hidden = true;
+      return;
+    }
+    b.addEventListener("click", function () {
+      v.muted = !v.muted;
+      if (!v.muted && v.paused) v.play();
+      b.textContent = v.muted ? "Sound on" : "Sound off";
+      b.setAttribute("aria-pressed", v.muted ? "false" : "true");
+    });
+  })();
+
   // Tags each signup with where the visitor came from, in Kit's "Source" custom field. Links carry
   // ?from=tiktok (or youtube, instagram, reddit...); an untagged visit falls back to the referring
   // site, or "direct". The tag is kept for the tab's session so it survives a reload.

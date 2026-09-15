@@ -40,6 +40,8 @@ the template's own layouts, with the avatar photos in `web/avatars/`. Its Kit fo
 Every accent on these pages is the house blue. No gold, orange or yellow.
 
 The hub is the exception. It belongs to no single tool, so it is written and edited directly here.
+Its version chips are typed by hand too, so a tool's release also sets its chip to the exact
+version its product page shows (Chatterbox 1.0.1 read "v1.0" on the hub until fixed).
 
 ## Where signups come from
 

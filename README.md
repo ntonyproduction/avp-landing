@@ -18,10 +18,12 @@ guessable URL with nothing checking who is asking.
 | `cropduster/index.html` | Cropduster's product page. **Generated**, see below. |
 | `cropduster/thanks/index.html` | The page people land on after subscribing. **Generated.** |
 | `cropduster/Cropduster.zip` | The download itself. |
+| `cropduster/demo.mp4`, `demo.jpg` | The page's demo video (a cut of the organic Short, 720×1280, audio in the -16 to -14 LUFS band) and its first frame as poster. Not generated: rendered from Resolve, then copied here. |
 | `cd/yt/`, `cd/tt/` | Short links that redirect to the Cropduster page carrying `?from=youtube` and `?from=tiktok`, for pasting into comments. |
 | `chatterbox/index.html` | Chatterbox's product page. **Generated**, see below. |
 | `chatterbox/thanks/index.html` | Where Chatterbox's Kit form sends people after they subscribe. **Generated.** |
 | `chatterbox/Chatterbox.zip` | The download: `Chatterbox-<version>-Complete.zip` from the Chatterbox repo's `release.py`, renamed. |
+| `chatterbox/demo.mp4`, `demo.jpg` | Chatterbox's demo video and poster, made the same way as Cropduster's. |
 | `cb/yt/`, `cb/tt/` | The same short links for Chatterbox. |
 | `clipping/` | The old clipping-service page, kept after the tools hub took over the root. Nothing links to it; it is reachable only by its URL. |
 
@@ -37,7 +39,15 @@ The same goes for `chatterbox/index.html` and `chatterbox/thanks/index.html`, bu
 the template's own layouts, with the avatar photos in `web/avatars/`. Its Kit form ID is
 `KIT_FORM_ID` at the top of that script.
 
-Every accent on these pages is the house blue. No gold, orange or yellow.
+Every accent on these pages is the house blue. No gold, orange or yellow. On every page, the hub
+included, the logo top left is a link to `/`.
+
+**Demo videos.** Each product page shows a short demo next to its signup form: `demo.mp4` loops
+muted as a preview (browsers only autoplay silent video), and **Play with sound** restarts it from
+0:00 with audio, plays it once, then returns to the muted loop. The markup and script live in the
+tool repo's `web/landing.template.html`; the video files live here, beside the page. To replace
+one, render the new cut, check it passes the loudness gate, encode it to 720×1280 H.264 with
+`-movflags +faststart`, write its first frame as `demo.jpg`, and overwrite both files.
 
 The hub is the exception. It belongs to no single tool, so it is written and edited directly here.
 Its version chips are typed by hand too, so a tool's release also sets its chip to the exact

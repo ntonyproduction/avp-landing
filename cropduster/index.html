@@ -224,7 +224,7 @@
     <figure class="short">
       <video id="demo" src="demo.mp4" poster="demo.jpg" autoplay muted loop playsinline preload="metadata"
              aria-label="Cropduster's overlay on a vertical edit in DaVinci Resolve"></video>
-      <button class="sound" type="button" id="demo-sound" aria-pressed="false">Sound on</button>
+      <button class="sound" type="button" id="demo-sound" aria-pressed="false">Play with sound</button>
     </figure>
   </div>
 </section>
@@ -312,7 +312,9 @@
 </footer>
 
 <script>
-  // The demo plays muted (browsers only autoplay silent video); the button turns sound on and off.
+  // The demo loops muted as a preview (browsers only autoplay silent video). "Play with sound"
+  // restarts it from the top with audio, because by the time a visitor scrolls down and clicks,
+  // the loop is partway through the explanation. It plays once, then goes back to the muted loop.
   // With reduced motion asked for, it does not autoplay: the poster shows and controls appear.
   (function () {
     var v = document.getElementById("demo"), b = document.getElementById("demo-sound");
@@ -321,12 +323,17 @@
       v.removeAttribute("autoplay"); v.pause(); v.controls = true; b.hidden = true;
       return;
     }
+    function preview() {
+      v.muted = true; v.loop = true;
+      b.textContent = "Play with sound"; b.setAttribute("aria-pressed", "false");
+      if (v.paused) v.play();
+    }
     b.addEventListener("click", function () {
-      v.muted = !v.muted;
-      if (!v.muted && v.paused) v.play();
-      b.textContent = v.muted ? "Sound on" : "Sound off";
-      b.setAttribute("aria-pressed", v.muted ? "false" : "true");
+      if (!v.muted) { preview(); return; }
+      v.loop = false; v.currentTime = 0; v.muted = false; v.play();
+      b.textContent = "Mute"; b.setAttribute("aria-pressed", "true");
     });
+    v.addEventListener("ended", function () { v.currentTime = 0; preview(); });
   })();
 
   // Tags each signup with where the visitor came from, in Kit's "Source" custom field. Links carry

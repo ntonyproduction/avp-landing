@@ -94,7 +94,8 @@ quietly the way Cropduster's did until 2026-09-16:
 | Kit form | 9919442 | 9901490 |
 | Auto-confirm new subscribers | on | on |
 | Tag | `chatterbox` | `cropduster` |
-| Welcome sequence | Chatterbox welcome | Cropduster welcome |
+| Welcome sequence | Chatterbox welcome (2895956) | Cropduster welcome (2896045) |
+| Launch broadcast | to `cropduster` subscribers | to `chatterbox` subscribers |
 
 **Auto-confirm is on**, so someone is a confirmed subscriber the moment they submit and can be
 reached by a broadcast. Kit still sends its confirmation email and that email still carries the
@@ -108,8 +109,32 @@ Emails 1 and 2 are tool-specific. Emails 3 and 4 are the same text in both seque
 which tool they point at, so a new tool means writing two, not four. A Kit rule subscribes people to
 the sequence when they subscribe to that tool's form.
 
-Sequences are a paid Kit feature. `scripts/kit_list.py` in the Cropduster repo reads the list from
-the API without a browser.
+Sequences are a paid Kit feature (Creator Monthly, from 2026-09-23). `scripts/kit_list.py` in
+the Cropduster repo reads the list from the API without a browser, and `scripts/kit_emails.py`
+beside it prints the sequences and the broadcast as text for review.
+
+**One welcome sequence per product, one broadcast per launch.** The sequence is the evergreen part:
+it runs for anyone who ever downloads that tool, and it is written to still make sense a year later,
+so it carries no dates and no version numbers. A launch instead gets a single broadcast, sent once
+to the *other* tool's subscribers, and that one can be specific about the day. Chatterbox's is "I
+made a second one" (campaign 25949900). A new tool therefore means one new sequence and one new
+broadcast, never a second sequence aimed at the same people.
+
+**Email 3 excludes the tool it is promoting.** Someone who owns both tools should not be pitched
+either one, so Chatterbox email 3 excludes the `cropduster` tag and Cropduster email 3 excludes
+`chatterbox`. The filter is per email, set with the funnel icon beside *On days* in the sequence
+editor, and it does not exist in Kit's v4 API: the sequence email model carries no condition field,
+so this can only be set and checked in the browser. The sidebar shows a small funnel on any email
+that has one.
+
+**Email 4 is filtered on one side only.** It is the same text in both sequences, so someone in both
+would otherwise be asked the same question twice, four days apart. Cropduster's copy excludes
+`chatterbox`; Chatterbox's carries no filter. Filtering both would mean a two-tool subscriber is
+never asked at all, which is the trap worth remembering when a third tool arrives.
+
+Both sequences went live on 2026-09-16 with all four emails published. Note that publishing does not
+enrol anyone retroactively: the Kit rule fires on the subscribe event, so subscribers who arrived
+before a sequence was publishable are simply not in it, and adding them is a manual decision.
 
 ## Downloads carry no version
 

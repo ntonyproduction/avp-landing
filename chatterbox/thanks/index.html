@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Check your inbox</title>
+<title>Your Chatterbox download</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,6 +46,26 @@
   .lede{font-size:1.1rem; color:var(--ink-dim)}
   .lede b{color:var(--ink); font-weight:600}
 
+  /* the download itself, so the email is a convenience and not the only way in */
+  .get{
+    margin-top:26px; border:1px solid var(--brand-dim); border-radius:4px; background:var(--panel);
+    padding:20px 22px; display:flex; align-items:center; justify-content:space-between;
+    gap:16px; flex-wrap:wrap;
+  }
+  .get b{color:var(--ink); font-weight:700; font-size:1.02rem}
+  .get span{
+    display:block; margin-top:3px; color:var(--ink-faint); font-size:.82rem;
+    font-family:"IBM Plex Mono",ui-monospace,monospace; letter-spacing:.06em;
+  }
+  .btn{
+    background:var(--brand); color:#04121D; border:1px solid var(--brand); border-radius:3px;
+    padding:13px 22px; text-decoration:none; white-space:nowrap;
+    font-family:Montserrat,sans-serif; font-weight:800; font-size:.95rem; letter-spacing:-.005em;
+    transition:filter .15s ease;
+  }
+  .btn:hover{filter:brightness(1.09)}
+  .btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
   .steps{margin:30px 0 0; padding:0; counter-reset:s; display:grid; gap:2px}
   .steps li{
     counter-increment:s; list-style:none; display:grid; grid-template-columns:34px 1fr; gap:14px;
@@ -88,18 +108,21 @@
 
 <main>
   <div class="shell">
-    <p class="tag">One step left <span class="on">&middot;</span> the email can take a few minutes</p>
-    <h1>Check your inbox.</h1>
-    <p class="lede">I've just sent you a confirmation email. It often arrives within a minute, but it can take a few. <b>Click the button inside it and your download starts straight away.</b></p>
+    <p class="tag">You're in <span class="on">&middot;</span> the file is right here</p>
+    <h1>Here's Chatterbox.</h1>
+    <p class="lede">No waiting on an email. <b>The download is on this page.</b> I've sent you the same link as well, so you can find it again on another machine.</p>
+
+    <div class="get">
+      <p><b>Chatterbox 1.0.3</b><span>Resolve + Premiere &middot; .zip</span></p>
+      <a class="btn" href="/chatterbox/Chatterbox.zip" download>Download Chatterbox</a>
+    </div>
 
     <ol class="steps">
-      <li><span>Open the email titled <b>Your Chatterbox download</b>.</span></li>
-      <li><span>Click <b>CONFIRM AND DOWNLOAD</b>. That confirms your address and sends you the file in one go.</span></li>
       <li><span>Unzip it. There is a folder for DaVinci Resolve and one for Premiere Pro, each with its own install guide.</span></li>
       <li><span><b>Resolve:</b> double-click <b>install.cmd</b> (Windows) or <b>install.command</b> (Mac), then restart Resolve. <b>Premiere:</b> install the font, then the template, as the guide shows.</span></li>
     </ol>
 
-    <p class="aside">Not there after five minutes? Look in <b>Promotions</b>, <b>Other</b> or spam. If you find it in one of those, drag it to your inbox and everything I send you afterwards will land in the right place.</p>
+    <p class="aside">The email is titled <b>Your Chatterbox download</b>. If it is not in your inbox, look in <b>Promotions</b>, <b>Other</b> or spam and drag it across &mdash; then everything I send you afterwards lands in the right place.</p>
 
     <div class="contents">
       <p class="tag">What you are getting</p>

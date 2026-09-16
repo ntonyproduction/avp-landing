@@ -39,6 +39,14 @@ The same goes for `chatterbox/index.html` and `chatterbox/thanks/index.html`, bu
 the template's own layouts, with the avatar photos in `web/avatars/`. Its Kit form ID is
 `KIT_FORM_ID` at the top of that script.
 
+**The thank-you page carries the download itself.** Delivery used to depend entirely on Kit's
+confirmation email, so anyone whose email landed in spam, or who simply never clicked, gave up their
+address and got nothing. The thank-you page now shows a **Download <Tool>** button pointing at the
+zip beside it, and the email is described as a copy for later rather than the way in. The zip is
+publicly readable at a guessable URL anyway (see the top of this file), and the address is already
+captured by the time anyone reaches this page, so the button costs no signups. Do the same on every
+tool's thank-you page.
+
 Every accent on these pages is the house blue. No gold, orange or yellow. On every page, the hub
 included, the logo top left is a link to `/`.
 

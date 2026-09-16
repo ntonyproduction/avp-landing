@@ -53,11 +53,11 @@ The hub is the exception. It belongs to no single tool, so it is written and edi
 Its version chips are typed by hand too, so a tool's release also sets its chip to the exact
 version its product page shows (Chatterbox 1.0.1 read "v1.0" on the hub until fixed).
 
-**Texton** is on the hub as a card only: no product page, no download, no version chip, priced
-"Soon". `art/texton.jpg` is a placeholder render and will be replaced before launch. It is the
-first tool planned as paid, so when it ships its download cannot sit in this repo for the reason
-at the top of this file -- the file would be publicly readable at a guessable URL. That needs
-solving before the card becomes a link.
+The **texture tool** is on the hub as a card only: no render, no product page, no download, no
+version chip, priced "Soon". Its name is not settled, so the card carries a working label. It is
+the first tool planned as paid, so when it ships its download cannot sit in this repo for the
+reason at the top of this file -- the file would be publicly readable at a guessable URL. That
+needs solving before the card becomes a link.
 
 ## Where signups come from
 

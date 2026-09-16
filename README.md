@@ -84,6 +84,33 @@ other:
 
 Keep tags short and lowercase, one per place: `tiktok`, `youtube`, `instagram`, `reddit`.
 
+## What happens after someone subscribes
+
+Every tool's Kit form is wired the same way. A new tool needs all four pieces, or its funnel leaks
+quietly the way Cropduster's did until 2026-09-16:
+
+| | Chatterbox | Cropduster |
+|---|---|---|
+| Kit form | 9919442 | 9901490 |
+| Auto-confirm new subscribers | on | on |
+| Tag | `chatterbox` | `cropduster` |
+| Welcome sequence | Chatterbox welcome | Cropduster welcome |
+
+**Auto-confirm is on**, so someone is a confirmed subscriber the moment they submit and can be
+reached by a broadcast. Kit still sends its confirmation email and that email still carries the
+download link, but nothing depends on the click any more, because the thank-you page hands over the
+zip itself. Before that, six of seventeen subscribers had given an address and received nothing:
+they never clicked, so Kit never delivered and never let them be mailed again.
+
+**The welcome sequence** is four emails, on days 0, 2, 5 and 9. The download; the one feature of
+that tool most people miss; the other free tool; then an open question about what to build next.
+Emails 1 and 2 are tool-specific. Emails 3 and 4 are the same text in both sequences apart from
+which tool they point at, so a new tool means writing two, not four. A Kit rule subscribes people to
+the sequence when they subscribe to that tool's form.
+
+Sequences are a paid Kit feature. `scripts/kit_list.py` in the Cropduster repo reads the list from
+the API without a browser.
+
 ## Downloads carry no version
 
 `cropduster/Cropduster.zip` has no version in its name on purpose: the delivery email and every link

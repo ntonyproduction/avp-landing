@@ -17,10 +17,21 @@ Yours already is — that is what ManyChat is connected through — so there is 
 
 ## 1. Create the Meta app
 
-1. Go to <https://developers.facebook.com/apps/> and click **Create app**
-2. Give it a name only you see, e.g. `AVP Publishing`
-3. When it asks for a use case, pick **Other**, then app type **Business**
-4. Create it, then from the app dashboard add the **Instagram** product
+Go straight to the wizard: <https://developers.facebook.com/apps/creation/>
+
+Do **not** use `developers.facebook.com/apps`. If you are signed into a Business portfolio,
+Meta redirects that to the business-scoped app list on business.facebook.com, which has no
+Create button and only says "No Apps Found".
+
+The wizard is five screens:
+
+1. **App details** – name it something only you see, e.g. `AVP Publishing`, and give a contact email
+2. **Use cases** – pick **Other** (you add the Instagram permissions yourself in the Explorer)
+3. **Business** – connect your portfolio, or pick "I don't want to connect a business portfolio yet"
+4. **Requirements** – read and continue
+5. **Overview** – confirm, and pick app type **Business** if it asks
+
+Then from the app dashboard, add the **Instagram** product.
 
 Leave the app in **Development** mode. You are the admin, you are posting to your own account,
 so it works as-is. This is the step people think needs App Review — it does not.

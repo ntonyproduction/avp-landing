@@ -102,6 +102,39 @@ def graph(method: str, path: str, **params):
     return r.json()
 
 
+def try_graph(method: str, path: str, **params):
+    """Like graph() but returns None instead of exiting, for probing."""
+    try:
+        r = requests.request(method, f"{API}/{path.lstrip('/')}",
+                             data=params if method == "POST" else None,
+                             params=None if method == "POST" else params, timeout=60)
+    except requests.RequestException:
+        return None
+    return r.json() if r.ok else None
+
+
+def granted_pages(app_id: str, app_secret: str, token: str) -> list[dict]:
+    """Pages the user actually granted, read from the token itself.
+
+    Facebook Login for Business hands out business-scoped tokens, and those can leave
+    /me/accounts empty even when the Page was granted. The Page ids are in the token's
+    granular_scopes, so ask the token what it was given and look each one up.
+    """
+    data = graph("GET", "debug_token", input_token=token,
+                 access_token=f"{app_id}|{app_secret}").get("data", {})
+    ids: list[str] = []
+    for scope in data.get("granular_scopes", []):
+        for target in scope.get("target_ids") or []:
+            if target not in ids:
+                ids.append(target)
+    pages = []
+    for target in ids:
+        page = try_graph("GET", target, fields="name,access_token", access_token=token)
+        if page and page.get("access_token"):
+            pages.append(page)
+    return pages
+
+
 def account(creds: dict) -> dict:
     """Re-read who the stored token actually posts as. Never trust the cached username."""
     me = graph("GET", creds["ig_user_id"], fields="id,username",
@@ -134,6 +167,9 @@ def cmd_auth(args) -> None:
     pages = graph("GET", "me/accounts", fields="name,id,access_token",
                   access_token=long_lived).get("data", [])
     if not pages:
+        print("  /me/accounts is empty; reading the Pages out of the token instead ...")
+        pages = granted_pages(app_id, app_secret, long_lived)
+    if not pages:
         sys.exit("that token has no Pages on it. Is the account a Business/Creator "
                  "account linked to a Facebook Page, and did you grant every permission?")
 
@@ -158,6 +194,48 @@ def cmd_auth(args) -> None:
 
 
 # --------------------------------------------------------------------------- whoami
+
+def cmd_doctor(args) -> None:
+    """Ask Facebook what a token can actually see. Run this when `auth` says it found no Page."""
+    token = args.token
+    print("who the token belongs to")
+    me = graph("GET", "me", fields="id,name", access_token=token)
+    print(f"  {me.get('name')}  (id {me.get('id')})\n")
+
+    print("permissions on the token")
+    perms = graph("GET", "me/permissions", access_token=token).get("data", [])
+    granted = sorted(p["permission"] for p in perms if p.get("status") == "granted")
+    declined = sorted(p["permission"] for p in perms if p.get("status") != "granted")
+    print(f"  granted:  {', '.join(granted) or 'none'}")
+    if declined:
+        print(f"  DECLINED: {', '.join(declined)}")
+    for need in ("pages_show_list", "instagram_basic", "instagram_content_publish"):
+        if need not in granted:
+            print(f"  !! {need} is missing; the token cannot do the job without it")
+    print()
+
+    print("Pages this person has a role on  (GET /me/accounts)")
+    pages = graph("GET", "me/accounts", fields="name,id", access_token=token).get("data", [])
+    if not pages:
+        print("  NONE from /me/accounts.")
+        if args.app_id and args.app_secret:
+            print("  reading the Pages out of the token instead ...")
+            pages = granted_pages(args.app_id, args.app_secret, token)
+        else:
+            print("  pass --app-id and --app-secret to look inside the token itself,")
+            print("  which is where a business-scoped token keeps its Page ids.")
+    if not pages:
+        print("  still nothing: this profile really has no Page granted to the app.")
+        return
+    for page in pages:
+        ig = graph("GET", page["id"], fields="instagram_business_account{id,username}",
+                   access_token=token).get("instagram_business_account")
+        mark = "<-- this one" if ig and ig.get("username") == PINNED_USERNAME else ""
+        print(f"  {page['name']!r} (id {page['id']}) -> "
+              f"@{ig.get('username') if ig else 'no Instagram account linked'} {mark}")
+    print("\nIf the Page is listed but shows no Instagram account, the link between the Page")
+    print("and @" + PINNED_USERNAME + " is what is missing, not the token.")
+
 
 def cmd_whoami(args) -> None:
     creds = load()
@@ -373,6 +451,12 @@ def main() -> None:
     a.add_argument("--app-id")
     a.add_argument("--app-secret")
     a.set_defaults(func=cmd_auth)
+
+    d = sub.add_parser("doctor", help="ask Facebook what a token can actually see")
+    d.add_argument("--token", required=True, help="the short-lived token from the Explorer")
+    d.add_argument("--app-id", help="lets doctor look inside the token itself")
+    d.add_argument("--app-secret", help="lets doctor look inside the token itself")
+    d.set_defaults(func=cmd_doctor)
 
     w = sub.add_parser("whoami", help="which account, which quota")
     w.set_defaults(func=cmd_whoami)

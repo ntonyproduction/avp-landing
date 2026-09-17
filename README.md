@@ -121,6 +121,31 @@ had 2,676, so the signups are the reel's, not the carousel's. Kit cannot tell th
 arrive with `source` set to `instagram`, because that is all the link carries. If the two ever need
 separating, the `?from=` value is the place to do it.
 
+As of 2026-09-17 that ambiguity covers **three** posts, not two: the launch carousel, the first
+organic ad and the second. All three send people through the same bio link, so `instagram` is at
+once the tag carrying the most signups and the least informative one on the list. YouTube and
+TikTok avoid this only because `/cb/yt` and `/cb/tt` are separate links and each carries one post
+at a time. Giving an Instagram post its own `?from=` value, `instagram-ad2` say, is the cheap fix,
+and it has to be decided before the post goes up rather than reconstructed afterwards.
+
+**Where the twenty subscribers came from**, read with `kit_list.py` on 2026-09-17:
+
+| Source | Confirmed | Unconfirmed |
+|---|---|---|
+| `instagram` | 5 | 4 |
+| `youtube` | 4 | 2 |
+| `direct` | 1 | 0 |
+| `tiktok` | 0 | 0 |
+| untagged or test | 4 | 0 |
+
+**TikTok has produced nothing.** The first organic ad went there on 2026-09-15 and the second on
+2026-09-17, the bio link is `/cb/tt` and it carries `?from=tiktok`, so a signup would be attributed
+correctly if one arrived. None has. Instagram, running the same footage with a ManyChat keyword in
+front of it, is the largest single source. That is one platform's worth of evidence and not a
+verdict: the Instagram cut asks for a comment and answers with a DM, while the TikTok cut asks
+people to go and find a link in a bio, so the gap may be the call to action rather than the
+audience. Worth re-reading once ad 2 has run a week.
+
 Sequences are a paid Kit feature (Creator Monthly, from 2026-09-23). `scripts/kit_list.py` in
 the Cropduster repo reads the list from the API without a browser, and `scripts/kit_emails.py`
 beside it prints the sequences and the broadcast as text for review.

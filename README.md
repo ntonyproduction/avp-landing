@@ -15,6 +15,7 @@ guessable URL with nothing checking who is asking.
 | `index.html` | The tools hub. The site's front page, listing every tool. Written by hand, here. |
 | `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. |
 | `art/youtube-banner/` | The channel banner, one render per tool from `art/`. `python render.py` writes `banner.png` (2560×1440, uploaded to YouTube by hand) and `banner-preview.png` (the desktop, phone and TV crops). Moved here from the Cropduster repo because it covers every tool; fonts are fetched on the first run and not committed. |
+| `art/ig/<slug>/` | Carousel and photo posts staged for Instagram to fetch. Written by `scripts/avp_instagram.py`, committed and pushed, because the Graph API reads a public URL rather than taking an upload. Small JPEGs, so they stay. |
 | `cropduster/index.html` | Cropduster's product page. **Generated**, see below. |
 | `cropduster/thanks/index.html` | The page people land on after subscribing. **Generated.** |
 | `cropduster/Cropduster.zip` | The download itself. |
@@ -26,6 +27,7 @@ guessable URL with nothing checking who is asking.
 | `chatterbox/demo.mp4`, `demo.jpg` | Chatterbox's demo video and poster, made the same way as Cropduster's. |
 | `cb/yt/`, `cb/tt/` | The same short links for Chatterbox. |
 | `clipping/` | The old clipping-service page, kept after the tools hub took over the root. Nothing links to it; it is reachable only by its URL. |
+| `scripts/avp_instagram.py` | Posts to @audiovisionproductions from the command line: `post` for an image or carousel, `post-reel` for a video. See below. |
 
 ## Do not hand-edit the generated pages
 
@@ -66,6 +68,42 @@ version chip, priced "Soon". Its name is not settled, so the card carries a work
 the first tool planned as paid, so when it ships its download cannot sit in this repo for the
 reason at the top of this file -- the file would be publicly readable at a guessable URL. That
 needs solving before the card becomes a link.
+
+## Posting to Instagram
+
+`scripts/avp_instagram.py` publishes without a browser. One fact shapes the whole design: **the
+Graph API never takes the bytes.** It is handed a public URL and fetches the file itself, so
+anything being posted has to be readable by Meta, unauthenticated, at the moment of posting.
+
+Run `whoami` to see which account the stored token posts as and how much of the daily quota is
+left, and put `--dry-run` in front of any real post. Every command re-reads the account from the
+token and **refuses if it is not `audiovisionproductions`**, because this browser profile is signed
+into a personal account too and a post cannot be moved between accounts afterwards.
+
+**Images and carousels** stage into `art/ig/<slug>/`, get committed and pushed, and are served from
+`raw.githubusercontent.com`. They are small and they stay in the repo.
+
+**Reels do not.** An ad render is 65 to 70 MB, and committing one would put it in this repo's
+history permanently. Deleting it in a later commit does **not** reclaim anything, because the blob
+stays in history and every clone keeps paying for it. So `post-reel` uploads the file as an asset on
+the **`ig-staging`** prerelease instead. Release assets live entirely outside git history. The flow
+is: upload, create a `REELS` container, poll until Instagram finishes transcoding, publish, then
+delete the asset. Instagram keeps its own copy once the container reports `FINISHED`, so the URL is
+read exactly once and the original is never needed again.
+
+**`ig-staging` is scratch space, not a release.** Do not delete the tag and do not write release
+notes on it. It should normally hold **zero** assets; an asset sitting there means a publish failed
+after the upload, and the command prints the `gh release delete-asset` line to clear it. Failures
+deliberately leave the file in place so a retry does not re-upload 65 MB.
+
+**Where the ads actually live** is Drive, under `Business\Lead Magnets\<Tool>\Ads\Ad<N>\`, not
+this repo. Drive cannot serve the API either: a share link returns an HTML page rather than the
+bytes, and the `uc?export=download` form hits a virus-scan interstitial above about 25 MB, so Meta
+would fetch HTML and the container would fail.
+
+One thing still unproven: GitHub serves release assets as `application/octet-stream` rather than
+`video/mp4`. The URL ends in `.mp4` and Meta appears to go by that and by the bytes, but if a
+container ever comes back `ERROR` with a healthy-looking file, suspect the content type first.
 
 ## Where signups come from
 

@@ -109,6 +109,13 @@ Emails 1 and 2 are tool-specific. Emails 3 and 4 are the same text in both seque
 which tool they point at, so a new tool means writing two, not four. A Kit rule subscribes people to
 the sequence when they subscribe to that tool's form.
 
+**The tag comes from a rule, not from the form.** There are four rules: each tool's form subscribes
+people to its welcome sequence, and each also adds that tool's tag. The tag used to ride along with
+the website embed, which was enough until the Instagram launch, because ManyChat hits the same form
+without it. The first two subscribers off the carousel landed in a sequence carrying no tag at all.
+Every exclusion filter below keys off tags, so one untagged subscriber quietly defeats them all.
+Tagging on the rule covers every route in: website, Instagram, API.
+
 Sequences are a paid Kit feature (Creator Monthly, from 2026-09-23). `scripts/kit_list.py` in
 the Cropduster repo reads the list from the API without a browser, and `scripts/kit_emails.py`
 beside it prints the sequences and the broadcast as text for review.
@@ -135,6 +142,26 @@ never asked at all, which is the trap worth remembering when a third tool arrive
 Both sequences went live on 2026-09-16 with all four emails published. Note that publishing does not
 enrol anyone retroactively: the Kit rule fires on the subscribe event, so subscribers who arrived
 before a sequence was publishable are simply not in it, and adding them is a manual decision.
+
+**A broadcast can cover a backlog the sequence cannot reach.** "Why the tools live inside your
+editor" (25953928) went to all 11 tagged subscribers on 2026-09-16: a plain letter, no links, no
+images, whose only ask is a reply, because a reply is the strongest engagement signal a mailbox
+provider reads. "I made a second one" (25949900) is still a draft, and it exists for a backlog
+rather than a launch. The eight Cropduster subscribers all predate their own sequence, so they will
+never receive Cropduster email 3 and would otherwise never hear that Chatterbox exists. Anyone
+downloading Cropduster from now on gets that pitch from the sequence, so this broadcast is a
+one-time catch-up and not a habit.
+
+**Three places Kit's API answers 200 and does nothing.** Read the result back after every write:
+
+- `content` on a **published** sequence email is dropped silently. Unpublish, write, republish.
+  `subject` and `preview_text` update fine either way, which is what makes it easy to miss.
+- A broadcast `subscriber_filter` takes only **one** group. Sending `all` and `none` together
+  returns 422, so the two-group filter on 25949900 had to be built in the browser. The API reads
+  two groups back quite happily; it just will not write them.
+- `GET /tags/{id}/subscribers` lags. `GET /subscribers/{id}/tags` is the one to trust: after two
+  people were tagged it went on listing the stale count for the rest of the session, which reads
+  exactly like a failed write.
 
 ## Downloads carry no version
 

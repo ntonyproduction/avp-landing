@@ -113,13 +113,13 @@ the sequence when they subscribe to that tool's form.
 people to its welcome sequence, and each also adds that tool's tag. The tag used to ride along with
 the website embed, which was enough until Instagram, because ManyChat hits the same form without
 it. The first two subscribers in from Instagram landed in a sequence carrying no tag at all.
-
-Worth knowing which Instagram post that means. On 2026-09-16 the launch carousel had 16 views and
-the demo reel had 2,676, so the signups are the reel's. Kit cannot tell them apart: both arrive with
-`source` set to `instagram`, because that is all the link carries. If the two ever need separating,
-the `?from=` value is the place to do it.
 Every exclusion filter below keys off tags, so one untagged subscriber quietly defeats them all.
 Tagging on the rule covers every route in: website, Instagram, API.
+
+**Which Instagram post, though.** On 2026-09-16 the launch carousel had 16 views and the demo reel
+had 2,676, so the signups are the reel's, not the carousel's. Kit cannot tell them apart: both
+arrive with `source` set to `instagram`, because that is all the link carries. If the two ever need
+separating, the `?from=` value is the place to do it.
 
 Sequences are a paid Kit feature (Creator Monthly, from 2026-09-23). `scripts/kit_list.py` in
 the Cropduster repo reads the list from the API without a browser, and `scripts/kit_emails.py`

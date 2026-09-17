@@ -1,15 +1,22 @@
-# Skills, tracked copies
+# Skills, the only copies
 
-The Claude skills Anthony actually uses live outside every repo, under
-`%APPDATA%\Roaming\Claude\...\skills\<name>\SKILL.md`, where nothing version controls them. One bad
-edit or a reinstall and the thinking in them is gone.
+Anthony's own Claude skills are not files on this machine. Checked 2026-09-16: the app hands them to
+each session in a temporary folder under `%APPDATA%\Claude\local-agent-mode-sessions\`, and that
+folder does not exist on disk outside a running session. `~/.claude/plugins/` holds the official
+marketplace plugins and nothing of his. So the skills are managed by Claude, not stored by him.
 
-So the ones worth keeping are mirrored here. This folder is deliberately **not** `.claude/skills/`:
-a plain path means Claude does not load these as project skills, so there is no second copy
-competing with the live one. These are backups and a diff history, nothing more.
+That has one consequence worth stating plainly: **editing the file the session hands you does
+nothing.** The edit lives as long as the session does. A whole Copywriting section was written that
+way on 2026-09-16 and would have been lost, except it had been copied here first.
 
-They are copies, so they drift. After changing a skill, copy it back here and commit, and treat the
-file under `%APPDATA%` as the one that is true.
+So the copy in this folder is not a backup. It is the source. The working version is whatever has
+been pasted into the app, and the way to change a skill is:
+
+1. Edit the file here, and commit it. The diff is the only history these skills have.
+2. Paste the result into the skill in the app, under **Customize**.
+
+Deliberately not `.claude/skills/`: a plain path means Claude does not load these as project skills,
+so nothing here competes with the real one.
 
 | Skill | What it covers |
 |---|---|

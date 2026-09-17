@@ -9,6 +9,7 @@ Commands
   auth      one-time: trade a short-lived token for a Page token that does not expire
   whoami    print which Instagram account the stored token posts to, and today's quota
   post      one image or a carousel, from files or a folder
+  post-reel one vertical video, staged as a GitHub release asset and removed after
   publish   publish a container left behind by `post --stop-before-publish`
   verify    read a published post back by id
 
@@ -27,8 +28,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -47,6 +51,9 @@ REPO = Path(__file__).resolve().parent.parent
 STAGE_DIR = "art/ig"
 RAW = "https://raw.githubusercontent.com/ntonyproduction/avp-landing/main"
 MAX_WIDTH = 1440          # Instagram downscales anything wider, so do it here with a good filter
+REEL_TAG = "ig-staging"   # a release that exists only to hand Instagram a public URL
+REEL_MIN_SEC, REEL_MAX_SEC = 3, 15 * 60
+REEL_MAX_BYTES = 1_000_000_000
 MIN_RATIO, MAX_RATIO = 0.79, 1.91  # 4:5 portrait .. 1.91:1 landscape, with slack:
                                    # a 1080x1350 slide lands exactly on 0.8 and must not
                                    # fail the check on a float rounding
@@ -344,6 +351,154 @@ def wait_for(urls: list[str], timeout: int = 180) -> None:
     print(f"  all {len(urls)} reachable")
 
 
+# --------------------------------------------------------------------------- reels
+
+def gh(*cmd: str, check: bool = True) -> str:
+    """The GitHub CLI, run against this repo. Release assets live outside git history,
+    which is the whole point: a 65 MB ad must never become a commit."""
+    r = subprocess.run(["gh", *cmd], cwd=REPO, capture_output=True, text=True)
+    if r.returncode and check:
+        sys.exit(f"gh {' '.join(cmd)} failed: {r.stderr.strip() or r.stdout.strip()}")
+    return r.stdout.strip() if not r.returncode else ""
+
+
+def probe_video(path: Path) -> None:
+    """Best effort. ffprobe is not a dependency, so a missing one is a note, not an error."""
+    if not shutil.which("ffprobe"):
+        print("  (ffprobe not on PATH, skipping the shape check)")
+        return
+    r = subprocess.run(["ffprobe", "-v", "error", "-of", "json",
+                        "-show_entries", "format=duration",
+                        "-show_entries", "stream=codec_type,codec_name,width,height",
+                        str(path)], capture_output=True, text=True)
+    if r.returncode:
+        print("  (ffprobe could not read it, skipping the shape check)")
+        return
+    data = json.loads(r.stdout)
+    dur = float(data.get("format", {}).get("duration", 0))
+    video = next((st for st in data.get("streams", []) if st.get("codec_type") == "video"), {})
+    audio = next((st for st in data.get("streams", []) if st.get("codec_type") == "audio"), None)
+    w, h = video.get("width", 0), video.get("height", 0)
+    print(f"  {w}x{h}  {dur:.1f}s  {video.get('codec_name')}"
+          f"{'/' + audio['codec_name'] if audio else ', NO AUDIO'}")
+    if not REEL_MIN_SEC <= dur <= REEL_MAX_SEC:
+        sys.exit(f"a reel runs {REEL_MIN_SEC}s to {REEL_MAX_SEC // 60}min, this is {dur:.1f}s.")
+    if video.get("codec_name") != "h264":
+        print(f"  note: Instagram wants H.264, this is {video.get('codec_name')}")
+    if w and h and abs(w / h - 9 / 16) > 0.02:
+        print(f"  note: {w}x{h} is not 9:16; Instagram will letterbox or crop it")
+
+
+def stage_reel(video: Path) -> tuple[str, str]:
+    """Upload the file as a release asset and return (public url, asset name).
+
+    The asset name is sanitised because it becomes part of the URL, and Instagram's
+    fetcher is handed that URL verbatim.
+    """
+    if not gh("release", "view", REEL_TAG, "--json", "tagName", check=False):
+        print(f"  creating the {REEL_TAG!r} release ...")
+        gh("release", "create", REEL_TAG, "--title", "Instagram staging", "--prerelease",
+           "--notes", "Scratch space for publishing reels. Assets here are deleted "
+                      "once Instagram has fetched them; nothing here is permanent.")
+
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", video.stem).strip("-") or "reel"
+    asset = f"{stem}-{time.strftime('%Y%m%d-%H%M%S')}{video.suffix.lower()}"
+    tmp = Path(tempfile.mkdtemp(prefix="avp-reel-")) / asset
+    try:
+        os.link(video, tmp)          # same volume: instant, no second copy on disk
+    except OSError:
+        shutil.copy2(video, tmp)
+    try:
+        print(f"  uploading {asset} ({video.stat().st_size / 1048576:.1f} MB) ...")
+        gh("release", "upload", REEL_TAG, str(tmp), "--clobber")
+    finally:
+        shutil.rmtree(tmp.parent, ignore_errors=True)
+
+    listing = json.loads(gh("release", "view", REEL_TAG, "--json", "assets") or "{}")
+    for item in listing.get("assets", []):
+        if item.get("name") == asset:
+            return item["url"], asset
+    sys.exit(f"uploaded {asset} but GitHub does not list it on {REEL_TAG}")
+
+
+def unstage_reel(asset: str) -> None:
+    print(f"  removing {asset} from the {REEL_TAG!r} release ...")
+    gh("release", "delete-asset", REEL_TAG, asset, "--yes", check=False)
+
+
+def url_live(url: str, timeout: int = 180) -> None:
+    """A release URL 302s to objects.githubusercontent.com. Follow it, and fall back to a
+    one-byte GET for the case where the object store refuses HEAD."""
+    print("waiting for GitHub to serve it ...")
+    deadline = time.time() + timeout
+    while True:
+        for probe in (lambda: requests.head(url, timeout=20, allow_redirects=True),
+                      lambda: requests.get(url, timeout=20, allow_redirects=True,
+                                           headers={"Range": "bytes=0-0"}, stream=True)):
+            try:
+                if probe().status_code in (200, 206):
+                    print("  reachable")
+                    return
+            except requests.RequestException:
+                pass
+        if time.time() > deadline:
+            sys.exit(f"timed out waiting for {url}")
+        time.sleep(3)
+
+
+def cmd_post_reel(args) -> None:
+    if args.dry_run and not (store() / "credentials.json").exists():
+        creds, who = {}, "(not set up yet)"
+    else:
+        creds = load()
+        who = "@" + account(creds)["username"]
+
+    video = Path(args.video)
+    if not video.is_file():
+        sys.exit(f"no such file: {video}")
+    size = video.stat().st_size
+    if size > REEL_MAX_BYTES:
+        sys.exit(f"{video.name} is {size / 1048576:.0f} MB; Instagram takes up to 1 GB.")
+    caption = (Path(args.caption_file).read_text(encoding="utf-8").strip()
+               if args.caption_file else (args.caption or ""))
+
+    print(f"posting a reel to {who}")
+    print(f"  {video.name}  ({size / 1048576:.1f} MB)")
+    probe_video(video)
+    print(f"caption ({len(caption)} chars):\n{caption}\n")
+    if args.dry_run:
+        print("--dry-run: stopping before anything is uploaded or published")
+        return
+
+    url, asset = stage_reel(video)
+    published = False
+    try:
+        url_live(url)
+        print("creating the container ...")
+        container = graph("POST", f"{creds['ig_user_id']}/media", media_type="REELS",
+                          video_url=url, caption=caption,
+                          access_token=creds["page_token"])["id"]
+        print(f"  container {container}; Instagram is transcoding, this takes a minute ...")
+        container_ready(creds, container, timeout=args.timeout)
+
+        if args.stop_before_publish:
+            print(f"\ncontainer {container} is built and NOT published.")
+            print(f"publish it with:  py -3 -u scripts/avp_instagram.py publish {container}")
+            print(f"the staged asset is being left in place; remove it afterwards with:")
+            print(f"  gh release delete-asset {REEL_TAG} {asset} --yes")
+            return
+        publish(creds, container)
+        published = True
+    finally:
+        # Instagram keeps its own copy once the container is FINISHED, so the asset has
+        # done its job. Leave it only when the post did not go out, so a retry has a URL.
+        if published and not args.keep_asset:
+            unstage_reel(asset)
+        elif not published:
+            print(f"\nleaving {asset} staged so you can retry without re-uploading.")
+            print(f"remove it with:  gh release delete-asset {REEL_TAG} {asset} --yes")
+
+
 # --------------------------------------------------------------------------- publish
 
 def container_ready(creds: dict, cid: str, timeout: int = 300) -> None:
@@ -473,6 +628,20 @@ def main() -> None:
     o.add_argument("--stop-before-publish", action="store_true",
                    help="build the post but leave the last click for a human")
     o.set_defaults(func=cmd_post)
+
+    r = sub.add_parser("post-reel", help="publish one vertical video as a reel")
+    r.add_argument("video", help="path to the .mp4")
+    rcap = r.add_mutually_exclusive_group()
+    rcap.add_argument("--caption")
+    rcap.add_argument("--caption-file", help="a UTF-8 file: safest for emoji and hashtags")
+    r.add_argument("--dry-run", action="store_true", help="show the plan, touch nothing")
+    r.add_argument("--keep-asset", action="store_true",
+                   help="leave the staged file on the release instead of deleting it")
+    r.add_argument("--stop-before-publish", action="store_true",
+                   help="build the reel but leave the last click for a human")
+    r.add_argument("--timeout", type=int, default=900,
+                   help="seconds to wait for Instagram to transcode (default 900)")
+    r.set_defaults(func=cmd_post_reel)
 
     pb = sub.add_parser("publish", help="publish a container left by --stop-before-publish")
     pb.add_argument("container")

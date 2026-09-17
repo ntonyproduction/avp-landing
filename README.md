@@ -176,8 +176,11 @@ the pitch arrives after three emails that earn it instead of on its own.
 The person holding both tags goes into one sequence only. In both, they would get two download
 emails on the same day, and nothing here sends more than one email a day to anyone.
 
-None of it runs until Chatterbox's bugs are fixed: wave 1 sends people to download Chatterbox, and
-wave 2's second email teaches its highlighter in detail.
+This was held until Chatterbox's bugs were fixed -- wave 1 sends people to download Chatterbox and
+wave 2's second email teaches its highlighter in detail, so neither could go out while the
+highlighter did not draw in Premiere. **Chatterbox 1.0.4 (2026-09-16) cleared that**: the editor's
+whole report is fixed in both editors and the download on this site is the new build, so the waves
+are ready to run.
 
 **Three places Kit's API answers 200 and does nothing.** Read the result back after every write:
 

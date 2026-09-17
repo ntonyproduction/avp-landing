@@ -63,11 +63,19 @@ The hub is the exception. It belongs to no single tool, so it is written and edi
 Its version chips are typed by hand too, so a tool's release also sets its chip to the exact
 version its product page shows (Chatterbox 1.0.1 read "v1.0" on the hub until fixed).
 
-The **texture tool** is on the hub as a card only: no render, no product page, no download, no
-version chip, priced "Soon". Its name is not settled, so the card carries a working label. It is
-the first tool planned as paid, so when it ships its download cannot sit in this repo for the
-reason at the top of this file -- the file would be publicly readable at a guessable URL. That
-needs solving before the card becomes a link.
+The **texture tool** is not on the hub at all. It had a card, the name was settled and briefly
+shipped on it, then the whole card came out on 17 September 2026: the tool moved to the back
+burner and a card reading "Soon" still advertises something. It was removed rather than blanked,
+and with no HTML comment marking the spot, because a comment would put the name back in the page
+source. The markup is in this repo's history, so restoring it is a revert, not a rewrite. Its
+finished 900x900 render is already made and staged in the tool's own repo, not here.
+
+Two things still have to be true before that card can come back as a link. The name goes in the
+`<h2>` and the `.role` and `.for` lines go back together, because a card that names a tool without
+saying what it runs in is a claim waiting to be wrong -- that tool is a Fusion fuse, so it is
+Resolve only and a Premiere build is a rewrite rather than a target. And it is the first tool
+planned as paid, so its download cannot sit in this repo for the reason at the top of this file:
+the file would be publicly readable at a guessable URL.
 
 ## Posting to Instagram
 

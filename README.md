@@ -128,9 +128,14 @@ beside it prints the sequences and the broadcast as text for review.
 **One welcome sequence per product, one broadcast per launch.** The sequence is the evergreen part:
 it runs for anyone who ever downloads that tool, and it is written to still make sense a year later,
 so it carries no dates and no version numbers. A launch instead gets a single broadcast, sent once
-to the *other* tool's subscribers, and that one can be specific about the day. Chatterbox's is "I
-made a second one" (campaign 25949900). A new tool therefore means one new sequence and one new
-broadcast, never a second sequence aimed at the same people.
+to the *other* tool's subscribers, and that one can be specific about the day. A new tool therefore
+means one new sequence and one new broadcast, never a second sequence aimed at the same people.
+
+Chatterbox is the exception that proves it. Its broadcast was written when the sequences reached
+almost nobody, so it was covering a backlog rather than announcing a launch, and it is being retired
+unsent for the reason below. A real launch broadcast still earns its place: by the time a third tool
+ships, the first two lists will be in their sequences, and no existing sequence mentions a tool that
+did not exist when it was written.
 
 **Email 3 excludes the tool it is promoting.** Someone who owns both tools should not be pitched
 either one, so Chatterbox email 3 excludes the `cropduster` tag and Cropduster email 3 excludes
@@ -148,14 +153,31 @@ Both sequences went live on 2026-09-16 with all four emails published. Note that
 enrol anyone retroactively: the Kit rule fires on the subscribe event, so subscribers who arrived
 before a sequence was publishable are simply not in it, and adding them is a manual decision.
 
-**A broadcast can cover a backlog the sequence cannot reach.** "Why the tools live inside your
-editor" (25953928) went to all 11 tagged subscribers on 2026-09-16: a plain letter, no links, no
-images, whose only ask is a reply, because a reply is the strongest engagement signal a mailbox
-provider reads. "I made a second one" (25949900) is still a draft, and it exists for a backlog
-rather than a launch. The eight Cropduster subscribers all predate their own sequence, so they will
-never receive Cropduster email 3 and would otherwise never hear that Chatterbox exists. Anyone
-downloading Cropduster from now on gets that pitch from the sequence, so this broadcast is a
-one-time catch-up and not a habit.
+**A broadcast reaches people a sequence cannot.** "Why the tools live inside your editor" (25953928)
+went to all 11 tagged subscribers on 2026-09-16: a plain letter, no links, no images, whose only ask
+is a reply, because a reply is the strongest engagement signal a mailbox provider reads. It exists
+because publishing the sequences reached almost nobody, for the reason above.
+
+**The backlog gets enrolled, not broadcast at.** As of 2026-09-16, 11 of 13 confirmed subscribers
+are in no sequence: they downloaded before their sequence could enrol them, and the rule only fires
+on the subscribe event. The plan is to add them by hand rather than mail them a one-off:
+
+| Wave | Who | Sequence | What they get |
+|---|---|---|---|
+| 1 | 7 cropduster-only | Cropduster welcome | 4 emails, the Chatterbox pitch on day 5 |
+| 2 | 3 chatterbox-only | Chatterbox welcome | 4 emails, the Cropduster pitch on day 5 |
+| 3 | 1 holding both tags | Chatterbox welcome only | 3 emails, both pitches filtered out |
+
+Which retires "I made a second one" (25949900) rather than sending it. Wave 1's day-5 email is the
+same Chatterbox pitch to the same seven people, so doing both would pitch them twice. The broadcast
+only ever existed to cover ground the sequence could not; enrolling them covers it better, because
+the pitch arrives after three emails that earn it instead of on its own.
+
+The person holding both tags goes into one sequence only. In both, they would get two download
+emails on the same day, and nothing here sends more than one email a day to anyone.
+
+None of it runs until Chatterbox's bugs are fixed: wave 1 sends people to download Chatterbox, and
+wave 2's second email teaches its highlighter in detail.
 
 **Three places Kit's API answers 200 and does nothing.** Read the result back after every write:
 

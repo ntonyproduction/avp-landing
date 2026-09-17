@@ -176,11 +176,20 @@ the pitch arrives after three emails that earn it instead of on its own.
 The person holding both tags goes into one sequence only. In both, they would get two download
 emails on the same day, and nothing here sends more than one email a day to anyone.
 
-This was held until Chatterbox's bugs were fixed -- wave 1 sends people to download Chatterbox and
+This was held until Chatterbox's bugs were fixed: wave 1 sends people to download Chatterbox and
 wave 2's second email teaches its highlighter in detail, so neither could go out while the
-highlighter did not draw in Premiere. **Chatterbox 1.0.4 (2026-09-16) cleared that**: the editor's
-whole report is fixed in both editors and the download on this site is the new build, so the waves
-are ready to run.
+highlighter did not draw in Premiere. **Chatterbox 1.0.4 (2026-09-16) fixed the editor's whole
+report** in both editors and the download here is that build. The waves still wait on a tester
+confirming it, because shipping a build and trusting one are different gates, and the waves are the
+thing that tells people to go and get it.
+
+**A release can quietly invalidate the sequence copy.** 1.0.4 moved Draw-on, Delay and Easing into
+Resolve, where they had been a Premiere-only substitute for keyframing, and replaced the seven
+marker-colour presets with a swatch. Chatterbox email 2 described the old behaviour and its
+screenshot showed the old panel, so both went wrong the moment the build shipped, and nothing in
+Kit would ever have said so. Read the sequence emails against the release notes whenever a tool
+ships. The download link survives a version bump; the copy explaining the tool does not, and
+neither does a screenshot of its inspector.
 
 **Three places Kit's API answers 200 and does nothing.** Read the result back after every write:
 

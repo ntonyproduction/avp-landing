@@ -191,7 +191,7 @@ section yet: apply the core rules and ask.
 **Read this first.** Anthony sells nothing. Every tool is free, the list is small, and a welcome
 sequence exists to deliver the file, teach the one feature people miss, point at the other tool,
 and ask what to build next. Almost all direct-response advice assumes a paid offer and a cold
-list. Section 6 lists what was left out on those grounds and why. Revisit it if a paid product
+list. Section 8 lists what was left out on those grounds and why. Revisit it if a paid product
 ever ships.
 
 ## 1. Voice, read off Anthony's own copy rather than imported

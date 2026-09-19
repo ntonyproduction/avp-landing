@@ -196,8 +196,15 @@ ever ships.
 
 ## 1. Voice, read off Anthony's own copy rather than imported
 
-- **Product names stay lowercase** mid-sentence: "Your chatterbox download", "thanks for
-  grabbing cropduster". Subjects are sentence case. Preview text is all lowercase.
+- **No capital letter except the first of a sentence.** Product names, apps, platforms and a
+  tool's own control names all stay lowercase mid-sentence, even where the interface
+  capitalises them: "Your chatterbox download", "thanks for grabbing cropduster", "in resolve",
+  "windows' emoji panel", "set draw-on to 0", "ease in & out", "the choose photo button". Two
+  exceptions, both in his published emails: the pronoun "I", and the one CAPITALS emphasis word
+  in section 2. Image alt text follows the rule too, since a client that blocks images shows it
+  in place of the picture. Subjects are sentence case. Preview text is all lowercase. Before a
+  draft goes to Kit, read it for stray capitals: a control name copied off the inspector is the
+  usual one.
 - **First person is correct here.** "I made a second one", "I answer every one". Rule 7 bans
   first person for a *guest's* story on a client channel. It does not apply to Anthony writing
   to his own list about his own tools.

@@ -250,9 +250,12 @@ emails on the same day, and nothing here sends more than one email a day to anyo
 This was held until Chatterbox's bugs were fixed: wave 1 sends people to download Chatterbox and
 wave 2's second email teaches its highlighter in detail, so neither could go out while the
 highlighter did not draw in Premiere. **Chatterbox 1.0.4 (2026-09-16) fixed the editor's whole
-report** in both editors and the download here is that build. The waves still wait on a tester
-confirming it, because shipping a build and trusting one are different gates, and the waves are the
-thing that tells people to go and get it.
+report** in both editors. The waves waited on a tester confirming it, because shipping a build and
+trusting one are different gates, and the waves are the thing that tells people to go and get it.
+That tester (a Mac, Premiere in Spanish) took it through 1.0.5 to 1.0.9; the report on 1.0.9 found
+nothing left in Premiere and one Resolve fault, a card that shrank at a lower Timeline Playback
+Resolution. **1.0.10 (2026-09-19) fixes it**, confirmed in Resolve on Windows, and the download
+here is that build.
 
 **A release can quietly invalidate the sequence copy.** 1.0.4 moved Draw-on, Delay and Easing into
 Resolve, where they had been a Premiere-only substitute for keyframing, and replaced the seven

@@ -228,6 +228,11 @@ ever ships.
   first-name sign-off. The caps work because the surrounding text is calm.
 - **Never in a subject line.** All-caps there is a long-standing spam signal, and it is the part
   filters weigh hardest. Body copy only.
+- **Bold labels, it does not shout.** Put it on the noun being handed over (the tool, the pack,
+  the thing that is free) and on the single line carrying the offer, not on verbs and not on
+  whatever feels strongest. Observed across a run of Cymatics emails, where bold marks the
+  product every time and almost never the action. Bold plus underline plus colour reads as a
+  link, so keep that combination for actual links.
 - Bold is the alternative and reads as designed rather than typed. Caps read as a person emphasising
   a word out loud, which is the voice these emails are in.
 
@@ -262,6 +267,18 @@ ever ships.
 - **One ask per email.** Reply, or go get the other tool. Never both in the same email.
 - A P.S. is read more than the body and is worth using when there is a genuine second thing to
   say. A broadcast usually earns one. A four-line delivery email does not.
+- **The ellipsis does three jobs**, and they are worth keeping apart. Trailing at the end of a
+  line it withholds, so the reader has to go on to close it. Dropped mid-sentence after an
+  opening word it acts as a breath, which makes the line read as spoken rather than written.
+  And straddling a break it lets a sentence start in the body and finish inside the link text,
+  so the link is the second half of something already being read rather than a button bolted
+  on. That third one is the technique worth having; the first two are common and wear out fast.
+  Observed from Cymatics rather than read off Anthony's own copy, which is the exception in
+  this section: replace it the moment there is enough of his own email using it to read from.
+- **What not to take from Cymatics.** Their em-dashes, FREE in a subject, capitalised product
+  names and emoji in subject lines all contradict rules above, and their urgency works because
+  a livestream ends. Nothing here ends: the download page is permanent. Take the structure,
+  one idea per paragraph, the early link, the P.S. carrying a second thing. Leave the voice.
 
 ## 5. Storytelling and rapport
 

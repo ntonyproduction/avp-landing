@@ -28,6 +28,7 @@ guessable URL with nothing checking who is asking.
 | `cb/yt/`, `cb/tt/` | The same short links for Chatterbox. |
 | `clipping/` | The old clipping-service page, kept after the tools hub took over the root. Nothing links to it; it is reachable only by its URL. |
 | `scripts/avp_instagram.py` | Posts to @audiovisionproductions from the command line: `post` for an image or carousel, `post-reel` for a video. See below. |
+| `scripts/avp_youtube.py` | Uploads and schedules on @audiovisionproductions: `auth`, `whoami`, `upload`, `verify`. A copy of the `youtube-upload` skill's script, kept here because the canonical copy lives in the credential store (`~/.avp/youtube/`) and a store can go missing while a repo cannot. Holds no credentials. |
 
 ## Do not hand-edit the generated pages
 
@@ -88,6 +89,16 @@ left, and put `--dry-run` in front of any real post. Every command re-reads the 
 token and **refuses if it is not `audiovisionproductions`**, because this browser profile is signed
 into a personal account too and a post cannot be moved between accounts afterwards.
 
+**That refusal is the whole reason to prefer the script**, and ad 3 (2026-09-21) proved it the hard
+way. The credential store was missing, restoring it needed a Meta app secret that was not to hand,
+so the reel went up through instagram.com instead. The browser has no such guard, and that profile
+was signed in as **`avp.anthony`**, not `audiovisionproductions`: the account picker holds four
+saved sessions and switching is one click with no password, but nothing prompts you to. TikTok is
+worse, because it stores only one session (`@gtmcutshq`) and offers **no account switcher at all**
+in Studio, on tiktok.com, or under Studio > Settings, so reaching the right account means a full log
+out and log in. Posting by browser is a fallback, not an equivalent: check the account on screen
+before staging and again immediately before the publish click.
+
 **Images and carousels** stage into `art/ig/<slug>/`, get committed and pushed, and are served from
 `raw.githubusercontent.com`. They are small and they stay in the repo.
 
@@ -108,6 +119,12 @@ deliberately leave the file in place so a retry does not re-upload 65 MB.
 this repo. Drive cannot serve the API either: a share link returns an HTML page rather than the
 bytes, and the `uc?export=download` form hits a virus-scan interstitial above about 25 MB, so Meta
 would fetch HTML and the container would fail.
+
+**The copy in that folder is the one the loudness gate applies to**, since it is the file that
+uploads. Resolve does not hand back a compliant render on its own: ad 3 came out at **-13.4 LUFS**
+(Instagram cut) and **-13.6** (YouTube/TikTok cut), both over the -14 ceiling, and each needed a
+static gain (`-af volume=-1.1dB` and `-0.9dB`, video stream copied) to land at -14.5. Measure every
+cut before it goes anywhere, and re-measure the corrected file rather than trusting the arithmetic.
 
 One thing still unproven: GitHub serves release assets as `application/octet-stream` rather than
 `video/mp4`. The URL ends in `.mp4` and Meta appears to go by that and by the bytes, but if a
@@ -167,12 +184,21 @@ had 2,676, so the signups are the reel's, not the carousel's. Kit cannot tell th
 arrive with `source` set to `instagram`, because that is all the link carries. If the two ever need
 separating, the `?from=` value is the place to do it.
 
-As of 2026-09-17 that ambiguity covers **three** posts, not two: the launch carousel, the first
-organic ad and the second. All three send people through the same bio link, so `instagram` is at
-once the tag carrying the most signups and the least informative one on the list. YouTube and
-TikTok avoid this only because `/cb/yt` and `/cb/tt` are separate links and each carries one post
-at a time. Giving an Instagram post its own `?from=` value, `instagram-ad2` say, is the cheap fix,
-and it has to be decided before the post goes up rather than reconstructed afterwards.
+As of 2026-09-21 that ambiguity covers **four** posts: the launch carousel, and organic ads 1, 2 and
+3. All four send people through the same bio link, so `instagram` is at once the tag carrying the
+most signups and the least informative one on the list. YouTube and TikTok avoid this only because
+`/cb/yt` and `/cb/tt` are separate links and each carries one post at a time.
+
+**Giving a post its own `?from=` value is not the free fix this file used to call it.** The obvious
+move is a suffixed value, `instagram-ad3` say, decided before the post goes up. The cost only shows
+up in the daily Telegram report: `newBySource` in `time-tracker/src/lib/kit.ts` groups the raw Kit
+`source` string with **no normalisation** and prints one bullet per distinct value, so a suffix
+appears as a row *separate from* `instagram` and the per-platform total has to be summed by hand.
+Ad 3 therefore shipped with a bare `?from=instagram` (2026-09-21): the report answers "which
+platform", which is the question actually being asked of it, and per-post attribution is not worth
+fragmenting it. Suffix a post only when that post's own numbers matter more than the platform line,
+and expect to add the rows up afterwards. The same applies to `youtube` and `tiktok`, which `/cb/yt`
+and `/cb/tt` carry.
 
 **Where the twenty subscribers came from**, read with `kit_list.py` on 2026-09-17:
 
@@ -184,13 +210,13 @@ and it has to be decided before the post goes up rather than reconstructed after
 | `tiktok` | 0 | 0 |
 | untagged or test | 4 | 0 |
 
-**TikTok has produced nothing.** The first organic ad went there on 2026-09-15 and the second on
-2026-09-17, the bio link is `/cb/tt` and it carries `?from=tiktok`, so a signup would be attributed
-correctly if one arrived. None has. Instagram, running the same footage with a ManyChat keyword in
-front of it, is the largest single source. That is one platform's worth of evidence and not a
-verdict: the Instagram cut asks for a comment and answers with a DM, while the TikTok cut asks
-people to go and find a link in a bio, so the gap may be the call to action rather than the
-audience. Worth re-reading once ad 2 has run a week.
+**TikTok has produced nothing.** The first organic ad went there on 2026-09-15, the second on
+2026-09-17 and the third on 2026-09-21, the bio link is `/cb/tt` and it carries `?from=tiktok`, so
+a signup would be attributed correctly if one arrived. None has. Instagram, running the same
+footage with a ManyChat keyword in front of it, is the largest single source. That is one
+platform's worth of evidence and not a verdict: the Instagram cut asks for a comment and answers
+with a DM, while the TikTok cut asks people to go and find a link in a bio, so the gap may be the
+call to action rather than the audience. Worth re-reading once ad 3 has run a week.
 
 Sequences are a paid Kit feature (Creator Monthly, from 2026-09-23). `scripts/kit_list.py` in
 the Cropduster repo reads the list from the API without a browser, and `scripts/kit_emails.py`

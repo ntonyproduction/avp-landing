@@ -27,18 +27,18 @@
             mask-image:linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 16%, transparent 34%, transparent 70%, rgba(0,0,0,.55) 86%, #000 100%)}
 
   .safe{position:absolute; left:507px; top:508px; width:1546px; height:423px;
-    display:grid; grid-template-columns:1fr auto; column-gap:56px; align-items:center;
+    display:grid; grid-template-columns:1fr auto; column-gap:44px; align-items:center;
     padding:0 64px 0 66px; box-sizing:border-box}
   h1{margin:0; font-weight:900; font-size:92px; line-height:.97; letter-spacing:-.026em}
   h1 em{font-style:normal; color:var(--brand)}
   .cta{margin:26px 0 0; display:flex; align-items:center; gap:16px;
-    font-weight:700; font-size:42px; letter-spacing:-.012em; color:var(--ink-dim)}
+    font-weight:700; font-size:40px; letter-spacing:-.012em; color:var(--ink-dim); white-space:nowrap}
   .cta b{color:var(--ink); font-weight:800}
   .cta svg{width:32px; height:38px; flex:none}
 
   /* one render per tool; a third tool is a third figure and a narrower gap */
-  .renders{display:flex; gap:24px}
-  .render{margin:0; width:330px; height:330px; border:2px solid var(--edge); border-radius:6px;
+  .renders{display:flex; gap:16px}
+  .render{margin:0; width:250px; height:250px; border:2px solid var(--edge); border-radius:6px;
     overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.55)}
   .render img{display:block; width:100%; height:100%}
 </style>
@@ -54,6 +54,7 @@
     </p>
   </div>
   <div class="renders">
+    <figure class="render"><img src="../shutterdrag.jpg" alt=""></figure>
     <figure class="render"><img src="../cropduster.jpg" alt=""></figure>
     <figure class="render"><img src="../chatterbox.jpg" alt=""></figure>
   </div>

@@ -106,8 +106,10 @@
     letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); margin:0;
   }
   /* Which editor it installs into. Cymatics can leave this out because every plugin is a VST;
-     here a tool can be Resolve only, so it stays. */
-  .for{font-size:.83rem; color:var(--ink-faint); margin:0}
+     here a tool can be Resolve only, so it stays. The editors' own icons, because an editor
+     knows them at a glance faster than they read the names; the names stay as alt and hover. */
+  .for{display:flex; gap:8px; margin:2px 0 0}
+  .for img{width:26px; height:26px; object-fit:contain}
   .price{margin:auto 0 0; padding-top:15px; font-weight:800; font-size:1.05rem; color:var(--brand)}
   .price.pending{color:var(--ink-faint); font-weight:600; font-size:.95rem}
 
@@ -152,7 +154,7 @@
         <div class="body">
           <div class="name"><h2>Shutterdrag</h2><span class="chips"><span class="chip">v1.1</span></span></div>
           <p class="role">Slow shutter</p>
-          <p class="for">DaVinci Resolve</p>
+          <p class="for"><img src="art/resolve.svg" alt="DaVinci Resolve" title="DaVinci Resolve" width="26" height="26"></p>
           <p class="price">Free</p>
         </div>
       </a>
@@ -162,7 +164,7 @@
         <div class="body">
           <div class="name"><h2>Cropduster</h2><span class="chips"><span class="chip">v1.4</span></span></div>
           <p class="role">Social safe zones</p>
-          <p class="for">DaVinci Resolve and Premiere Pro</p>
+          <p class="for"><img src="art/resolve.svg" alt="DaVinci Resolve" title="DaVinci Resolve" width="26" height="26"><img src="art/premiere.svg" alt="Premiere Pro" title="Premiere Pro" width="26" height="26"></p>
           <p class="price">Free</p>
         </div>
       </a>
@@ -172,7 +174,7 @@
         <div class="body">
           <div class="name"><h2>Chatterbox</h2><span class="chips"><span class="chip">v1.0.10</span></span></div>
           <p class="role">Social comment cards</p>
-          <p class="for">DaVinci Resolve and Premiere Pro</p>
+          <p class="for"><img src="art/resolve.svg" alt="DaVinci Resolve" title="DaVinci Resolve" width="26" height="26"><img src="art/premiere.svg" alt="Premiere Pro" title="Premiere Pro" width="26" height="26"></p>
           <p class="price">Free</p>
         </div>
       </a>

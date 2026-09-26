@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Polar appends a customer session token to this page's URL; never pass it on in a Referer. -->
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Your download · Audio Vision Productions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  /*
+    Where Polar sends a buyer after paying for any AVP tool. One page for every paid tool, so it
+    names none of them: the tool is in the checkout, and the button fetches the right download.
+    The styles follow the tools' own thank-you pages (Shutterdrag's, minus its accent).
+  */
+  :root{
+    --ground:#0A0E12; --panel:#10161C; --edge:#24303A;
+    --brand:#62A3DA; --brand-dim:#35719F;
+    --ink:#EAEDF0; --ink-dim:#9DA9B4; --ink-faint:#70818F;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:Montserrat,system-ui,-apple-system,Segoe UI,sans-serif;
+    font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  img{display:block; max-width:100%}
+  a{color:var(--brand)}
+  .shell{max-width:660px; margin-inline:auto; padding-inline:24px}
+  .tag{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+  }
+  .tag .on{color:var(--brand)}
+  h1{font-family:Montserrat,sans-serif; font-weight:900; margin:14px 0 16px;
+     font-size:clamp(2rem,1.2rem + 3vw,3rem); line-height:1.04; letter-spacing:-.022em; text-wrap:balance}
+  p{margin:0}
+
+  .top{border-bottom:1px solid var(--edge)}
+  .top .shell{display:flex; align-items:center; gap:16px; padding-block:18px; max-width:1120px}
+  .brand{display:flex; align-items:center; gap:11px; color:inherit; text-decoration:none}
+  .brand img{width:30px; height:auto}
+  .brand b{font-family:Montserrat,sans-serif; font-weight:800; font-size:.95rem; letter-spacing:-.01em}
+  .brand b em{font-style:normal; color:var(--brand)}
+
+  main{padding-block:clamp(48px,8vw,92px)}
+  .lede{font-size:1.1rem; color:var(--ink-dim)}
+  .lede b{color:var(--ink); font-weight:600}
+
+  .get{
+    margin-top:26px; border:1px solid var(--brand-dim); border-radius:4px; background:var(--panel);
+    padding:20px 22px; display:flex; align-items:center; justify-content:space-between;
+    gap:16px; flex-wrap:wrap;
+  }
+  .get b{color:var(--ink); font-weight:700; font-size:1.02rem}
+  .get span{
+    display:block; margin-top:3px; color:var(--ink-faint); font-size:.82rem;
+    font-family:"IBM Plex Mono",ui-monospace,monospace; letter-spacing:.06em;
+  }
+  .btn{
+    background:var(--brand); color:#04121D; border:1px solid var(--brand); border-radius:3px;
+    padding:13px 22px; text-decoration:none; white-space:nowrap;
+    font-family:Montserrat,sans-serif; font-weight:800; font-size:.95rem; letter-spacing:-.005em;
+    transition:filter .15s ease;
+  }
+  .btn:hover{filter:brightness(1.09)}
+  .btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+  .steps{margin:30px 0 0; padding:0; counter-reset:s; display:grid; gap:2px}
+  .steps li{
+    counter-increment:s; list-style:none; display:grid; grid-template-columns:34px 1fr; gap:14px;
+    align-items:baseline; padding:13px 0; border-bottom:1px solid var(--edge); color:var(--ink-dim);
+  }
+  .steps li::before{
+    content:counter(s,decimal-leading-zero);
+    font-family:"IBM Plex Mono",monospace; font-size:.82rem; font-weight:600;
+    color:var(--brand); letter-spacing:.06em;
+  }
+  .steps b{color:var(--ink); font-weight:600}
+
+  .aside{
+    margin-top:28px; border-left:2px solid var(--brand); padding:12px 0 12px 15px;
+    color:var(--ink-dim); font-size:.94rem;
+  }
+  .aside b{color:var(--ink); font-weight:600}
+  .aside + .aside{margin-top:14px}
+
+  [hidden]{display:none!important}
+
+  footer{border-top:1px solid var(--edge); padding-block:26px; color:var(--ink-faint); font-size:.85rem}
+  footer .shell{max-width:1120px}
+  footer b{color:var(--ink-dim)}
+  footer address{font-style:normal; line-height:1.7}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="shell">
+    <a class="brand" href="/"><img src="/art/avp-logo.png" alt="Audio Vision Productions"><b>Audio <em>Vision</em> Productions</b></a>
+  </div>
+</header>
+
+<main>
+  <div class="shell">
+    <!-- Shown when Polar sent the buyer here with their order. -->
+    <div id="paid" hidden>
+      <p class="tag">Payment received <span class="on">&middot;</span> thank you</p>
+      <h1>Thanks. Your download is ready.</h1>
+      <p class="lede">No waiting on an email. <b>The download is one click away</b>, right here.</p>
+
+      <div class="get">
+        <p><b>Your download</b><span>Opens your download page &middot; .zip</span></p>
+        <a class="btn" id="download" href="#">Get your download</a>
+      </div>
+
+      <ol class="steps">
+        <li><span>The button opens your download page. Click the <b>download arrow</b> next to the .zip.</span></li>
+        <li><span>Unzip it. Inside are the installer and a one-page <b>install guide</b>.</span></li>
+        <li><span>Follow the guide. It says exactly where the tool shows up in your editor.</span></li>
+      </ol>
+
+      <p class="aside">Payment is handled by <b>Polar</b>, who resell the tools for me and take care of sales tax, so your receipt comes from Polar. It links to the same download page: keep it, and you can download again on another machine whenever you like.</p>
+      <p class="aside">Something not working? Email <a href="mailto:info@audiovisionproductions.ca">info@audiovisionproductions.ca</a> and I'll sort it out.</p>
+    </div>
+
+    <!-- Shown when someone reaches this page without an order. -->
+    <div id="lost">
+      <p class="tag">Downloads</p>
+      <h1>Looking for your download?</h1>
+      <p class="lede">This is where you land after buying a tool. If you bought one, <b>your receipt email from Polar</b> has a link to your download page.</p>
+      <p class="aside">Can't find it? Email <a href="mailto:info@audiovisionproductions.ca">info@audiovisionproductions.ca</a> with the address you bought with. Or <a href="/">see all the tools</a>.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="shell">
+    <address>
+      <b>Audio Vision Productions</b><br>
+      <a href="mailto:info@audiovisionproductions.ca">info@audiovisionproductions.ca</a>
+    </address>
+  </div>
+</footer>
+
+<script>
+  // The relay in the time-tracker repo: it checks the checkout is paid and opens the buyer's
+  // Polar download page, signed in. Polar fills checkout_id into this page's URL.
+  var DOWNLOAD_ROUTE = 'https://time-tracker-production-0a32.up.railway.app/api/polar/download';
+
+  (function () {
+    var id = new URLSearchParams(location.search).get('checkout_id');
+    if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return;
+    document.getElementById('download').href = DOWNLOAD_ROUTE + '?checkout_id=' + encodeURIComponent(id);
+    document.getElementById('paid').hidden = false;
+    document.getElementById('lost').hidden = true;
+    // Drop Polar's session token from the address bar, so a bookmark or a shared screenshot
+    // does not carry it. The checkout id stays: the button needs it on a reload.
+    history.replaceState(null, '', location.pathname + '?checkout_id=' + encodeURIComponent(id));
+  })();
+</script>
+</html>

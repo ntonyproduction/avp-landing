@@ -13,6 +13,7 @@ guessable URL with nothing checking who is asking.
 | Path | What it is |
 |---|---|
 | `index.html` | The tools hub. The site's front page, listing every tool. Written by hand, here. |
+| `tt/`, `yt/`, `ig/` | **The bio links.** Each redirects to the hub carrying `?from=tiktok`, `?from=youtube` or `?from=instagram`. Set once in each profile's bio and never changed; see "The bio link" below. |
 | `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. |
 | `art/youtube-banner/` | The channel banner, one render per tool from `art/`. `python render.py` writes `banner.png` (2560×1440, uploaded to YouTube by hand) and `banner-preview.png` (the desktop, phone and TV crops). Moved here from the Cropduster repo because it covers every tool; fonts are fetched on the first run and not committed. |
 | `art/ig/<slug>/` | Carousel and photo posts staged for Instagram to fetch. Written by `scripts/avp_instagram.py`, committed and pushed, because the Graph API reads a public URL rather than taking an upload. Small JPEGs, so they stay. |
@@ -147,6 +148,31 @@ other:
    does not inherit this tab's session storage.
 
 Keep tags short and lowercase, one per place: `tiktok`, `youtube`, `instagram`, `reddit`.
+
+## The bio link
+
+Every profile's bio points at the hub, never at one tool: `audiovisionproductions.ca/tt` on
+TikTok, `/yt` on YouTube, `/ig` on Instagram. Introduced on 2026-09-26.
+
+**Why the bio never points at a tool.** A video keeps being watched for months, and "link in bio"
+is only true while the bio still leads to what the video showed. Until this change the bio was
+swapped to the newest tool at each launch, which quietly broke every older video's call to action:
+someone watching a Cropduster ad after the Shutterdrag launch landed on Shutterdrag. The hub lists
+every tool, so every video's call to action stays true for good. A launch adds the new tool's card
+to the hub, and nothing in any bio changes.
+
+The hub's look was deliberately left alone when the bio links went in. A featured card for the
+newest tool and a line for visitors arriving from a video were built and previewed on 2026-09-26,
+then shelved ("not yet"). If the newest tool ever needs to stand out, that is the place to start.
+
+**Attribution is unchanged.** The redirect adds `?from=`, and the hub passes it on through
+`sessionStorage` and the rewritten card links described above, so a signup still records its
+platform. The per-tool short links (`/cd/tt`, `/cb/yt` and the rest) still go straight to one
+tool's page. They are for comments and descriptions that name one tool, not for bios.
+
+**A video that promises something specific** ("the overlay is in the link") must say which card to
+tap, because the bio now lands on the hub: "link in bio, then Pixelito". The promised file has to
+be on that tool's page or in its download, since the hub itself hands nothing over.
 
 ## What happens after someone subscribes
 

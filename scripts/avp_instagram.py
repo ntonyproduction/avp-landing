@@ -16,7 +16,8 @@ Commands
 
 Instagram only accepts JPEG, so PNG slides are converted on the way out. The API never
 takes the bytes: it fetches a public URL, so `post` stages the JPEGs into this repo,
-pushes, waits for GitHub to serve them, and only then publishes.
+commits that folder alone on main, pushes, waits for GitHub to serve them at URLs pinned
+to that commit, and only then publishes.
 
 Every post re-reads the token's account and REFUSES if it is not the pinned username:
 this browser profile is signed in as a personal account too, and a post cannot be moved
@@ -314,9 +315,64 @@ def git_try(*cmd: str) -> str:
     return "" if r.returncode else r.stdout.strip()
 
 
+def git_ok(*cmd: str) -> bool:
+    """Whether a git command succeeds, for yes/no questions like merge-base --is-ancestor."""
+    return subprocess.run(["git", *cmd], cwd=REPO, capture_output=True, text=True).returncode == 0
+
+
+def require_main() -> None:
+    """Staged images are committed to this public repo, so only ever onto main, tracking
+    origin/main. Anywhere else they land on the wrong branch, or never reach GitHub at all."""
+    branch = git("rev-parse", "--abbrev-ref", "HEAD")
+    upstream = git_try("rev-parse", "--abbrev-ref", "@{u}")
+    if branch != "main":
+        sys.exit(f"posting commits images to avp-landing's main branch, but this checkout is on "
+                 f"{branch!r}. Switch to main first.")
+    if upstream != "origin/main":
+        sys.exit(f"main is tracking {upstream or 'nothing'}, not origin/main. "
+                 f"Run:  git branch -u origin/main")
+
+
+def commit_folder(rel: str, message: str) -> str:
+    """Commit one staged folder (and nothing else that happens to be staged), push it, and return
+    the commit the folder last changed in.
+
+    A push sends every local commit on main, and main publishes the site. So before anything is
+    committed, this refuses if main already holds unpushed commits that touch anything outside the
+    folder (a launch page held back, say), and names them. It pushes only when the folder's own
+    commit is not on GitHub yet, so a re-run after a failed push still pushes, and a re-run with
+    the folder already there pushes nothing. The URLs are pinned to that commit: raw.githubusercontent
+    caches a /main/ path for five minutes, so an image re-staged at the same path could reach
+    Instagram as the old one, and a commit URL never changes."""
+    held = [f for f in git("diff", "--name-only", "@{u}..HEAD").splitlines() if not f.startswith(rel + "/")]
+    if held:
+        sys.exit("main has unpushed commits that touch more than this post's images, and a push would "
+                 "publish them too:\n" + git("log", "--format=  %h %s", "@{u}..HEAD")
+                 + "\nPush or move those first, then run this again.")
+    git("add", "--", rel)
+    if git("status", "--porcelain", "--", rel):
+        git("commit", "-m", message, "--", rel)
+        print(f"  committed {rel}")
+    else:
+        print(f"  {rel} already committed")
+    sha = git("log", "-1", "--format=%H", "--", rel)
+    if not sha:
+        sys.exit(f"nothing is committed under {rel}; git may be ignoring it (check .gitignore)")
+    if git_ok("merge-base", "--is-ancestor", sha, "@{u}"):
+        print("  already on GitHub")
+    else:
+        git("push")
+        print("  pushed")
+    return sha
+
+
+def pinned(sha: str, path: str) -> str:
+    return f"{RAW.rsplit('/', 1)[0]}/{sha}/{path}"
+
+
 def stage(files: list[Path], slug: str, push: bool) -> list[str]:
     rel = f"{STAGE_DIR}/{slug}"
-    urls, sizes = [], set()
+    names, sizes = [], set()
     for i, src in enumerate(files, 1):
         dest = REPO / rel / f"{i:02d}.jpg"
         w, h = to_jpeg(src, dest)
@@ -324,23 +380,27 @@ def stage(files: list[Path], slug: str, push: bool) -> list[str]:
         if not MIN_RATIO <= ratio <= MAX_RATIO:
             sys.exit(f"{src.name} is {w}x{h} ({ratio:.2f}:1). Instagram takes 4:5 to 1.91:1.")
         sizes.add((w, h))
-        urls.append(f"{RAW}/{rel}/{i:02d}.jpg")
+        names.append(dest.name)
         print(f"  {src.name} -> {rel}/{dest.name}  {w}x{h}")
     if len(sizes) > 1:
         print(f"  note: mixed sizes {sorted(sizes)}; Instagram crops a carousel "
               f"to the first image's shape")
 
-    if not push:
-        print("  --no-push: assuming those URLs are already live")
-        return urls
-    git("add", "--", rel)
-    if git("status", "--porcelain", "--", rel):
-        git("commit", "-m", f"Instagram carousel images: {slug}")
-        git("push")
-        print(f"  pushed {len(files)} image(s)")
+    if push:
+        sha = commit_folder(rel, f"Instagram carousel images: {slug}")
     else:
-        print("  already committed, nothing to push")
-    return urls
+        # --no-push: the images must already be committed AND on GitHub, exactly as they are here,
+        # or Instagram would fetch something other than what was just checked.
+        sha = git("log", "-1", "--format=%H", "--", rel)
+        if not sha:
+            sys.exit(f"--no-push, but {rel} was never committed (a new date in the default slug?). "
+                     f"Pass --slug with the folder that was pushed, or drop --no-push.")
+        if git("status", "--porcelain", "--", rel):
+            sys.exit(f"--no-push, but {rel} differs from what is committed. Drop --no-push.")
+        if "origin/main" not in git_try("branch", "-r", "--contains", sha):
+            sys.exit(f"--no-push, but the commit holding {rel} is not on GitHub yet. Drop --no-push.")
+        print(f"  --no-push: using {rel} as committed in {sha[:8]}")
+    return [pinned(sha, f"{rel}/{n}") for n in names]
 
 
 def wait_for(urls: list[str], timeout: int = 180) -> None:
@@ -470,43 +530,17 @@ def check_cover(path: Path) -> tuple[int, int]:
     return w, h
 
 
-def require_main() -> None:
-    """The cover is committed to this public repo, so only ever onto main, tracking origin/main.
-    Anywhere else it lands on the wrong branch, or never reaches GitHub at all."""
-    branch = git("rev-parse", "--abbrev-ref", "HEAD")
-    upstream = git_try("rev-parse", "--abbrev-ref", "@{u}")
-    if branch != "main" or upstream != "origin/main":
-        sys.exit(f"--cover commits to avp-landing's main branch, but this checkout is on "
-                 f"{branch!r} (tracking {upstream or 'nothing'}). Switch to main first.")
-
-
 def stage_cover(cover: Path, slug: str) -> str:
     """Stage the cover the way `post` stages a carousel: a JPEG under art/ig/<slug>/, committed,
     pushed and served from raw.githubusercontent.com. That is the route Instagram is known to
     fetch images from; release assets come back as application/octet-stream, which is still
-    unproven even for video. Only that folder is committed, whatever else is staged.
-
-    The URL Instagram gets is pinned to the commit, not to /main/: raw.githubusercontent.com
-    caches a branch path for five minutes, so a cover re-staged at the same path could reach
-    Instagram as the old image. The push is decided by whether the branch is ahead of GitHub,
-    not by whether the folder changed, so a re-run after a failed push still pushes."""
+    unproven even for video. commit_folder() commits that folder alone, pushes and returns the
+    commit the URL is pinned to."""
     rel = f"{STAGE_DIR}/{slug}"
     dest = REPO / rel / "cover.jpg"
     w, h = to_jpeg(cover, dest)
     print(f"  cover {cover.name} -> {rel}/cover.jpg  {w}x{h}")
-    git("add", "--", rel)
-    if git("status", "--porcelain", "--", rel):
-        git("commit", "-m", f"Instagram reel cover: {slug}", "--", rel)
-        print("  committed the cover")
-    else:
-        print("  cover already committed")
-    if int(git("rev-list", "--count", "@{u}..HEAD") or 0):
-        git("push")
-        print("  pushed")
-    else:
-        print("  already on GitHub")
-    sha = git("log", "-1", "--format=%H", "--", f"{rel}/cover.jpg")
-    url = f"{RAW.rsplit('/', 1)[0]}/{sha}/{rel}/cover.jpg"
+    url = pinned(commit_folder(rel, f"Instagram reel cover: {slug}"), f"{rel}/cover.jpg")
     wait_for([url])
     return url
 
@@ -621,6 +655,8 @@ def cmd_post(args) -> None:
         print("--dry-run: stopping before anything is converted, pushed or published")
         return
 
+    if not args.no_push:          # --no-push commits nothing; stage() checks its commit is on GitHub
+        require_main()
     urls = stage(files, slug, push=not args.no_push)
     wait_for(urls)
 

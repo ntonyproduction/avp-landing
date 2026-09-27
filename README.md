@@ -108,7 +108,20 @@ out and log in. Posting by browser is a fallback, not an equivalent: check the a
 before staging and again immediately before the publish click.
 
 **Images and carousels** stage into `art/ig/<slug>/`, get committed and pushed, and are served from
-`raw.githubusercontent.com`. They are small and they stay in the repo.
+`raw.githubusercontent.com`. They are small and they stay in the repo. How the staging behaves, since
+2026-09-27 (`commit_folder` in the script, shared by `post` and `post-reel --cover`):
+
+- **Only that folder is committed**, whatever else happens to be staged.
+- **Only on `main` tracking `origin/main`**; anywhere else it refuses before writing a commit.
+- **It never publishes anything else.** A push sends every local commit on main, and main is the live
+  site, so if main holds unpushed commits that touch anything outside the post's folder (a launch page
+  held back, say), it refuses before committing and names them. Push or move those first.
+- **It pushes only when the folder's own commit is not on GitHub yet**, so a retry after a failed
+  push still pushes, and a re-run with the images already there pushes nothing.
+- **Instagram gets URLs pinned to that commit**, not `/main/` ones: GitHub caches a branch path for
+  five minutes, so an image re-staged at the same path could reach Instagram as the old one.
+- `post --no-push` commits nothing: it checks the folder is committed, unchanged and on GitHub, and
+  says which of the three it is not.
 
 **Reels do not.** An ad render is 65 to 70 MB, and committing one would put it in this repo's
 history permanently. Deleting it in a later commit does **not** reclaim anything, because the blob
@@ -120,11 +133,8 @@ read exactly once and the original is never needed again.
 
 **A reel's cover is staged like a carousel image, not like the reel.** `post-reel --cover
 art/covers/<tool>-ad<N>.jpg` converts the cover to JPEG under `art/ig/<slug>/cover.jpg` (the slug
-defaults to the date and the video's name; `--slug` sets it), commits only that folder, pushes, and
-hands Instagram a `raw.githubusercontent.com` URL **pinned to that commit** as the container's
-`cover_url`. Not a `/main/` URL: GitHub caches a branch path for five minutes, so a cover re-staged at
-the same path could reach Instagram as the old image. It only runs on `main` tracking `origin/main`,
-and it pushes whenever the branch is ahead of GitHub, so a re-run after a failed push still pushes.
+defaults to the date and the video's name; `--slug` sets it) and goes through the same staging as a
+carousel (above), so Instagram gets a URL pinned to the cover's commit as the container's `cover_url`.
 The cover goes up before the video, so a failed push never strands 65 MB on the release, and after
 publishing the script reads the reel's `thumbnail_url` back to show which cover Instagram used (a
 failed read only says so; the reel is already live). The cover stays in the
@@ -164,6 +174,9 @@ else:
    sharp Chatterbox card in front. Cropduster: a phone with the platform's buttons, the green
    safe-zone box and a caption inside it. Shutterdrag: a skateboard, sharp at the front, smeared
    along its path. Every element has to earn its place; a new tool gets its own hero function.
+   **Each ad shows its own subject**, never one subject in variations across a tool's ads (Anthony,
+   2026-09-27): an ad about a car gets the car, an ad about a skater the skater. When the ad's subject
+   is Anthony's face, the object stands for the look instead.
 3. **The headline**, Montserrat 900 at 110px, one phrase in blue, traced to the ad's own words.
 
 What was tried and dropped, so nobody tries it again: **frames from the ad** (every frame carries
@@ -186,7 +199,7 @@ would. Prepare it locally and commit on launch day.
 | | At posting | On a post already up |
 |---|---|---|
 | Instagram | `avp_instagram.py post-reel --cover art/covers/<tool>-ad<N>.jpg` (the container's `cover_url`), or the web uploader | the phone app only, from the camera roll (done for the first three, 2026-09-27): instagram.com's Edit has no cover |
-| TikTok | the uploader's cover picker (whether it takes an image is still to be confirmed on the next ad) | **never**: for 7 days the app and TikTok Studio let you pick a frame and add text, but neither takes an image (the app checked on an iPhone, 2026-09-27) |
+| TikTok | the uploader's cover picker (whether it takes an image is still to be confirmed on the next ad; if it will not, `art/covers/cover_frame.py --frames 1` makes the cover the video's first frame, which is TikTok's default cover, as a one-frame flash) | **never**: for 7 days the app and TikTok Studio let you pick a frame and add text, but neither takes an image (the app checked on an iPhone, 2026-09-27) |
 | YouTube Shorts | **only as a frame of the video**: the cover-frame method below | only one of its own frames, so the cover cannot reach a Short already up without re-uploading it |
 
 **Never upload a cover image to a YouTube Short.** Fully custom Shorts covers are for Partner
@@ -200,13 +213,17 @@ Short's thumbnail on any channel, so the cover goes in as frames. Anthony's idea
 2026-09-27 on a private test (`nittzNfuqrM`): the thumbnail stayed the cover after the trim, with
 the same image version, and the video played without it on his phone.
 
-1. **Put the cover on the front of the YouTube cut**: half a second of it, and half a second of
-   silence ahead of the audio. Set `-framerate` to the ad's own rate (`ffprobe` it: the Shutterdrag
-   ads are 24, the Chatterbox ones 30000/1001). Loudness does not move (the test read -14.6 LUFS):
+1. **Put the cover on the front of the YouTube cut** with `art/covers/cover_frame.py`: half a
+   second of it, and half a second of silence ahead of the audio. It reads the ad's frame rate, size
+   and audio format (the Shutterdrag ads are 24 fps, the Chatterbox ones 30000/1001), checks the frame
+   count, prints the loudness for the gate (it does not move: -14.6 and -14.4 in the tests) and the
+   frame to trim at:
 
    ```
-   ffmpeg -loop 1 -framerate 24 -t 0.5 -i art/covers/<tool>-ad<N>.jpg -i "<ad> - YouTube.mp4" -f lavfi -t 0.5 -i anullsrc=r=48000:cl=stereo -filter_complex "[0:v]scale=1080:1920,format=yuv420p,setsar=1[c];[1:v]setsar=1[v];[c][v]concat=n=2:v=1:a=0[vo];[2:a][1:a]concat=n=2:v=0:a=1[ao]" -map "[vo]" -map "[ao]" -c:v libx264 -preset slow -crf 16 -pix_fmt yuv420p -c:a aac -b:a 256k -movflags +faststart "<ad> - YouTube (cover).mp4"
+   python art/covers/cover_frame.py art/covers/<tool>-ad<N>.jpg "<ad> - YouTube.mp4"
    ```
+
+   It writes `<ad> - YouTube (cover).mp4` next to the video.
 
 2. **Upload it private, or scheduled with `--publish-at`, never public.** Until step 4 the cover
    plays for half a second.

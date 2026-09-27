@@ -170,8 +170,8 @@ would. Prepare it locally and commit on launch day.
 
 | | At posting | On a post already up |
 |---|---|---|
-| Instagram | the reel container's `cover_url` (not yet sent by `avp_instagram.py post-reel`), or the web uploader | the phone app only: instagram.com's Edit has no cover |
-| TikTok | the uploader's cover picker | the phone app only, and only for 7 days: TikTok Studio on the web picks a frame but will not take an image |
+| Instagram | the reel container's `cover_url` (not yet sent by `avp_instagram.py post-reel`), or the web uploader | the phone app only, from the camera roll (done for the first three, 2026-09-27): instagram.com's Edit has no cover |
+| TikTok | the uploader's cover picker (whether it takes an image is still to be confirmed on the next ad) | **never**: for 7 days the app and TikTok Studio let you pick a frame and add text, but neither takes an image (the app checked on an iPhone, 2026-09-27) |
 | YouTube Shorts | **nowhere, until the channel is in the Partner Program** | same |
 
 **Do not put a cover on a YouTube Short.** Fully custom Shorts covers are for Partner Program

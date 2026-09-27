@@ -9,7 +9,8 @@ Commands
   auth      one-time: trade a short-lived token for a Page token that does not expire
   whoami    print which Instagram account the stored token posts to, and today's quota
   post      one image or a carousel, from files or a folder
-  post-reel one vertical video, staged as a GitHub release asset and removed after
+  post-reel one vertical video, staged as a GitHub release asset and removed after;
+            --cover sets the reel's cover image (staged like a post's JPEGs)
   publish   publish a container left behind by `post --stop-before-publish`
   verify    read a published post back by id
 
@@ -54,6 +55,7 @@ MAX_WIDTH = 1440          # Instagram downscales anything wider, so do it here w
 REEL_TAG = "ig-staging"   # a release that exists only to hand Instagram a public URL
 REEL_MIN_SEC, REEL_MAX_SEC = 3, 15 * 60
 REEL_MAX_BYTES = 1_000_000_000
+COVER_RATIO = 9 / 16      # the Reels tab shows the cover whole; the grid crops its centre to 3:4
 MIN_RATIO, MAX_RATIO = 0.79, 1.91  # 4:5 portrait .. 1.91:1 landscape, with slack:
                                    # a 1080x1350 slide lands exactly on 0.8 and must not
                                    # fail the check on a float rounding
@@ -306,6 +308,12 @@ def git(*cmd: str) -> str:
     return r.stdout.strip()
 
 
+def git_try(*cmd: str) -> str:
+    """Like git() but returns "" instead of exiting, for probing."""
+    r = subprocess.run(["git", *cmd], cwd=REPO, capture_output=True, text=True)
+    return "" if r.returncode else r.stdout.strip()
+
+
 def stage(files: list[Path], slug: str, push: bool) -> list[str]:
     rel = f"{STAGE_DIR}/{slug}"
     urls, sizes = [], set()
@@ -446,6 +454,63 @@ def url_live(url: str, timeout: int = 180) -> None:
         time.sleep(3)
 
 
+def check_cover(path: Path) -> tuple[int, int]:
+    """Refuse a cover Instagram could not use, before a single byte of video goes up."""
+    if not path.is_file():
+        sys.exit(f"no such cover: {path}")
+    try:
+        with Image.open(path) as im:
+            im.load()            # decode it all: a truncated file passes on its header alone
+            w, h = im.size
+    except OSError as e:
+        sys.exit(f"cannot read the cover {path.name} as an image: {e}")
+    if abs(w / h - COVER_RATIO) > 0.02:
+        print(f"  note: the cover is {w}x{h}, not 9:16; the Reels tab shows it whole, "
+              f"so Instagram will crop or letterbox it")
+    return w, h
+
+
+def require_main() -> None:
+    """The cover is committed to this public repo, so only ever onto main, tracking origin/main.
+    Anywhere else it lands on the wrong branch, or never reaches GitHub at all."""
+    branch = git("rev-parse", "--abbrev-ref", "HEAD")
+    upstream = git_try("rev-parse", "--abbrev-ref", "@{u}")
+    if branch != "main" or upstream != "origin/main":
+        sys.exit(f"--cover commits to avp-landing's main branch, but this checkout is on "
+                 f"{branch!r} (tracking {upstream or 'nothing'}). Switch to main first.")
+
+
+def stage_cover(cover: Path, slug: str) -> str:
+    """Stage the cover the way `post` stages a carousel: a JPEG under art/ig/<slug>/, committed,
+    pushed and served from raw.githubusercontent.com. That is the route Instagram is known to
+    fetch images from; release assets come back as application/octet-stream, which is still
+    unproven even for video. Only that folder is committed, whatever else is staged.
+
+    The URL Instagram gets is pinned to the commit, not to /main/: raw.githubusercontent.com
+    caches a branch path for five minutes, so a cover re-staged at the same path could reach
+    Instagram as the old image. The push is decided by whether the branch is ahead of GitHub,
+    not by whether the folder changed, so a re-run after a failed push still pushes."""
+    rel = f"{STAGE_DIR}/{slug}"
+    dest = REPO / rel / "cover.jpg"
+    w, h = to_jpeg(cover, dest)
+    print(f"  cover {cover.name} -> {rel}/cover.jpg  {w}x{h}")
+    git("add", "--", rel)
+    if git("status", "--porcelain", "--", rel):
+        git("commit", "-m", f"Instagram reel cover: {slug}", "--", rel)
+        print("  committed the cover")
+    else:
+        print("  cover already committed")
+    if int(git("rev-list", "--count", "@{u}..HEAD") or 0):
+        git("push")
+        print("  pushed")
+    else:
+        print("  already on GitHub")
+    sha = git("log", "-1", "--format=%H", "--", f"{rel}/cover.jpg")
+    url = f"{RAW.rsplit('/', 1)[0]}/{sha}/{rel}/cover.jpg"
+    wait_for([url])
+    return url
+
+
 def cmd_post_reel(args) -> None:
     if args.dry_run and not (store() / "credentials.json").exists():
         creds, who = {}, "(not set up yet)"
@@ -461,23 +526,36 @@ def cmd_post_reel(args) -> None:
         sys.exit(f"{video.name} is {size / 1048576:.0f} MB; Instagram takes up to 1 GB.")
     caption = (Path(args.caption_file).read_text(encoding="utf-8").strip()
                if args.caption_file else (args.caption or ""))
+    cover = Path(args.cover) if args.cover else None
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", video.stem).strip("-").lower() or "reel"
+    slug = args.slug or f"{time.strftime('%Y-%m-%d')}-{stem}"
 
     print(f"posting a reel to {who}")
     print(f"  {video.name}  ({size / 1048576:.1f} MB)")
     probe_video(video)
+    if cover:
+        w, h = check_cover(cover)
+        print(f"  cover: {cover.name}  {w}x{h}  -> {STAGE_DIR}/{slug}/cover.jpg")
+    else:
+        print("  cover: none, so Instagram uses the first frame (--cover sets one)")
     print(f"caption ({len(caption)} chars):\n{caption}\n")
     if args.dry_run:
         print("--dry-run: stopping before anything is uploaded or published")
         return
 
+    # The cover first: a git failure here must not leave a 65 MB asset on the release.
+    if cover:
+        require_main()
+    cover_url = stage_cover(cover, slug) if cover else None
     url, asset = stage_reel(video)
     published = False
     try:
         url_live(url)
         print("creating the container ...")
+        extra = {"cover_url": cover_url} if cover_url else {}
         container = graph("POST", f"{creds['ig_user_id']}/media", media_type="REELS",
                           video_url=url, caption=caption,
-                          access_token=creds["page_token"])["id"]
+                          access_token=creds["page_token"], **extra)["id"]
         print(f"  container {container}; Instagram is transcoding, this takes a minute ...")
         container_ready(creds, container, timeout=args.timeout)
 
@@ -487,8 +565,14 @@ def cmd_post_reel(args) -> None:
             print(f"the staged asset is being left in place; remove it afterwards with:")
             print(f"  gh release delete-asset {REEL_TAG} {asset} --yes")
             return
-        publish(creds, container)
+        media = publish(creds, container)
         published = True
+        if cover_url:
+            # Read back what Instagram actually uses. Informational only: the reel is already
+            # live, so a failed read must not look like a failed post and invite a second one.
+            got = try_graph("GET", media, fields="thumbnail_url", access_token=creds["page_token"])
+            thumb = (got or {}).get("thumbnail_url")
+            print(f"  cover as Instagram serves it: {thumb or 'could not be read back; look at the reel'}")
     finally:
         # Instagram keeps its own copy once the container is FINISHED, so the asset has
         # done its job. Leave it only when the post did not go out, so a retry has a URL.
@@ -567,11 +651,12 @@ def cmd_post(args) -> None:
     publish(creds, parent)
 
 
-def publish(creds: dict, container: str) -> None:
+def publish(creds: dict, container: str) -> str:
     print("publishing ...")
     media = graph("POST", f"{creds['ig_user_id']}/media_publish", creation_id=container,
                   access_token=creds["page_token"])["id"]
     show(creds, media)
+    return media
 
 
 def cmd_publish(args) -> None:
@@ -634,6 +719,8 @@ def main() -> None:
     rcap = r.add_mutually_exclusive_group()
     rcap.add_argument("--caption")
     rcap.add_argument("--caption-file", help="a UTF-8 file: safest for emoji and hashtags")
+    r.add_argument("--cover", help="cover image, .jpg or .png at 9:16, e.g. art/covers/<tool>-ad<N>.jpg")
+    r.add_argument("--slug", help="folder under art/ig/ for the cover (default: date + video name)")
     r.add_argument("--dry-run", action="store_true", help="show the plan, touch nothing")
     r.add_argument("--keep-asset", action="store_true",
                    help="leave the staged file on the release instead of deleting it")

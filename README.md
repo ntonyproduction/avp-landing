@@ -30,7 +30,7 @@ guessable URL with nothing checking who is asking.
 | `cb/yt/`, `cb/tt/` | The same short links for Chatterbox. |
 | `thank-you/index.html` | Where Polar sends a buyer after paying for **any** paid tool. It names no tool, so it can sit in this public repo before a paid tool is announced. It reads `checkout_id` from its URL and points **Get your download** at the relay in the `time-tracker` repo (`DOWNLOAD_ROUTE` in its script), which checks the payment and opens the buyer's Polar download page. It strips the session token Polar appends from the address bar. Without a `checkout_id` it shows where to find the receipt. Written by hand, here. |
 | `clipping/` | The old clipping-service page, kept after the tools hub took over the root. Nothing links to it; it is reachable only by its URL. |
-| `scripts/avp_instagram.py` | Posts to @audiovisionproductions from the command line: `post` for an image or carousel, `post-reel` for a video. See below. |
+| `scripts/avp_instagram.py` | Posts to @audiovisionproductions from the command line: `post` for an image or carousel, `post-reel` for a video (with `--cover` for its cover image). See below. |
 | `scripts/avp_youtube.py` | Uploads and schedules on @audiovisionproductions: `auth`, `whoami`, `upload` (with `--thumbnail` for a cover), `thumbnail` (a cover on a video already up, never on a Short), `verify`. A copy of the `youtube-upload` skill's script, kept here because the canonical copy lives in the credential store (`~/.avp/youtube/`) and a store can go missing while a repo cannot. Holds no credentials. |
 
 ## Do not hand-edit the generated pages
@@ -118,6 +118,21 @@ is: upload, create a `REELS` container, poll until Instagram finishes transcodin
 delete the asset. Instagram keeps its own copy once the container reports `FINISHED`, so the URL is
 read exactly once and the original is never needed again.
 
+**A reel's cover is staged like a carousel image, not like the reel.** `post-reel --cover
+art/covers/<tool>-ad<N>.jpg` converts the cover to JPEG under `art/ig/<slug>/cover.jpg` (the slug
+defaults to the date and the video's name; `--slug` sets it), commits only that folder, pushes, and
+hands Instagram a `raw.githubusercontent.com` URL **pinned to that commit** as the container's
+`cover_url`. Not a `/main/` URL: GitHub caches a branch path for five minutes, so a cover re-staged at
+the same path could reach Instagram as the old image. It only runs on `main` tracking `origin/main`,
+and it pushes whenever the branch is ahead of GitHub, so a re-run after a failed push still pushes.
+The cover goes up before the video, so a failed push never strands 65 MB on the release, and after
+publishing the script reads the reel's `thumbnail_url` back to show which cover Instagram used (a
+failed read only says so; the reel is already live). The cover stays in the
+repo, like any posted image. Release assets were not used for it because they come back as
+`application/octet-stream`, still unproven even for video (below). Added 2026-09-27 and tested with
+dry runs and simulated runs only: this PC has no Instagram credentials, so the first real post with
+`--cover` is also its first live test. Read the `thumbnail_url` line that time.
+
 **`ig-staging` is scratch space, not a release.** Do not delete the tag and do not write release
 notes on it. It should normally hold **zero** assets; an asset sitting there means a publish failed
 after the upload, and the command prints the `gh release delete-asset` line to clear it. Failures
@@ -170,7 +185,7 @@ would. Prepare it locally and commit on launch day.
 
 | | At posting | On a post already up |
 |---|---|---|
-| Instagram | the reel container's `cover_url` (not yet sent by `avp_instagram.py post-reel`), or the web uploader | the phone app only, from the camera roll (done for the first three, 2026-09-27): instagram.com's Edit has no cover |
+| Instagram | `avp_instagram.py post-reel --cover art/covers/<tool>-ad<N>.jpg` (the container's `cover_url`), or the web uploader | the phone app only, from the camera roll (done for the first three, 2026-09-27): instagram.com's Edit has no cover |
 | TikTok | the uploader's cover picker (whether it takes an image is still to be confirmed on the next ad) | **never**: for 7 days the app and TikTok Studio let you pick a frame and add text, but neither takes an image (the app checked on an iPhone, 2026-09-27) |
 | YouTube Shorts | **only as a frame of the video**: the cover-frame method below | only one of its own frames, so the cover cannot reach a Short already up without re-uploading it |
 

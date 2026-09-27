@@ -31,7 +31,7 @@ guessable URL with nothing checking who is asking.
 | `thank-you/index.html` | Where Polar sends a buyer after paying for **any** paid tool. It names no tool, so it can sit in this public repo before a paid tool is announced. It reads `checkout_id` from its URL and points **Get your download** at the relay in the `time-tracker` repo (`DOWNLOAD_ROUTE` in its script), which checks the payment and opens the buyer's Polar download page. It strips the session token Polar appends from the address bar. Without a `checkout_id` it shows where to find the receipt. Written by hand, here. |
 | `clipping/` | The old clipping-service page, kept after the tools hub took over the root. Nothing links to it; it is reachable only by its URL. |
 | `scripts/avp_instagram.py` | Posts to @audiovisionproductions from the command line: `post` for an image or carousel, `post-reel` for a video. See below. |
-| `scripts/avp_youtube.py` | Uploads and schedules on @audiovisionproductions: `auth`, `whoami`, `upload`, `verify`. A copy of the `youtube-upload` skill's script, kept here because the canonical copy lives in the credential store (`~/.avp/youtube/`) and a store can go missing while a repo cannot. Holds no credentials. |
+| `scripts/avp_youtube.py` | Uploads and schedules on @audiovisionproductions: `auth`, `whoami`, `upload` (with `--thumbnail` for a cover), `thumbnail` (a cover on a video already up, never on a Short), `verify`. A copy of the `youtube-upload` skill's script, kept here because the canonical copy lives in the credential store (`~/.avp/youtube/`) and a store can go missing while a repo cannot. Holds no credentials. |
 
 ## Do not hand-edit the generated pages
 
@@ -166,10 +166,19 @@ purpose: it shows only on the full cover.
 Adding an unreleased tool's cover and committing it announces the tool, exactly as its card in `art/`
 would. Prepare it locally and commit on launch day.
 
-Posting still sets the cover by hand: Instagram's cover picker and TikTok Studio both take an image
-upload. `avp_instagram.py post-reel` does not send one yet. The Graph API's reel container accepts a
-`cover_url`, which would read the committed JPEG from `raw.githubusercontent.com` the way carousel
-images are read.
+**Where a cover can go, checked 2026-09-27:**
+
+| | At posting | On a post already up |
+|---|---|---|
+| Instagram | the reel container's `cover_url` (not yet sent by `avp_instagram.py post-reel`), or the web uploader | the phone app only: instagram.com's Edit has no cover |
+| TikTok | the uploader's cover picker | the phone app only, and only for 7 days: TikTok Studio on the web picks a frame but will not take an image |
+| YouTube Shorts | **nowhere, until the channel is in the Partner Program** | same |
+
+**Do not put a cover on a YouTube Short.** Fully custom Shorts covers are for Partner Program
+channels only, but the API accepts one from any channel. On 2026-09-27 three Shorts given these
+covers through the API showed as grey tiles in the app's Shorts tab and in Studio, and had to be put
+back on a frame by hand in Studio. `avp_youtube.py` now refuses a Short unless `--allow-short`. A
+horizontal video (a long-form upload) takes a cover normally.
 
 ## Where signups come from
 

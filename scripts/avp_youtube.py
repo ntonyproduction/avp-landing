@@ -6,10 +6,11 @@ ONE credential store for every repo. Nothing secret lives in a project folder.
   file:   credentials.json  {client_id, client_secret, refresh_token, channel_handle}
 
 Commands
-  auth      one-time browser consent; writes refresh_token + the channel it belongs to
-  whoami    print which channel the stored token posts to
-  upload    one video (flags) or many (--batch entries.json)
-  verify    read a video back by id
+  auth       one-time browser consent; writes refresh_token + the channel it belongs to
+  whoami     print which channel the stored token posts to
+  upload     one video (flags) or many (--batch entries.json); --thumbnail sets its cover
+  thumbnail  set the cover image of a video already on the channel (never a Short)
+  verify     read a video back by id
 
 Every upload re-reads the token's channel and REFUSES if it is not the pinned handle:
 an API-uploaded video cannot be moved between channels afterwards.
@@ -22,6 +23,7 @@ import argparse
 import http.server
 import json
 import os
+import re
 import secrets
 import socket
 import sys
@@ -42,8 +44,11 @@ TOKEN_URL = "https://oauth2.googleapis.com/token"
 UPLOAD_URL = "https://www.googleapis.com/upload/youtube/v3/videos"
 API_URL = "https://www.googleapis.com/youtube/v3/videos"
 CHANNELS_URL = "https://www.googleapis.com/youtube/v3/channels"
-# upload = post the video; readonly = read it back, so a run is verified on the
-# artifact and not on the request. Editing an existing video's metadata or touching
+THUMB_URL = "https://www.googleapis.com/upload/youtube/v3/thumbnails/set"
+SERVED_THUMB = "https://i.ytimg.com/vi/{id}/maxresdefault.jpg"
+# upload = post the video, and set its thumbnail (thumbnails.set accepts this scope:
+# proven on three Shorts, 2026-09-27); readonly = read it back, so a run is verified on
+# the artifact and not on the request. Editing an existing video's metadata or touching
 # playlists would need youtube.force-ssl: re-run `auth` if that is ever added.
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
           "https://www.googleapis.com/auth/youtube.readonly"]
@@ -52,6 +57,8 @@ MAX_TITLE, MAX_DESC, MAX_TAGS_CHARS = 100, 5000, 460
 CHUNK = 8 * 1024 * 1024
 MIME = {".mp4": "video/mp4", ".mov": "video/quicktime", ".mkv": "video/x-matroska",
         ".webm": "video/webm", ".avi": "video/x-msvideo", ".m4v": "video/x-m4v"}
+IMAGE_MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"}
+MAX_THUMB = 50 * 1024 * 1024      # thumbnails.set mediaUpload.maxSize, 52428800 (read 2026-09-27)
 
 
 def store_dir() -> Path:
@@ -259,6 +266,124 @@ def upload(entry: dict, token: str) -> str:
     sys.exit("upload loop ended without a video id")
 
 
+# ---------------------------------------------------------------------- thumbnail ----
+def check_thumbnail(image: str) -> Path:
+    """Refuse a file thumbnails.set would refuse, before a single byte of video goes up. Only
+    the file: whether the video may carry a cover at all (cover_blocker) is known after upload."""
+    p = Path(image).expanduser()
+    if not p.is_file():
+        sys.exit(f"thumbnail not found: {p}")
+    if p.suffix.lower() not in IMAGE_MIME:
+        sys.exit(f"thumbnail must be a .jpg or .png, got {p.name}")
+    size = p.stat().st_size
+    if size > MAX_THUMB:
+        sys.exit(f"thumbnail is {size:,} bytes, YouTube's limit is {MAX_THUMB:,} (50 MB): {p.name}")
+    return p
+
+
+class ApiError(Exception):
+    """A non-200 from the API, keeping the status so a passing fault can be told from a refusal."""
+
+    def __init__(self, status: int, body: str):
+        super().__init__(f"{status} {body[:300]}")
+        self.status = status
+
+
+def video_shape(vid: str, token: str) -> tuple[int, bool | None] | None:
+    """(seconds, vertical) for a video, or None if this token sees no video with that id.
+    seconds is 0 while it is still processing (duration P0D). vertical comes from the player's
+    embed size at a fixed width, 1000x1778 for a 9:16 Short and 1000x563 for 16:9 (read
+    2026-09-27); None if the size is missing."""
+    requests = _requests()
+    r = requests.get(API_URL, params={"part": "contentDetails,player", "id": vid, "maxWidth": 1000},
+                     headers={"Authorization": f"Bearer {token}"}, timeout=60)
+    if r.status_code != 200:
+        raise ApiError(r.status_code, r.text)
+    items = r.json().get("items") or []
+    if not items:
+        return None
+    m = re.fullmatch(r"P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?",
+                     items[0].get("contentDetails", {}).get("duration") or "")
+    d, h, mi, se = (int(x or 0) for x in m.groups()) if m else (0, 0, 0, 0)
+    p = items[0].get("player", {})
+    w, ht = int(p.get("embedWidth") or 0), int(p.get("embedHeight") or 0)
+    return ((d * 24 + h) * 60 + mi) * 60 + se, (ht >= w if w and ht else None)
+
+
+def cover_blocker(vid: str, token: str, wait: int = 0) -> tuple[str, str] | None:
+    """Why this video must not get a custom cover, as (reason, hint), or None if it may.
+    hint is "retry" (try again later), "short" (only with --allow-short) or "id".
+
+    A Short may not: a vertical or square video of three minutes or less. Fully custom Shorts
+    covers are for Partner Program channels only (announced 2026-07-24), but the API accepts
+    one from any channel and only the 16:9 images change: on 2026-09-27 three Shorts given
+    covers this way showed as grey tiles in the app's Shorts tab and in Studio, while the web
+    kept the old frames. `wait` lets a fresh upload process, and rides out a passing 5xx or 429,
+    before giving up. Network errors are left to the caller."""
+    deadline = time.time() + wait
+    while True:
+        try:
+            shape, err = video_shape(vid, token), None
+        except ApiError as e:
+            shape, err = None, e
+        pending = (err is not None and (err.status >= 500 or err.status == 429)) or                   (err is None and (shape is None or shape[0] == 0))
+        if not pending or time.time() >= deadline:
+            break
+        time.sleep(10)
+    if err is not None:
+        return f"could not read {vid}: {err}", "retry"
+    if shape is None:
+        return (f"{vid} is not on this channel yet", "retry") if wait else (f"no video {vid} on this channel", "id")
+    secs, vertical = shape
+    if secs == 0:
+        return f"{vid} is still processing, so its shape is not known yet", "retry"
+    if secs <= 180 and vertical is not False:
+        shape_word = "vertical" if vertical else "of unknown shape"
+        return (f"{vid} is {secs}s long and {shape_word}, so YouTube treats it as a Short, and a "
+                "custom cover on a Short shows as a grey tile until the channel is in the Partner "
+                "Program"), "short"
+    return None
+
+
+def set_thumbnail(vid: str, image: Path, token: str, allow_short: bool = False,
+                  allow_any: bool = False, wait: int = 0) -> bool:
+    """thumbnails.set. Never exits and never raises: after an upload the video already exists,
+    and a failed cover must not stop the rest of a batch. Every failure prints what to run
+    next, carrying the flags that were in effect."""
+    requests = _requests()
+    retry = (f'thumbnail {vid} "{image}"' + (" --allow-short" if allow_short else "")
+             + (" --allow-any-channel" if allow_any else ""))
+    try:
+        if not allow_short:
+            blocked = cover_blocker(vid, token, wait)
+            if blocked:
+                reason, hint = blocked
+                print(f"  !! thumbnail not set: {reason}")
+                print({"retry": f"     retry with:  {retry}",
+                       "short": f"     to set it anyway:  {retry} --allow-short",
+                       "id": "     check the video id"}[hint])
+                return False
+        r = requests.post(THUMB_URL, params={"videoId": vid, "uploadType": "media"},
+                          headers={"Authorization": f"Bearer {token}",
+                                   "Content-Type": IMAGE_MIME[image.suffix.lower()]},
+                          data=image.read_bytes(), timeout=300)
+    except (requests.RequestException, OSError) as exc:
+        print(f"  !! thumbnail not set: {exc}")
+        print(f"     retry with:  {retry}")
+        return False
+    if r.status_code != 200:
+        print(f"  !! thumbnail refused: {r.status_code} {r.text[:400]}")
+        if r.status_code == 403 and "quota" not in r.text.lower():
+            print("     403 means the video is not this channel's, or the channel cannot use "
+                  "custom thumbnails yet (verify it at https://www.youtube.com/verify)")
+        print(f"     retry with:  {retry}")
+        return False
+    # The API's reply lists the image URLs whether or not they changed, so it proves nothing.
+    # Look at the served one; a vertical cover comes back 16:9, pillarboxed over a blur.
+    print(f"  thumbnail: {image.name} accepted. Check it: {SERVED_THUMB.format(id=vid)}")
+    return True
+
+
 def verify(vid: str, token: str) -> dict:
     requests = _requests()
     r = requests.get(API_URL, params={"part": "snippet,status", "id": vid},
@@ -352,8 +477,10 @@ def entries_from(a) -> list[dict]:
         items = data["videos"] if isinstance(data, dict) else data
         base = Path(a.batch).resolve().parent
         for e in items:
-            p = Path(e["file"]).expanduser()
-            e["file"] = str(p if p.is_absolute() else base / p)
+            for key in ("file", "thumbnail"):          # both relative to the batch file
+                if e.get(key):
+                    p = Path(e[key]).expanduser()
+                    e[key] = str(p if p.is_absolute() else base / p)
         return items
     if not a.file:
         sys.exit("pass --file <video> or --batch <json>")
@@ -362,31 +489,59 @@ def entries_from(a) -> list[dict]:
         desc = Path(a.description_file).read_text(encoding="utf-8")
     return [{"file": a.file, "title": a.title, "description": desc, "tags": a.tags,
              "publish_at": a.publish_at, "visibility": a.visibility,
-             "category": a.category}]
+             "category": a.category, "thumbnail": a.thumbnail}]
 
 
 def cmd_upload(a) -> int:
     entries = entries_from(a)
     bodies = [build_body(e) for e in entries]      # validate everything before uploading
-    for e, b in zip(entries, bodies):
+    thumbs = [check_thumbnail(e["thumbnail"]) if e.get("thumbnail") else None for e in entries]
+    for e, b, t in zip(entries, bodies, thumbs):
         p = Path(e["file"]).expanduser()
         mb = p.stat().st_size / 1048576 if p.is_file() else 0
         print(f"- {p.name} ({mb:.0f} MB) {b['status']['privacyStatus']}"
               f"{' @ ' + b['status']['publishAt'] if b['status'].get('publishAt') else ''}"
-              f"  {b['snippet']['title']!r}")
+              f"  {b['snippet']['title']!r}{'  + ' + t.name if t else ''}")
         if not p.is_file():
             sys.exit(f"file not found: {p}")
     if a.dry_run:
         print(f"[dry] {len(entries)} video(s) validated, nothing uploaded")
+        if any(thumbs) and not a.allow_short:
+            print("[dry] covers are checked against each video's shape after upload: a vertical "
+                  "video of 3 minutes or less keeps YouTube's own frame")
         return 0
     c = read_creds()
     token = access_token(c)
     assert_channel(token, c["channel_handle"], a.allow_any_channel)  # before any bytes
-    for i, e in enumerate(entries, 1):
+    failed = 0
+    for i, (e, t) in enumerate(zip(entries, thumbs), 1):
         print(f"[{i}/{len(entries)}]")
         vid = upload(e, token)
+        token = access_token(c)     # an upload can outlast the hour a token lives
+        if t and not set_thumbnail(vid, t, token, a.allow_short, a.allow_any_channel, wait=120):
+            failed += 1
         verify(vid, token)
-    return 0
+    if failed:
+        print(f"[yt] {failed} cover(s) not set; every video uploaded. What to run for each is above.")
+    return 1 if failed else 0
+
+
+def cmd_thumbnail(a) -> int:
+    image = check_thumbnail(a.image)
+    c = read_creds()
+    token = access_token(c)
+    assert_channel(token, c["channel_handle"], a.allow_any_channel)
+    if a.dry_run:                    # reads the video (no write) so the answer is the real one
+        try:
+            blocked = None if a.allow_short else cover_blocker(a.id, token)
+        except _requests().RequestException as exc:
+            sys.exit(f"could not read {a.id}: {exc}")
+        print(f"[dry] {image.name}: " + (f"would be refused, {blocked[0]}" if blocked
+                                         else f"would be set on {a.id}") + ". Nothing sent.")
+        return 1 if blocked else 0
+    ok = set_thumbnail(a.id, image, token, a.allow_short, a.allow_any_channel)
+    verify(a.id, token)
+    return 0 if ok else 1
 
 
 def cmd_whoami(a) -> int:
@@ -423,12 +578,20 @@ def main() -> int:
     u.add_argument("--visibility", default="private",
                    choices=["private", "unlisted", "public"])
     u.add_argument("--category", default="22", help="YouTube category id (22 = People & Blogs)")
-    u.add_argument("--batch", help="JSON list of entries")
+    u.add_argument("--thumbnail", help="cover image, .jpg or .png, 50 MB at most (not on a Short)")
+    u.add_argument("--allow-short", action="store_true", help="set --thumbnail even on a Short (Partner Program channels)")
+    u.add_argument("--batch", help="JSON list of entries (each may carry \"thumbnail\")")
     u.add_argument("--dry-run", action="store_true")
     u.add_argument("--allow-any-channel", action="store_true")
+    t = sub.add_parser("thumbnail", help="set the cover of a video already on the channel")
+    t.add_argument("id", help="video id, e.g. B78MHOBusYs")
+    t.add_argument("image", help=".jpg or .png, 50 MB at most")
+    t.add_argument("--dry-run", action="store_true", help="check the image and the video, send nothing")
+    t.add_argument("--allow-short", action="store_true", help="even on a Short (Partner Program channels)")
+    t.add_argument("--allow-any-channel", action="store_true")
     a = ap.parse_args()
     return {"auth": cmd_auth, "whoami": cmd_whoami, "upload": cmd_upload,
-            "verify": cmd_verify}[a.cmd](a) or 0
+            "thumbnail": cmd_thumbnail, "verify": cmd_verify}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":

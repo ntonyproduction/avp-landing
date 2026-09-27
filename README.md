@@ -172,13 +172,37 @@ would. Prepare it locally and commit on launch day.
 |---|---|---|
 | Instagram | the reel container's `cover_url` (not yet sent by `avp_instagram.py post-reel`), or the web uploader | the phone app only, from the camera roll (done for the first three, 2026-09-27): instagram.com's Edit has no cover |
 | TikTok | the uploader's cover picker (whether it takes an image is still to be confirmed on the next ad) | **never**: for 7 days the app and TikTok Studio let you pick a frame and add text, but neither takes an image (the app checked on an iPhone, 2026-09-27) |
-| YouTube Shorts | **nowhere, until the channel is in the Partner Program** | same |
+| YouTube Shorts | **only as a frame of the video**: the cover-frame method below | only one of its own frames, so the cover cannot reach a Short already up without re-uploading it |
 
-**Do not put a cover on a YouTube Short.** Fully custom Shorts covers are for Partner Program
-channels only, but the API accepts one from any channel. On 2026-09-27 three Shorts given these
-covers through the API showed as grey tiles in the app's Shorts tab and in Studio, and had to be put
-back on a frame by hand in Studio. `avp_youtube.py` now refuses a Short unless `--allow-short`. A
-horizontal video (a long-form upload) takes a cover normally.
+**Never upload a cover image to a YouTube Short.** Fully custom Shorts covers are for Partner
+Program channels only, but the API accepts one from any channel. On 2026-09-27 three Shorts given
+these covers through the API showed as grey tiles in the app's Shorts tab and in Studio, and had to
+be put back on a frame by hand in Studio. `avp_youtube.py` refuses a Short unless `--allow-short`.
+A horizontal video (a long-form upload) takes a cover image normally.
+
+**The cover-frame method: how a Short wears the cover anyway.** A frame of the video is allowed as a
+Short's thumbnail on any channel, so the cover goes in as frames. Anthony's idea, proven on
+2026-09-27 on a private test (`nittzNfuqrM`): the thumbnail stayed the cover after the trim, with
+the same image version, and the video played without it on his phone.
+
+1. **Put the cover on the front of the YouTube cut**: half a second of it, and half a second of
+   silence ahead of the audio. Set `-framerate` to the ad's own rate (`ffprobe` it: the Shutterdrag
+   ads are 24, the Chatterbox ones 30000/1001). Loudness does not move (the test read -14.6 LUFS):
+
+   ```
+   ffmpeg -loop 1 -framerate 24 -t 0.5 -i art/covers/<tool>-ad<N>.jpg -i "<ad> - YouTube.mp4" -f lavfi -t 0.5 -i anullsrc=r=48000:cl=stereo -filter_complex "[0:v]scale=1080:1920,format=yuv420p,setsar=1[c];[1:v]setsar=1[v];[c][v]concat=n=2:v=1:a=0[vo];[2:a][1:a]concat=n=2:v=0:a=1[ao]" -map "[vo]" -map "[ao]" -c:v libx264 -preset slow -crf 16 -pix_fmt yuv420p -c:a aac -b:a 256k -movflags +faststart "<ad> - YouTube (cover).mp4"
+   ```
+
+2. **Upload it private, or scheduled with `--publish-at`, never public.** Until step 4 the cover
+   plays for half a second.
+3. **Pick the first frame as the thumbnail in the YouTube phone app** (the Short, then Edit, then
+   the thumbnail, then drag to the far left). This step is Anthony's: desktop Studio's "Select from
+   video" offers only three frames YouTube chooses, never the first one.
+4. **Trim the cover off in Studio**: Editor, then Trim & cut, then zoom the timeline in and drag the
+   start handle just past the cover (frame 13 at 24 fps; a frame of the ad is cheaper than a
+   sliver of cover). The preview must open on the ad. Save and acknowledge. It applied in a few
+   minutes; the length drops by half a second.
+5. Check the thumbnail is still the cover, then publish, or let the schedule do it.
 
 ## Where signups come from
 

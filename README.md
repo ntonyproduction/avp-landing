@@ -16,6 +16,7 @@ guessable URL with nothing checking who is asking.
 | `tt/`, `yt/`, `ig/` | **The bio links.** Each redirects to the hub carrying `?from=tiktok`, `?from=youtube` or `?from=instagram`. Set once in each profile's bio and never changed; see "The bio link" below. |
 | `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. |
 | `art/youtube-banner/` | The channel banner, one render per tool from `art/`. `python render.py` writes `banner.png` (2560×1440, uploaded to YouTube by hand) and `banner-preview.png` (the desktop, phone and TV crops). Moved here from the Cropduster repo because it covers every tool; fonts are fetched on the first run and not committed. |
+| `art/covers/` | Reel covers for the organic ads, one `<tool>-ad<N>.jpg` each (1080×1920). `python covers.py` renders them and `preview.jpg`; the covers are listed in `COVERS` at the top of the script. See "Reel covers" below. |
 | `art/ig/<slug>/` | Carousel and photo posts staged for Instagram to fetch. Written by `scripts/avp_instagram.py`, committed and pushed, because the Graph API reads a public URL rather than taking an upload. Small JPEGs, so they stay. |
 | `cropduster/index.html` | Cropduster's product page. **Generated**, see below. |
 | `cropduster/thanks/index.html` | The page people land on after subscribing. **Generated.** |
@@ -136,6 +137,39 @@ cut before it goes anywhere, and re-measure the corrected file rather than trust
 One thing still unproven: GitHub serves release assets as `application/octet-stream` rather than
 `video/mp4`. The URL ends in `.mp4` and Meta appears to go by that and by the bytes, but if a
 container ever comes back `ERROR` with a healthy-looking file, suspect the content type first.
+
+## Reel covers
+
+Every organic ad gets a drawn cover from `art/covers/covers.py`. **This is the house style from
+2026-09-27**, chosen over covers built from the ad's own frames. A cover has three things and nothing
+else:
+
+1. **The brand ground**: `#0A0E12` with a house-blue glow behind the object.
+2. **One drawn object that says what the tool does.** Chatterbox: a blurred comment section with one
+   sharp Chatterbox card in front. Cropduster: a phone with the platform's buttons, the green
+   safe-zone box and a caption inside it. Shutterdrag: a skateboard, sharp at the front, smeared
+   along its path. Every element has to earn its place; a new tool gets its own hero function.
+3. **The headline**, Montserrat 900 at 110px, one phrase in blue, traced to the ad's own words.
+
+What was tried and dropped, so nobody tries it again: **frames from the ad** (every frame carries
+burned-in captions and titles, and Anthony does not want his face on them), **small print** such as
+an eyebrow line over the headline or BEFORE/AFTER tags (unreadable at grid size, so it was removed),
+and **abstract light trails** for Shutterdrag (they read as speed lines; the smear only says "slow
+shutter" when something recognisable is making it).
+
+**Judge a cover at grid size, not full size.** The Instagram and TikTok grids crop a 9:16 cover to
+its centre 3:4 (y 240 to 1680), and on a phone a tile is about 124px wide. `preview.jpg` shows both
+the whole cover with that crop boxed and the tile at that size. The logo sits below the crop on
+purpose: it shows only on the full cover.
+
+**This repo is public, so a cover is public the moment it is pushed**, including its headline.
+Adding an unreleased tool's cover and committing it announces the tool, exactly as its card in `art/`
+would. Prepare it locally and commit on launch day.
+
+Posting still sets the cover by hand: Instagram's cover picker and TikTok Studio both take an image
+upload. `avp_instagram.py post-reel` does not send one yet. The Graph API's reel container accepts a
+`cover_url`, which would read the committed JPEG from `raw.githubusercontent.com` the way carousel
+images are read.
 
 ## Where signups come from
 

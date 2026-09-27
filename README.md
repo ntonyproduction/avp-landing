@@ -66,6 +66,11 @@ The hub is the exception. It belongs to no single tool, so it is written and edi
 Its version chips are typed by hand too, so a tool's release also sets its chip to the exact
 version its product page shows (Chatterbox 1.0.1 read "v1.0" on the hub until fixed).
 
+**The newest tool wears a NEW badge**, and only the newest. It is the `new` class on that card's
+`<a>`, drawn over the render by CSS, so a launch moves one word: add `new` to the new card and take
+it off the old one. Two cards reading NEW means neither is, and a badge left behind ends up on a
+tool that is months old.
+
 The **texture tool** is not on the hub at all. It had a card, the name was settled and briefly
 shipped on it, then the whole card came out on 17 September 2026: the tool moved to the back
 burner and a card reading "Soon" still advertises something. It was removed rather than blanked,
@@ -163,7 +168,9 @@ to the hub, and nothing in any bio changes.
 
 The hub's look was deliberately left alone when the bio links went in. A featured card for the
 newest tool and a line for visitors arriving from a video were built and previewed on 2026-09-26,
-then shelved ("not yet"). If the newest tool ever needs to stand out, that is the place to start.
+then shelved ("not yet"). On 2026-09-27 the lighter version went in instead: the NEW badge on the
+newest card (see above), with the grid and the cards otherwise unchanged. If the newest tool ever
+needs to stand out more than that, the featured card is the place to start.
 
 **Attribution is unchanged.** The redirect adds `?from=`, and the hub passes it on through
 `sessionStorage` and the rewritten card links described above, so a signup still records its

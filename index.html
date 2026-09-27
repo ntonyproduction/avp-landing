@@ -84,6 +84,17 @@
     display:grid; place-items:center;
   }
   .shot img{width:100%; height:100%; object-fit:cover; transition:filter .15s ease}
+  /* The newest tool. The bio links land here, so someone arriving from the latest video
+     should find its card without reading the grid. One card only: at each launch the `new`
+     class moves to the new card, or the badge ends up on a tool that is months old. */
+  .card.new .shot{position:relative}
+  .card.new .shot::before{
+    content:"New"; position:absolute; top:12px; left:12px; z-index:1;
+    font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; line-height:1;
+    background:var(--brand); color:var(--ground); border-radius:2px; padding:7px 10px 6px;
+    box-shadow:0 2px 10px rgba(0,0,0,.45);
+  }
   /* Placeholder for a tool with no render yet: a drawn panel, so an empty card still
      looks deliberate next to one that has artwork. */
   .shot.empty{
@@ -149,7 +160,7 @@
   <div class="shell">
     <section class="grid">
 
-      <a class="card live" href="shutterdrag/" data-keep-source>
+      <a class="card live new" href="shutterdrag/" data-keep-source>
         <div class="shot"><img src="art/shutterdrag.jpg" alt="The Shutterdrag tool, drawn as a leaf-shutter lens in a black plate, a car crossing the glass with its light streaking behind it." width="900" height="900"></div>
         <div class="body">
           <div class="name"><h2>Shutterdrag</h2><span class="chips"><span class="chip">v1.1</span></span></div>

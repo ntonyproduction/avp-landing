@@ -220,6 +220,17 @@ Short's thumbnail on any channel, so the cover goes in as frames. Anthony's idea
 2026-09-27 on a private test (`nittzNfuqrM`): the thumbnail stayed the cover after the trim, with
 the same image version, and the video played without it on his phone.
 
+**When: as soon as the YouTube cut is final, days before it posts, never on posting day** (Anthony,
+2026-09-28, the standing procedure for every organic ad). YouTube's own processing sets the pace and
+cannot be hurried. On Pixelito's launch day, ad 2's first upload kept Trim & cut locked ("the claims
+are being processed") for over an hour, even with its Claims page already clear. A second upload
+unlocked in about 20 minutes, and the saved trim then took more than 15 minutes to apply. So every
+ad's YouTube version goes through steps 1 to 4 below as soon as its final is in Drive
+(`AVP Tools/<Tool>/Ads/`), and waits private, trimmed and thumbnailed. On posting day only step 5 is
+left: switch it to Public in Studio. Or schedule it with `--publish-at` at upload, once the date is
+known and at least a day out. If an upload stays locked for an hour, upload it again rather than
+waiting, then delete the spare copy by hand in Studio (the token cannot delete).
+
 1. **Put the cover on the front of the YouTube cut** with `art/covers/cover_frame.py`: half a
    second of it, and half a second of silence ahead of the audio. It reads the ad's frame rate, size
    and audio format (the Shutterdrag ads are 24 fps, the Chatterbox ones 30000/1001), checks the frame
@@ -236,12 +247,16 @@ the same image version, and the video played without it on his phone.
    plays for half a second.
 3. **Pick the first frame as the thumbnail in the YouTube phone app** (the Short, then Edit, then
    the thumbnail, then drag to the far left). This step is Anthony's: desktop Studio's "Select from
-   video" offers only three frames YouTube chooses, never the first one.
+   video" offers only three frames YouTube chooses, never the first one. **It must come BEFORE the
+   trim**, which deletes the cover frames; check in Studio that the thumbnail shows the cover first.
 4. **Trim the cover off in Studio**: Editor, then Trim & cut, then zoom the timeline in and drag the
    start handle just past the cover (frame 13 at 24 fps; a frame of the ad is cheaper than a
-   sliver of cover). The preview must open on the ad. Save and acknowledge. It applied in a few
-   minutes; the length drops by half a second.
-5. Check the thumbnail is still the cover, then publish, or let the schedule do it.
+   sliver of cover). The timeline reads seconds:frames, so at 30 fps the start goes to 00:15 and at
+   24 fps to 00:12. The preview must open on the ad. Save and acknowledge. It can apply in a few
+   minutes or take much longer; the length drops by half a second. Until then, Studio shows "Video
+   editing is in progress" and the player still has the cover.
+5. Check the thumbnail is still the cover, then publish (Visibility > Public in Studio; the token
+   has no scope to change it), or let the schedule do it. Pin the `/<slug>/yt/` comment after.
 
 ## Where signups come from
 

@@ -254,7 +254,15 @@ waiting, then delete the spare copy by hand in Studio (the token cannot delete).
    sliver of cover). The timeline reads seconds:frames, so at 30 fps the start goes to 00:15 and at
    24 fps to 00:12. The preview must open on the ad. Save and acknowledge. It can apply in a few
    minutes or take much longer; the length drops by half a second. Until then, Studio shows "Video
-   editing is in progress" and the player still has the cover.
+   editing is in progress" and the player still has the cover. **Judge the new length on the watch
+   page** (youtube.com/watch?v=<id>): Studio's own player label and the API round the half second
+   up, so Pixelito's ad 1 (50.5 s) still read 0:51 there after the trim had applied, while the watch
+   page read 0:50. Pixelito's launch timings: ad 1's saved trim took 1.5 to 2 hours; ad 3 stayed
+   locked about 3 hours after upload, then its trim applied within minutes.
+   **Make sure Studio is on the AVP channel first** (the shield avatar). In Anthony's Chrome,
+   studio.youtube.com with no video in the URL opens the TonyDidIt channel and switches the session
+   to it; switch back through the avatar, Switch account, the shield entry under the AVP Google
+   account.
 5. Check the thumbnail is still the cover, then publish (Visibility > Public in Studio; the token
    has no scope to change it), or let the schedule do it. Pin the `/<slug>/yt/` comment after.
 

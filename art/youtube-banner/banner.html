@@ -36,9 +36,10 @@
   .cta b{color:var(--ink); font-weight:800}
   .cta svg{width:32px; height:38px; flex:none}
 
-  /* one render per tool; a third tool is a third figure and a narrower gap */
-  .renders{display:flex; gap:16px}
-  .render{margin:0; width:250px; height:250px; border:2px solid var(--edge); border-radius:6px;
+  /* one render per tool, newest first; a fourth tool made them 184px so the row still fits the
+     phone-safe box beside the headline, whose widest line is the CTA (2026-09-28) */
+  .renders{display:flex; gap:12px}
+  .render{margin:0; width:184px; height:184px; border:2px solid var(--edge); border-radius:6px;
     overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.55)}
   .render img{display:block; width:100%; height:100%}
 </style>
@@ -54,6 +55,7 @@
     </p>
   </div>
   <div class="renders">
+    <figure class="render"><img src="../pixelito.jpg" alt=""></figure>
     <figure class="render"><img src="../shutterdrag.jpg" alt=""></figure>
     <figure class="render"><img src="../cropduster.jpg" alt=""></figure>
     <figure class="render"><img src="../chatterbox.jpg" alt=""></figure>

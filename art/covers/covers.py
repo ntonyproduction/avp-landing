@@ -82,6 +82,14 @@ def skateboard():
       <use href="#board" transform="translate({x:.1f} {y:.1f}) rotate({a:.1f}) scale(1.2)" filter="url(#lift)"/></svg>"""
 
 
+def picture(name):
+    """A tool whose object is best made elsewhere hands over a transparent 1080x980 PNG, placed on the picture area
+    as it is. Pixelito's come from its own repo (marketing/covers/make_cover_art.py), through the effect's maths."""
+    def hero():
+        return f'<img class="pic" src="{(HERE / name).as_uri()}" alt="">'
+    return hero
+
+
 # --- the covers: one per posted ad --------------------------------------------------------------
 # slug = <tool>-ad<N>. The headline traces to the ad's own words (its on-screen title, its hook or
 # its voiceover), two or three lines, one phrase in <em> for the house blue. At 110px a line holds
@@ -91,6 +99,12 @@ COVERS = [
     dict(slug="shutterdrag-ad1", hero=skateboard, headline="<em>Free</em> slow<br>shutter FX."),
     dict(slug="cropduster-ad4", hero=phone, headline="Stop your<br>text getting<br><em>cropped.</em>"),
     dict(slug="chatterbox-ad3", hero=comments, headline="How to create<br><em>fake comments.</em>"),
+    # Pixelito: each ad's own subject through Pixelito's maths: ad 1's car (split), ad 2's skater (8-bit), and for
+    # ad 3, whose subject is Anthony's face, a sphere in its two tones (the dither). Committed with the launch,
+    # 2026-09-28.
+    dict(slug="pixelito-ad1", hero=picture("pixelito-ad1-art.png"), headline="<em>Low-res</em><br>transition.<br>No AI."),
+    dict(slug="pixelito-ad2", hero=picture("pixelito-ad2-art.png"), headline="<em>Free</em> 8-bit<br>effect."),
+    dict(slug="pixelito-ad3", hero=picture("pixelito-ad3-art.png"), headline="<em>Dither</em> effect<br>in one drag."),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>
@@ -104,6 +118,7 @@ h1 em{{font-style:normal;color:#62A3DA}}
 .foot{{position:absolute;left:76px;top:1745px}}
 .foot img{{display:block;width:62px;height:auto}}
 .draw{{position:absolute;left:0;top:0;width:1080px;height:960px}}
+.pic{{position:absolute;left:0;top:0;width:1080px;height:980px;image-rendering:pixelated}}
 
 .thread{{position:absolute;inset:-20px 40px 0;filter:blur(6px);opacity:.42;
   -webkit-mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent)}}

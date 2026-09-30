@@ -101,8 +101,9 @@ COVERS = [
     dict(slug="chatterbox-ad3", hero=comments, headline="How to create<br><em>fake comments.</em>"),
     # Pixelito: each ad's own subject through Pixelito's maths: ad 1's car (split), ad 2's skater (8-bit), and for
     # ad 3, whose subject is Anthony's face, a sphere in its two tones (the dither). Committed with the launch,
-    # 2026-09-28.
-    dict(slug="pixelito-ad1", hero=picture("pixelito-ad1-art.png"), headline="<em>Low-res</em><br>transition.<br>No AI."),
+    # 2026-09-28. Ad 1's third line was "No AI." until 2026-09-30: its hook car is Veo footage, so it now traces to
+    # the voiceover's "with one effect" (the YouTube thumbnail, picked from the old cover frame, still says No AI).
+    dict(slug="pixelito-ad1", hero=picture("pixelito-ad1-art.png"), headline="<em>Low-res</em><br>transition.<br>One effect."),
     dict(slug="pixelito-ad2", hero=picture("pixelito-ad2-art.png"), headline="<em>Free</em> 8-bit<br>effect."),
     dict(slug="pixelito-ad3", hero=picture("pixelito-ad3-art.png"), headline="<em>Dither</em> effect<br>in one drag."),
 ]

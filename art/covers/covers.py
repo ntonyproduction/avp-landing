@@ -106,6 +106,14 @@ COVERS = [
     dict(slug="pixelito-ad1", hero=picture("pixelito-ad1-art.png"), headline="<em>Low-res</em><br>transition.<br>One effect."),
     dict(slug="pixelito-ad2", hero=picture("pixelito-ad2-art.png"), headline="<em>Free</em> 8-bit<br>effect."),
     dict(slug="pixelito-ad3", hero=picture("pixelito-ad3-art.png"), headline="<em>Dither</em> effect<br>in one drag."),
+    # Paperboy: three different objects, since the same one three times read as one post three times (Anthony,
+    # 2026-09-30), all made in paperboy/marketing/covers/make_cover_art.py. Ad 1: the product card (the ad's "1.
+    # download paperboy"), headline from its on-screen "i made this animation with one free tool". Ad 2: FULL screen,
+    # the app's own held last card, whose printed headline IS the cover's ("Free Match Cut effect", the voiceover's
+    # words, in ad 2's dark look). Ad 3: a stack of its #paperboy pages turned about the pinned phrase; it has no words.
+    dict(slug="paperboy-ad1", hero=picture("paperboy-ad1-art.png"), headline="Made with<br><em>one free</em><br>tool."),
+    dict(slug="paperboy-ad2", hero=lambda: "", headline="", full="paperboy-ad2-full.png"),
+    dict(slug="paperboy-ad3", hero=picture("paperboy-ad3-art.png"), headline="Type a word.<br><em>Get this.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>
@@ -120,6 +128,7 @@ h1 em{{font-style:normal;color:#62A3DA}}
 .foot img{{display:block;width:62px;height:auto}}
 .draw{{position:absolute;left:0;top:0;width:1080px;height:960px}}
 .pic{{position:absolute;left:0;top:0;width:1080px;height:980px;image-rendering:pixelated}}
+.full{{position:absolute;left:0;top:0;width:1080px;height:1920px}}
 
 .thread{{position:absolute;inset:-20px 40px 0;filter:blur(6px);opacity:.42;
   -webkit-mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent)}}
@@ -144,7 +153,7 @@ h1 em{{font-style:normal;color:#62A3DA}}
 .meta u{{width:150px;height:16px;border-radius:8px;background:#EAEDF0;opacity:.8}}
 .meta i{{flex-basis:100%;height:14px;border-radius:7px;background:#EAEDF0;opacity:.45}}
 </style></head><body><div class="cover">
-<h1>{headline}</h1>
+{full}<h1>{headline}</h1>
 <div class="hero">{hero}</div>
 <div class="foot"><img src="{logo}" alt=""></div>
 </div></body></html>"""
@@ -153,7 +162,11 @@ h1 em{{font-style:normal;color:#62A3DA}}
 def render(cover, tmp):
     html = tmp / f"{cover['slug']}.html"
     html.write_text(PAGE.format(fonts=(BANNER / "fonts").as_uri(), logo=(HERE.parent / "avp-logo.png").as_uri(),
-                                headline=cover["headline"], hero=cover["hero"]()), encoding="utf-8")
+                                headline=cover["headline"], hero=cover["hero"](),
+                                # full: a 1080x1920 picture laid edge to edge over the ground, for a cover whose
+                                # picture carries its own headline (Paperboy ad 2's printed page)
+                                full=f'<img class="full" src="{(HERE / cover["full"]).as_uri()}" alt="">'
+                                if cover.get("full") else ""), encoding="utf-8")
     png = tmp / f"{cover['slug']}.png"
     subprocess.run([EDGE, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
                     f"--window-size={W},{H}", "--virtual-time-budget=5000", "--allow-file-access-from-files",

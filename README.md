@@ -52,6 +52,13 @@ The same goes for `chatterbox/index.html` and `chatterbox/thanks/index.html`, bu
 the template's own layouts, with the avatar photos in `web/avatars/`. Its Kit form ID is
 `KIT_FORM_ID` at the top of that script.
 
+**Every page with a Kit form loads `/email-check.js`** (added 2026-10-03). It catches the common address
+typos before the form posts (`gmail.comrm`, `gmial.com`, `hotmial.com`) and offers "Did you mean ...?";
+one click fixes and sends, and a second submit sends the address as typed, so it never blocks anyone.
+Real Canadian and French domains (`hotmail.ca`, `videotron.ca`, `orange.fr`) are on its known list and
+are never touched. The tag is the last line of each tool's `web/landing.template.html`, so a rebuild keeps
+it; a new tool's template copies it.
+
 **The thank-you page carries the download itself.** Delivery used to depend entirely on Kit's
 confirmation email, so anyone whose email landed in spam, or who simply never clicked, gave up their
 address and got nothing. The thank-you page now shows a **Download <Tool>** button pointing at the

@@ -301,8 +301,10 @@ the ones that earn a reply. But not every email wants one.
   sequence, and a story in front of the link only delays it.
 - **The mission gets a different story in every tool's email 1.** The belief is the same everywhere:
   the work should happen inside the editor you are already in. The story carrying it must not be.
-  Email 1 is the delivery email, so unlike email 3 it can never be filtered, which means anyone who
-  downloads two tools reads both versions and a third tool makes it three. Cropduster argues the
+  Since 2026-10-03 email 1 skips anyone who already holds another tool (`multi-tool`, tool-launch
+  3.3), since each form's own confirmation email carries the download. So a reader normally meets
+  only the story of the first tool they took, and which tool that is varies, so every version is
+  somebody's first. Cropduster argues the
   belief through capability, the ceiling Capcut hits. Chatterbox argues it through friction, the
   browser tab and the png import. A new tool takes whichever annoyance made it exist. One line may
   repeat deliberately as a refrain, the promise of a version for resolve and one for premiere, but
@@ -317,8 +319,8 @@ the ones that earn a reply. But not every email wants one.
 ## 6. Sequences
 
 - **Shared copy is a maintenance decision, not a writing one.** An email identical across two
-  sequences reaches anyone subscribed to both twice. Filter on the other tool's tag, or accept
-  the repeat with eyes open.
+  sequences reaches anyone subscribed to both twice. The sequences now filter on two helper tags,
+  `multi-tool` and `extra-<tool>` (tool-launch 3.3), never on each other's tool tags.
 - **Check what else is scheduled before wording a cross-promotion.** A sequence email and a
   broadcast announcing the same tool to the same person read as a mistake.
 - **Re-engaging a dormant list:** one question, no links, no images, nothing else in the email.

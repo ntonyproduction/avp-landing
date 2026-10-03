@@ -397,6 +397,11 @@ unsent for the reason below. A real launch broadcast still earns its place: by t
 ships, the first two lists will be in their sequences, and no existing sequence mentions a tool that
 did not exist when it was written.
 
+> **Superseded 2026-10-03.** The sequences no longer filter on each other's tool tags. Emails 1 and 3 now skip
+> anyone holding two or more tools (`multi-tool`), and emails 2 and 4 skip people for whom that tool was not
+> their first (`extra-<tool>`); the rules are in the tool-launch skill, 3.3. The two paragraphs below are how it
+> started, with two tools.
+
 **Email 3 excludes the tool it is promoting.** Someone who owns both tools should not be pitched
 either one, so Chatterbox email 3 excludes the `cropduster` tag and Cropduster email 3 excludes
 `chatterbox`. The filter is per email, set with the funnel icon beside *On days* in the sequence

@@ -48,15 +48,18 @@
   .spec dt.editor img{width:16px; height:16px; object-fit:contain}
 
   h1,h2,h3{font-family:Montserrat,system-ui,sans-serif; text-wrap:balance; margin:0}
-  h1{font-weight:900; font-size:clamp(2.05rem,1.25rem + 3.3vw,3.55rem); line-height:1.02; letter-spacing:-.022em}
+  h1{font-weight:900; font-size:clamp(2.05rem,1.25rem + 3.3vw,3.55rem); line-height:1.08; letter-spacing:-.022em}
   h2{font-weight:800; font-size:clamp(1.5rem,1.05rem + 1.7vw,2.15rem); line-height:1.12; letter-spacing:-.016em}
   h3{font-weight:700; font-size:1.06rem; letter-spacing:-.005em}
   p{margin:0}
 
+  /* Trawler's mark wraps onto two lines, so the stroke covers the middle 76% of the letters' height (caps and
+     x-height) and the h1 is set at 1.08: a full-height stroke at 1.02 painted over line 1's descenders (Anthony saw
+     the j of "just" cut off, 2026-10-05). */
   /* the words in the headline, marked with the amber of the app's own screen: a stroke, a little ragged at the
      ends, dark print through it */
   mark{
-    background:linear-gradient(100deg,transparent 0 .5%,var(--marker) 2% 97%,transparent 99.5%);
+    background:linear-gradient(100deg,transparent 0 .5%,var(--marker) 2% 97%,transparent 99.5%) 0 67% / 100% 76% no-repeat;
     color:#14110A; padding:0 .12em; margin:0 -.04em; border-radius:.18em .3em .22em .34em;
     -webkit-box-decoration-break:clone; box-decoration-break:clone;
   }

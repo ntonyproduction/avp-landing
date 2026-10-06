@@ -123,9 +123,10 @@
      wider, which is what a streak needs. */
   .demo .shell{display:grid; grid-template-columns:1fr; gap:clamp(20px,3vw,32px)}
   .demo .head{margin-bottom:0; max-width:62ch}
-  /* Full shell width. The section is one column now, so nothing shares the row, and a streak
-     is the one thing on this page that gets better the wider it runs. */
-  .short{position:relative; width:100%; aspect-ratio:16/9; margin:0; border:1px solid var(--edge);
+  /* Square, centred, at most 640 px: the cut is two WITHOUT / WITH cards stacked, which is a square.
+     In 16:9 half the frame was filler and each card was about 195 px wide on a phone; square, a
+     card is nearly the full width of a phone screen. */
+  .short{position:relative; width:min(640px,100%); aspect-ratio:1/1; margin:0 auto; border:1px solid var(--edge);
     border-radius:6px; overflow:hidden; background:var(--panel)}
   .short video{display:block; width:100%; height:100%; object-fit:cover}
   /* The real Inspector, at its own size. It is interface, not art: scaled up it looks soft and
@@ -231,8 +232,8 @@
     </div>
     <figure class="short">
       <video id="demo" src="demo.mp4" poster="demo.jpg" autoplay muted loop playsinline preload="metadata"
-             aria-label="A clip in DaVinci Resolve with Shutterdrag off, then on"></video>
-      <!-- no "Play with sound" button: this cut has no audio track. Put it back if music is added. -->
+             aria-label="A glowing ball, then a car, without Shutterdrag on top and with it below"></video>
+      <button class="sound" type="button" id="demo-sound" aria-pressed="false">Play with sound</button>
     </figure>
   </div>
 </section>

@@ -34,12 +34,6 @@
   a{color:var(--brand)}
   .shell{max-width:var(--shell); margin-inline:auto; padding-inline:24px}
 
-  .tag{
-    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; font-weight:600;
-    letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); margin:0;
-  }
-  .tag .on{color:var(--brand)}
-
   /* header ------------------------------------------------------------------ */
   .top{border-bottom:1px solid var(--edge)}
   .top .shell{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:18px}
@@ -56,7 +50,7 @@
   /* hero -------------------------------------------------------------------- */
   .hero{padding-block:clamp(52px,9vw,104px) clamp(34px,5vw,56px)}
   h1{
-    font-weight:900; margin:14px 0 18px; max-width:16ch;
+    font-weight:900; margin:0 0 18px; max-width:16ch;
     font-size:clamp(2.1rem,1.2rem + 3.4vw,3.4rem); line-height:1.03;
     letter-spacing:-.024em; text-wrap:balance;
   }
@@ -151,7 +145,6 @@
 <main>
   <section class="hero">
     <div class="shell">
-      <p class="tag">Video editing tools</p>
       <h1>Small tools for video editors.</h1>
       <p class="lede">Tools I build for my own edits and release once they hold up in real work. <b>Every download comes with a one page install guide.</b></p>
     </div>

@@ -114,6 +114,12 @@ COVERS = [
     dict(slug="paperboy-ad1", hero=picture("paperboy-ad1-art.png"), headline="Made with<br><em>one free</em><br>tool."),
     dict(slug="paperboy-ad2", hero=lambda: "", headline="", full="paperboy-ad2-full.png"),
     dict(slug="paperboy-ad3", hero=picture("paperboy-ad3-art.png"), headline="Type a word.<br><em>Get this.</em>"),
+    # Flipbook: each ad's own subject, made in flipbook/marketing/covers/make_cover_art.py. Ad 1: its dog, three
+    # drawings stacked. Headline from the on-screen sign of its first draft ("FREE HAND-DRAWN FX"). Ad 2: the sketched
+    # beach scene its story ends on; the headline is the end card's "Make anything look hand-drawn", broken to fit.
+    # Prepared 2026-10-10 for the 2026-10-11 launch; commit with the launch, not before.
+    dict(slug="flipbook-ad1", hero=picture("flipbook-ad1-art.png"), headline="<em>Free</em><br>hand-drawn<br>FX."),
+    dict(slug="flipbook-ad2", hero=picture("flipbook-ad2-art.png"), headline="Make<br>anything<br><em>hand-drawn.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

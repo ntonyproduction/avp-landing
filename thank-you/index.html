@@ -87,6 +87,25 @@
   .aside b{color:var(--ink); font-weight:600}
   .aside + .aside{margin-top:14px}
 
+  .key{
+    margin-top:26px; border:1px solid var(--brand-dim); border-radius:4px; background:var(--panel);
+    padding:20px 22px;
+  }
+  .key > span{
+    display:block; color:var(--ink-faint); font-size:.82rem;
+    font-family:"IBM Plex Mono",ui-monospace,monospace; letter-spacing:.06em;
+  }
+  .key .row{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:10px}
+  .key code{
+    flex:1 1 260px; min-width:0; overflow-wrap:anywhere; user-select:all;
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:1.05rem; font-weight:600;
+    color:var(--ink); letter-spacing:.02em; padding:10px 12px; border-radius:3px;
+    background:var(--ground); border:1px solid var(--edge);
+  }
+  .key .row + .row{margin-top:10px}
+  button.btn{cursor:pointer}
+  .wait{color:var(--ink-dim)}
+
   [hidden]{display:none!important}
 
   footer{border-top:1px solid var(--edge); padding-block:26px; color:var(--ink-faint); font-size:.85rem}
@@ -125,6 +144,41 @@
       <p class="aside">Something not working? Email <a href="mailto:info@audiovisionproductions.ca">info@audiovisionproductions.ca</a> and I'll sort it out.</p>
     </div>
 
+    <!-- Shown when the order was a licence key: the key is the product, so it goes on the page. -->
+    <div id="licence" hidden>
+      <p class="tag">Payment received <span class="on">&middot;</span> thank you</p>
+      <h1>Thanks. Here is your licence key.</h1>
+      <p class="lede"><b id="licence-product">Your Pro unlock</b> is this key. No file to download. Copy it and paste it in the app.</p>
+
+      <div class="key">
+        <span>Your licence key</span>
+        <div id="keys"></div>
+        <p class="wait" id="key-wait">Your key is being made. This takes a few seconds.</p>
+        <p class="wait" id="key-late" hidden>Your key is taking longer than usual. It is in your <b>receipt email from Polar</b>, and in your Polar page below.</p>
+      </div>
+
+      <ol class="steps" id="unlock-steps"></ol>
+
+      <p class="aside">The same key is in your <b>receipt email from Polar</b>, so you don't need to save this page. It is also on your Polar page, with your order: <a id="portal" href="#">open your Polar page</a>.</p>
+      <p class="aside">Something not working? Email <a href="mailto:info@audiovisionproductions.ca">info@audiovisionproductions.ca</a> and I'll sort it out.</p>
+    </div>
+
+    <!-- Shown when Polar sent the buyer here but the order could not be read: it points at both kinds. -->
+    <div id="either" hidden>
+      <p class="tag">Payment received <span class="on">&middot;</span> thank you</p>
+      <h1>Thanks for your order.</h1>
+      <p class="lede"><b>Your receipt email from Polar</b> has everything you bought. So does your Polar page.</p>
+
+      <div class="get">
+        <p><b>Your Polar page</b><span>Downloads and licence keys</span></p>
+        <a class="btn" id="either-open" href="#">Open your Polar page</a>
+      </div>
+
+      <p class="aside"><b>Bought a download?</b> Click the download arrow next to the .zip. Inside are the installer and a one-page install guide.</p>
+      <p class="aside"><b>Bought a licence key?</b> Copy the key from the email or your Polar page. Open the tool, find where it asks for a licence key, paste it and click <b>Unlock</b>.</p>
+      <p class="aside">Something not working? Email <a href="mailto:info@audiovisionproductions.ca">info@audiovisionproductions.ca</a> and I'll sort it out.</p>
+    </div>
+
     <!-- Shown when someone reaches this page without an order. -->
     <div id="lost">
       <p class="tag">Downloads</p>
@@ -145,19 +199,102 @@
 </footer>
 
 <script>
-  // The relay in the time-tracker repo: it checks the checkout is paid and opens the buyer's
-  // Polar download page, signed in. Polar fills checkout_id into this page's URL.
-  var DOWNLOAD_ROUTE = 'https://time-tracker-production-0a32.up.railway.app/api/polar/download';
+  // The relay in the time-tracker repo. DOWNLOAD_ROUTE checks the checkout is paid and opens the
+  // buyer's Polar page, signed in. ORDER_ROUTE says what was bought: a download, or a licence key,
+  // which it hands over so it can go on this page. Polar fills checkout_id into this page's URL.
+  var RELAY = 'https://time-tracker-production-0a32.up.railway.app/api/polar/';
+  var DOWNLOAD_ROUTE = RELAY + 'download';
+  var ORDER_ROUTE = RELAY + 'order';
+
+  // How to use a key. The relay sends each product's own steps, so this page names no tool;
+  // these are for a product it has none for.
+  var PLAIN_UNLOCK = ['Open the tool.', 'Find where it asks for a licence key.', 'Paste the key and click <b>Unlock</b>.'];
 
   (function () {
     var id = new URLSearchParams(location.search).get('checkout_id');
     if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return;
-    document.getElementById('download').href = DOWNLOAD_ROUTE + '?checkout_id=' + encodeURIComponent(id);
-    document.getElementById('paid').hidden = false;
+    var portal = DOWNLOAD_ROUTE + '?checkout_id=' + encodeURIComponent(id);
+    document.getElementById('download').href = portal;
+    document.getElementById('portal').href = portal;
+    document.getElementById('either-open').href = portal;
     document.getElementById('lost').hidden = true;
     // Drop Polar's session token from the address bar, so a bookmark or a shared screenshot
     // does not carry it. The checkout id stays: the button needs it on a reload.
     history.replaceState(null, '', location.pathname + '?checkout_id=' + encodeURIComponent(id));
+
+    function show(which) {
+      ['paid', 'licence', 'either'].forEach(function (p) { document.getElementById(p).hidden = p !== which; });
+    }
+
+    // Polar makes the key a few seconds after the payment, so ask again every 3 seconds, for about a minute.
+    var tries = 0;
+    function ask() {
+      var timeout = new AbortController();
+      var timer = setTimeout(function () { timeout.abort(); }, 8000);
+      fetch(ORDER_ROUTE + '?checkout_id=' + encodeURIComponent(id), { cache: 'no-store', signal: timeout.signal })
+        .then(function (res) { return res.json(); })
+        .then(function (order) { clearTimeout(timer); land(order); })
+        .catch(function () { clearTimeout(timer); land({ state: 'unknown' }); });
+    }
+
+    function land(order) {
+      if (order.kind !== 'licence') {
+        // A download, as before. Without an answer, the page points at both kinds instead of guessing.
+        if (order.state !== 'unknown') return show('paid');
+        document.title = 'Your order · Audio Vision Productions';
+        return show('either');
+      }
+      if (tries === 0) showLicence(order.product, order.steps);
+      var keys = order.keys || [];
+      if (keys.length) return showKeys(keys);
+      if (++tries < 20) return setTimeout(ask, 3000);
+      document.getElementById('key-wait').hidden = true;
+      document.getElementById('key-late').hidden = false;
+    }
+
+    function showLicence(product, steps) {
+      document.title = 'Your licence key · Audio Vision Productions';
+      if (product) document.getElementById('licence-product').textContent = product;
+      document.getElementById('unlock-steps').innerHTML = (steps && steps.length ? steps : PLAIN_UNLOCK)
+        .map(function (step) { return '<li><span>' + step + '</span></li>'; }).join('');
+      show('licence');
+    }
+
+    function showKeys(keys) {
+      document.getElementById('key-wait').hidden = true;
+      document.getElementById('key-late').hidden = true;
+      var box = document.getElementById('keys');
+      box.textContent = '';
+      keys.forEach(function (key) {
+        var row = document.createElement('div');
+        row.className = 'row';
+        var code = document.createElement('code');
+        code.textContent = key;
+        var copy = document.createElement('button');
+        copy.className = 'btn';
+        copy.type = 'button';
+        copy.textContent = 'Copy key';
+        copy.addEventListener('click', function () {
+          var done = function () { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy key'; }, 2000); };
+          if (navigator.clipboard) navigator.clipboard.writeText(key).then(done, function () { selectKey(code); });
+          else selectKey(code);
+        });
+        row.appendChild(code);
+        row.appendChild(copy);
+        box.appendChild(row);
+      });
+    }
+
+    // Without clipboard access, select the key so Ctrl+C takes it.
+    function selectKey(code) {
+      var range = document.createRange();
+      range.selectNodeContents(code);
+      var sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    ask();
   })();
 </script>
 </html>

@@ -120,6 +120,9 @@ COVERS = [
     # Prepared 2026-10-10 for the 2026-10-11 launch; commit with the launch, not before.
     dict(slug="flipbook-ad1", hero=picture("flipbook-ad1-art.png"), headline="<em>Free</em><br>hand-drawn<br>FX."),
     dict(slug="flipbook-ad2", hero=picture("flipbook-ad2-art.png"), headline="Make<br>anything<br><em>hand-drawn.</em>"),
+    # Ad 3 (drag it on, 2026-10-17): its running dog boiled, with a pencil's tip on its outline (Anthony's call, in
+    # place of the cursor first drawn there); the headline is the ad's one action.
+    dict(slug="flipbook-ad3", hero=picture("flipbook-ad3-art.png"), headline="Hand-drawn<br>in <em>one drag.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

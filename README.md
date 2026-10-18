@@ -162,7 +162,7 @@ notes on it. It should normally hold **zero** assets; an asset sitting there mea
 after the upload, and the command prints the `gh release delete-asset` line to clear it. Failures
 deliberately leave the file in place so a retry does not re-upload 65 MB.
 
-**Where the ads actually live** is Drive, under `Business\Lead Magnets\<Tool>\Ads\Ad<N>\`, not
+**Where the ads actually live** is Drive, under `AVP Tools\Organic Ads\` (root CLAUDE.md, "Where the files live"), not
 this repo. Drive cannot serve the API either: a share link returns an HTML page rather than the
 bytes, and the `uc?export=download` form hits a virus-scan interstitial above about 25 MB, so Meta
 would fetch HTML and the container would fail.

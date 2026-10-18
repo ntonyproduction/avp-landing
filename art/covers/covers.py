@@ -114,6 +114,10 @@ COVERS = [
     dict(slug="paperboy-ad1", hero=picture("paperboy-ad1-art.png"), headline="Made with<br><em>one free</em><br>tool."),
     dict(slug="paperboy-ad2", hero=lambda: "", headline="", full="paperboy-ad2-full.png"),
     dict(slug="paperboy-ad3", hero=picture("paperboy-ad3-art.png"), headline="Type a word.<br><em>Get this.</em>"),
+    # Ad 5 (EASY vs HARD mode, 2026-10-18): the ad's own two modes, HARD a timeline of stacked screenshot clips, EASY
+    # the app (paperboy/marketing/covers/ad5_cover_art.py); headline from its on-screen "EASY vs HARD mode". Anthony
+    # picked it over a lone highlighted page, which was too close to ad 3's.
+    dict(slug="paperboy-ad5", hero=picture("paperboy-ad5-art.png"), headline="Match cut.<br><em>Easy</em> mode."),
     # Flipbook: each ad's own subject, made in flipbook/marketing/covers/make_cover_art.py. Ad 1: its dog, three
     # drawings stacked. Headline from the on-screen sign of its first draft ("FREE HAND-DRAWN FX"). Ad 2: the sketched
     # beach scene its story ends on; the headline is the end card's "Make anything look hand-drawn", broken to fit.

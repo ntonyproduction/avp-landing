@@ -123,6 +123,10 @@ COVERS = [
     # Ad 3 (drag it on, 2026-10-17): its running dog boiled, with a pencil's tip on its outline (Anthony's call, in
     # place of the cursor first drawn there); the headline is the ad's one action.
     dict(slug="flipbook-ad3", hero=picture("flipbook-ad3-art.png"), headline="Hand-drawn<br>in <em>one drag.</em>"),
+    # Shutterdrag ad 5 (drag it on, full screen, 2026-10-18): its neon dancers, frame 200 of the real Resolve render, sharp
+    # with fans of light where their arms swept (shutterdrag/marketing/ad-fullscreen/cover_art.py); the headline is the
+    # ad's one action, as Flipbook ad 3's.
+    dict(slug="shutterdrag-ad5", hero=picture("shutterdrag-ad5-art.png"), headline="Slow shutter<br>in <em>one drag.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

@@ -38,6 +38,7 @@ guessable URL with nothing checking who is asking.
 | `thank-you/index.html` | Where Polar sends a buyer after paying for **any** paid tool. It names no tool, so it can sit in this public repo before a paid tool is announced. It reads `checkout_id` from its URL and points **Get your download** at the relay in the `time-tracker` repo (`DOWNLOAD_ROUTE` in its script), which checks the payment and opens the buyer's Polar download page. It first asks the relay's order route (`ORDER_ROUTE`) what was bought. A download keeps the **Get your download** button. A licence key (Cardwheel Pro) is shown on the page with a Copy button and the steps to unlock; the relay sends each product's steps, so the page still names no tool. If the relay cannot read the order (for example a sandbox checkout while Railway is on production), the page says the receipt email and the Polar page have the download or the key. It strips the session token Polar appends from the address bar. Without a `checkout_id` it shows where to find the receipt. Written by hand, here. |
 | `clipping/` | The old clipping-service page, kept after the tools hub took over the root. Nothing links to it; it is reachable only by its URL. |
 | `scripts/avp_instagram.py` | Posts to @audiovisionproductions from the command line: `post` for an image or carousel, `post-reel` for a video (with `--cover` for its cover image). See below. |
+| `scripts/check_versions.py` | Checks that every tool card on the home page shows the same `v<X.Y>` as the tool's own page, and fails naming any that differ. Run it before pushing any tool update (see "Do not hand-edit the generated pages"). |
 | `scripts/avp_youtube.py` | Uploads and schedules on @audiovisionproductions: `auth`, `whoami`, `upload` (with `--thumbnail` for a cover), `thumbnail` (a cover on a video already up, never on a Short), `verify`. A copy of the `youtube-upload` skill's script, kept here because the canonical copy lives in the credential store (`~/.avp/youtube/`) and a store can go missing while a repo cannot. Holds no credentials. |
 
 ## Do not hand-edit the generated pages
@@ -51,6 +52,11 @@ The same goes for `chatterbox/index.html` and `chatterbox/thanks/index.html`, bu
 `web/build_landing.py` in the **Chatterbox** repo. Its example cards are rendered there too, from
 the template's own layouts, with the avatar photos in `web/avatars/`. Its Kit form ID is
 `KIT_FORM_ID` at the top of that script.
+
+**The home page's version chips are the opposite case: typed by hand here, and nothing updates them.** A tool
+page rebuilt by its repo moves to the new version on its own; its card in `index.html` stays behind until someone
+changes it. Missed twice, Paperboy 1.2 (2026-10-19) the second time. So a tool update changes the card in the same
+commit as the tool page, and `py -3 scripts/check_versions.py` runs before the push.
 
 **Every page with a Kit form loads `/email-check.js`** (added 2026-10-03). It catches the common address
 typos before the form posts (`gmail.comrm`, `gmial.com`, `hotmial.com`) and offers "Did you mean ...?";

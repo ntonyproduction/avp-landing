@@ -81,6 +81,13 @@
   .hero{padding-block:clamp(40px,6vw,76px)}
   .hero .shell{display:grid; grid-template-columns:1.15fr .85fr; gap:clamp(28px,4vw,60px); align-items:center}
   .hero h1{margin-block:14px 18px}
+  /* the one-line bubble made the text column refuse to shrink below it, so the render beside it showed at 322 px
+     where Paperboy's shows at 430 (1902 px window). Above the phone layout the column is a size container, which
+     keeps its 1.15fr share, and the h1 scales down to the column so the one-line bubble still fits */
+  @media (min-width:861px){
+    .hero .shell>div:first-child{container-type:inline-size}
+    .hero h1{font-size:min(clamp(2.05rem,1.25rem + 3.3vw,3.55rem),8.9cqi)}
+  }
   .lede{font-size:var(--step); color:var(--ink-dim); max-width:52ch}
   .lede b{color:var(--ink); font-weight:600}
   .render{position:relative; margin:0}

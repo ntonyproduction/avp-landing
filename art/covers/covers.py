@@ -131,6 +131,16 @@ COVERS = [
     # with fans of light where their arms swept (shutterdrag/marketing/ad-fullscreen/cover_art.py); the headline is the
     # ad's one action, as Flipbook ad 3's.
     dict(slug="shutterdrag-ad5", hero=picture("shutterdrag-ad5-art.png"), headline="Slow shutter<br>in <em>one drag.</em>"),
+    # Textback ad 1 ("the easiest way to make a text message animation", 2026-10-19): the ad's row of apps fanned (lock
+    # screen, Instagram, WhatsApp, iMessage), every chat drawn by the app's own chat.js (textback/marketing/covers/cover.js);
+    # the headline is its "you can make it look like any app". Anthony picked it from four (2026-10-19) over one phone
+    # mid-Pop and the headlines "Text message animation. The easy way.", "Free text message animation." and "No After
+    # Effects. No keyframes.". Local until launch.
+    dict(slug="textback-ad1", hero=picture("textback-ad1-art.png"), headline="Texts that<br>look like<br><em>any app.</em>"),
+    # Textback ad 2 (the no-voice tutorial, 2026-10-19): the real window with ad 2's chat popping out of it
+    # (textback/marketing/covers/cover.js), not ad 1's phone; the headline is its hook bubble, "how do you make texts
+    # pop up like this?". Local until launch.
+    dict(slug="textback-ad2", hero=picture("textback-ad2-art.png"), headline="Make texts<br><em>pop up</em><br>like this."),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

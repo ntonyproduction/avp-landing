@@ -146,21 +146,21 @@
   .short button:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
 
   /* ---------------- the style row: the demo's chat in six styles (make_sample.js --styles), under the demo ----------
-     Three across, two on a phone; each tile its file's 4:5 at a fixed ratio, so nothing moves as they load */
+     Three across, two on a phone; each tile its file's 4:5 at a fixed ratio, so nothing moves as they load. The stills
+     are drawn on the page's own ground with no frame (Anthony, 2026-10-21), so each chat floats on the page */
   .stylerow{padding-top:0; border-top:0}
   .stylerow .tag{margin-bottom:16px}
   .tiles{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:0; padding:0; list-style:none}
   .tiles figure{margin:0}
-  .tiles img{display:block; width:100%; height:auto; aspect-ratio:4/5; border:1px solid var(--edge); border-radius:6px;
-    background:var(--panel)}
+  .tiles img{display:block; width:100%; height:auto; aspect-ratio:4/5; background:var(--ground)}
   .tiles figcaption{margin-top:8px; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; font-weight:600;
     letter-spacing:.12em; text-transform:uppercase; color:var(--ink-dim)}
   @media (max-width:560px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}}
 
   /* ---------------- features: one short loop per part of the app (make_features.js) ---------------- */
-  /* Tellybox's rows (Anthony, 2026-10-21): a loop and its words, alternating sides. Each clip is a real render over the
-     app's checkerboard, silent, and loads and plays only while on screen (script at the end). The reveals run across
-     the column under their words, three columns at a time, so the text stays readable. */
+  /* Tellybox's rows (Anthony, 2026-10-21): a loop and its words, alternating sides. Each clip is a real render on the
+     page's own ground, silent, and loads and plays only while on screen (script at the end). The reveals drift past
+     under their words. */
   .feats{display:grid; gap:clamp(36px,5vw,64px)}
   /* a vertical clip and its words, centred as a pair: in two halves of the column the words sat far from their clip */
   .feat{display:grid; grid-template-columns:auto minmax(0,30rem); justify-content:center; gap:clamp(22px,4vw,56px); align-items:center}
@@ -168,13 +168,47 @@
   .feat:nth-child(odd) .loop{order:2}
   .feat h3{font-size:clamp(1.25rem,2.2vw,1.6rem); margin:8px 0 10px}
   .feat p{color:var(--ink-dim); max-width:46ch}
-  .loop{position:relative; margin:0; border:1px solid var(--edge); border-radius:6px; overflow:hidden; background:var(--panel)}
+  /* no frame: the clips are rendered on --ground (make_features.js), so the chat floats on the page. H.264 cannot hit a
+     colour this dark exactly (it decodes 1 to 3 levels off), so a clip's outer 2% fades out and no box edge shows (its chat comes within 2.6% of the sides) */
+  .loop{position:relative; margin:0; overflow:hidden; background:var(--ground);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 2%,#000 98%,transparent),linear-gradient(transparent,#000 2%,#000 98%,transparent);
+    -webkit-mask-composite:source-in; mask-image:linear-gradient(90deg,transparent,#000 2%,#000 98%,transparent),linear-gradient(transparent,#000 2%,#000 98%,transparent);
+    mask-composite:intersect}
   .loop video{display:block; width:100%; height:100%; object-fit:cover}
   .tall .loop{aspect-ratio:9/16; width:min(340px,100%)}
   .feat.wide{grid-template-columns:minmax(0,1fr); gap:18px}
   .feat.wide .loop{order:2; aspect-ratio:16/9; width:100%}
-  /* the shapes: four FORMATs side by side, a 1920 x 560 strip */
-  .feat.strip .loop{aspect-ratio:24/7}
+  /* the shapes: four FORMATs side by side, a 1920 x 560 strip. Its sides fade over 1% only: the first and last outline
+     sit 1.5% in */
+  .feat.strip .loop{aspect-ratio:24/7;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 1%,#000 99%,transparent),linear-gradient(transparent,#000 3%,#000 97%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 1%,#000 99%,transparent),linear-gradient(transparent,#000 3%,#000 97%,transparent)}
+  /* the reveals: every reveal as a square tile, one bubble each, named under it, drifting left in a strip that loops
+     (the list runs twice, so moving it by half lands on the same picture). Hover pauses it. Each tile's spacing is
+     padding, not a flex gap, so half the track is exactly one run. With reduced motion the global rule stops the
+     drift and the strip becomes a row to scroll, without its second run. The .loop selector outweighs
+     .feat:nth-child(odd) .loop, whose order would put a name above its tile. */
+  .revstrip{overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+  .revtrack{display:flex; width:max-content; margin:0; padding:0; list-style:none;
+    animation:revdrift calc(var(--n) * 3.6s) linear infinite}
+  .revstrip:hover .revtrack{animation-play-state:paused}
+  @keyframes revdrift{to{transform:translateX(-50%)}}
+  .revtrack li{flex:0 0 auto; width:220px; padding-right:16px; margin:0}
+  /* no frame and the page's own ground: the tiles are rendered on --ground, so each bubble floats on the page. H.264
+     cannot hit a colour this dark exactly (it decodes 1 to 3 levels off), so each tile's outer 4% fades out and no
+     square edge shows. The bubble and Type & Send's bar sit inside that margin */
+  .feat .revtrack .loop,.feat:nth-child(odd) .revtrack .loop{order:0; aspect-ratio:1; width:100%; justify-self:stretch;
+    border:0; border-radius:0; background:var(--ground);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent),linear-gradient(transparent,#000 4%,#000 96%,transparent);
+    -webkit-mask-composite:source-in; mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent),linear-gradient(transparent,#000 4%,#000 96%,transparent);
+    mask-composite:intersect}
+  .revtrack .tag{margin-top:8px; color:var(--ink-dim)}
+  @media (max-width:640px){.revtrack li{width:150px; padding-right:12px}}
+  @media (prefers-reduced-motion:reduce){
+    .revstrip{overflow-x:auto; -webkit-mask-image:none; mask-image:none}
+    .revtrack li[aria-hidden]{display:none}
+  }
   .feat.wide p{max-width:70ch}
 
   /* ---------------- three steps ---------------- */
@@ -323,12 +357,12 @@
   <div class="shell">
     <p class="tag">One chat <span class="on">&middot;</span> 6 of its 19 styles</p>
     <ul class="tiles">
-      <li><figure><img src="styles/imessage.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s iMessage style"><figcaption>iMessage</figcaption></figure></li>
-      <li><figure><img src="styles/whatsapp.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s WhatsApp style"><figcaption>WhatsApp</figcaption></figure></li>
-      <li><figure><img src="styles/instagram.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Instagram style"><figcaption>Instagram</figcaption></figure></li>
-      <li><figure><img src="styles/discord.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Discord style"><figcaption>Discord</figcaption></figure></li>
-      <li><figure><img src="styles/snapchat.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Snapchat style"><figcaption>Snapchat</figcaption></figure></li>
-      <li><figure><img src="styles/notification.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Lock screen style"><figcaption>Lock screen</figcaption></figure></li>
+      <li><figure><img src="styles/imessage.jpg?v=1792624008" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s iMessage style"><figcaption>iMessage</figcaption></figure></li>
+      <li><figure><img src="styles/whatsapp.jpg?v=1792624027" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s WhatsApp style"><figcaption>WhatsApp</figcaption></figure></li>
+      <li><figure><img src="styles/instagram.jpg?v=1792624045" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Instagram style"><figcaption>Instagram</figcaption></figure></li>
+      <li><figure><img src="styles/discord.jpg?v=1792624062" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Discord style"><figcaption>Discord</figcaption></figure></li>
+      <li><figure><img src="styles/snapchat.jpg?v=1792624079" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Snapchat style"><figcaption>Snapchat</figcaption></figure></li>
+      <li><figure><img src="styles/notification.jpg?v=1792624088" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Lock screen style"><figcaption>Lock screen</figcaption></figure></li>
     </ul>
   </div>
 </section>
@@ -375,13 +409,28 @@
     </div>
   </div>
 </section>
-
+<section class="features">
+  <div class="shell">
+    <div class="head">
+      <p class="tag">Real renders <span class="on">&middot;</span> one part at a time</p>
+      <h2>Each part, on its own.</h2>
+    </div>
+    <div class="feats">
+      <article class="feat wide tiles"><div><p class="tag">Reveal</p><h3>Pick how each bubble lands.</h3><p>All nine in the REVEAL menu, one bubble each. REVEAL TIME, in the cog, speeds them all up or slows them down.</p></div><div class="revstrip"><ul class="revtrack" style="--n:9"><li><figure class="loop"><video data-src="features/reveals-slide.mp4?v=1792624505" poster="features/reveals-slide.jpg?v=1792624505" data-lag="0" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Slide Up reveal"></video></figure><p class="tag">Slide Up</p></li><li><figure class="loop"><video data-src="features/reveals-pop.mp4?v=1792624506" poster="features/reveals-pop.jpg?v=1792624506" data-lag="1" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Pop reveal"></video></figure><p class="tag">Pop</p></li><li><figure class="loop"><video data-src="features/reveals-compose.mp4?v=1792624507" poster="features/reveals-compose.jpg?v=1792624507" data-lag="2" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Type &amp; Send reveal"></video></figure><p class="tag">Type &amp; Send</p></li><li><figure class="loop"><video data-src="features/reveals-spring.mp4?v=1792624508" poster="features/reveals-spring.jpg?v=1792624508" data-lag="3" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Spring Pop reveal"></video></figure><p class="tag">Spring Pop</p></li><li><figure class="loop"><video data-src="features/reveals-bounce.mp4?v=1792624509" poster="features/reveals-bounce.jpg?v=1792624509" data-lag="4" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Bounce reveal"></video></figure><p class="tag">Bounce</p></li><li><figure class="loop"><video data-src="features/reveals-fade.mp4?v=1792624510" poster="features/reveals-fade.jpg?v=1792624510" data-lag="5" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Fade reveal"></video></figure><p class="tag">Fade</p></li><li><figure class="loop"><video data-src="features/reveals-typewriter.mp4?v=1792624511" poster="features/reveals-typewriter.jpg?v=1792624511" data-lag="6" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Typewriter reveal"></video></figure><p class="tag">Typewriter</p></li><li><figure class="loop"><video data-src="features/reveals-snap.mp4?v=1792624512" poster="features/reveals-snap.jpg?v=1792624512" data-lag="7" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Snap reveal"></video></figure><p class="tag">Snap</p></li><li><figure class="loop"><video data-src="features/reveals-wordfade.mp4?v=1792624513" poster="features/reveals-wordfade.jpg?v=1792624513" data-lag="8" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Word Fade reveal"></video></figure><p class="tag">Word Fade</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-slide.mp4?v=1792624505" poster="features/reveals-slide.jpg?v=1792624505" data-lag="0" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Slide Up reveal"></video></figure><p class="tag">Slide Up</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-pop.mp4?v=1792624506" poster="features/reveals-pop.jpg?v=1792624506" data-lag="1" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Pop reveal"></video></figure><p class="tag">Pop</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-compose.mp4?v=1792624507" poster="features/reveals-compose.jpg?v=1792624507" data-lag="2" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Type &amp; Send reveal"></video></figure><p class="tag">Type &amp; Send</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-spring.mp4?v=1792624508" poster="features/reveals-spring.jpg?v=1792624508" data-lag="3" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Spring Pop reveal"></video></figure><p class="tag">Spring Pop</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-bounce.mp4?v=1792624509" poster="features/reveals-bounce.jpg?v=1792624509" data-lag="4" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Bounce reveal"></video></figure><p class="tag">Bounce</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-fade.mp4?v=1792624510" poster="features/reveals-fade.jpg?v=1792624510" data-lag="5" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Fade reveal"></video></figure><p class="tag">Fade</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-typewriter.mp4?v=1792624511" poster="features/reveals-typewriter.jpg?v=1792624511" data-lag="6" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Typewriter reveal"></video></figure><p class="tag">Typewriter</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-snap.mp4?v=1792624512" poster="features/reveals-snap.jpg?v=1792624512" data-lag="7" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Snap reveal"></video></figure><p class="tag">Snap</p></li><li aria-hidden="true"><figure class="loop"><video data-src="features/reveals-wordfade.mp4?v=1792624513" poster="features/reveals-wordfade.jpg?v=1792624513" data-lag="8" muted loop playsinline preload="none" aria-label="One iMessage bubble arriving with the Word Fade reveal"></video></figure><p class="tag">Word Fade</p></li></ul></div></article>
+      <article class="feat tall"><figure class="loop"><video data-src="features/typesend.mp4?v=1792624381" poster="features/typesend.jpg?v=1792624381" muted loop playsinline preload="none" aria-label="An iMessage chat in which each of your replies is typed into the message bar, then sent"></video></figure><div><p class="tag">Type &amp; Send, Header</p><h3>Your side, typed out.</h3><p>On the phone styles, <span class="nw">Type &amp; Send</span> types your messages into the app's message bar, letter by letter, then sends them up. HEADER puts the contact on top.</p></div></article>
+      <article class="feat tall"><figure class="loop"><video data-src="features/holds.mp4?v=1792624842" poster="features/holds.jpg?v=1792624842" muted loop playsinline preload="none" aria-label="A WhatsApp chat: a video of a school of fish playing in a bubble, a voice note playing, then a photo of a cat asleep on a sofa, with reactions"></video></figure><div><p class="tag">Video, Voice, Photo</p><h3>More than text.</h3><p>Switch on PLAY and a video plays in its bubble or a voice note fills its waveform, and the chat waits for it. Photos, GIFs, reactions and read receipts too. They play silent: their sound is yours to add on the timeline.</p></div></article>
+      <article class="feat tall"><figure class="loop"><video data-src="features/group.mp4?v=1792624395" poster="features/group.jpg?v=1792624395" muted loop playsinline preload="none" aria-label="A Messenger group chat named Saturday, five people with their names and avatars, reactions popping in"></video></figure><div><p class="tag">+ Person, Group name</p><h3>Group chats, up to six.</h3><p>Add people and each gets a name and an avatar, the way the app shows them. Name the group and the header says it. An avatar can be a picture of your own.</p></div></article>
+      <article class="feat tall"><figure class="loop"><video data-src="features/lock.mp4?v=1792624397" poster="features/lock.jpg?v=1792624397" muted loop playsinline preload="none" aria-label="Lock-screen notifications from Jordan arriving one after another, the newest on top"></video></figure><div><p class="tag">Notification</p><h3>A lock screen, not a chat.</h3><p>The Notification style turns their messages into lock-screen notifications, the newest on top. Yours never show, as on a real phone.</p></div></article>
+      <article class="feat wide strip"><figure class="loop"><video data-src="features/shapes.mp4?v=1792624405" poster="features/shapes.jpg?v=1792624405" muted loop playsinline preload="none" aria-label="The same dark iMessage chat rendered vertical, 16:9, square and 4:5, side by side"></video></figure><div><p class="tag">Format</p><h3>Any shape your timeline is.</h3><p>Vertical out of the box, or 16:9, square, 4:5, 4K and a size you type. On a horizontal frame the chat scales up with it, so nothing needs resizing. In Resolve Studio, FORMAT follows the timeline by itself.</p></div></article>
+    </div>
+  </div>
+</section>
 
 <section>
   <div class="shell">
     <div class="head">
-      <p class="tag">19 styles <span class="on">&middot;</span> 9 reveals</p>
-      <h2>Pick the app. Pick how each message lands.</h2>
+      <p class="tag">19 styles</p>
+      <h2>Pick the app it looks like.</h2>
       <p>Each style follows its app's bubbles, colours and read receipts, with message sounds made for Textback rather than copied.</p>
     </div>
     <dl class="looks">
@@ -393,23 +442,6 @@
       <div><dt class="tag">Your own</dt><dd>Custom</dd></div>
     </dl>
 
-    <div class="reveals">
-      <h3>The reveals</h3>
-      <ul class="chips">
-        <li class="lead">Slide Up</li><li class="lead">Pop</li><li class="lead">Type &amp; Send</li>
-        <li>Spring Pop</li><li>Bounce</li><li>Fade</li><li>Typewriter</li><li>Snap</li><li>Word Fade</li>
-      </ul>
-      <p>On the phone styles, <b><span class="nw">Type &amp; Send</span></b> types your messages into the app's message bar, then sends them.</p>
-    </div>
-
-    <div class="reveals">
-      <h3>What a chat can hold</h3>
-      <ul class="chips">
-        <li>Typing dots</li><li>Reactions</li><li>Read receipts</li><li>Timestamps</li><li>Photos and GIFs</li>
-        <li>Voice notes</li><li>Videos</li><li>Avatars</li><li>Group chats up to six</li><li>Contact header</li><li>Colour emoji</li>
-      </ul>
-      <p>The phone styles draw them all, the others what their app would. Voice notes and videos play silent: their sound is yours to add on the timeline.</p>
-    </div>
   </div>
 </section>
 
@@ -481,20 +513,35 @@
 
   // The feature clips (Tellybox's script): each one loads only when it comes near the screen and plays only while it is
   // on it, so the page costs a phone nothing it does not scroll to. With reduced motion asked for, the posters show
-  // and each clip gets controls.
+  // and each clip gets controls. A clip with data-lag (the reveal strip's tiles, all one length) is put on one clock
+  // that many seconds behind it each time it starts, so the tiles land one after another, a second apart, however
+  // long each spent paused off screen.
   (function () {
     var vids = [].slice.call(document.querySelectorAll(".loop video[data-src]"));
     if (!vids.length) return;
     var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var t0 = performance.now();
     function load(v) { if (!v.src) { v.src = v.getAttribute("data-src"); } }
+    function beat(v) {
+      var lag = v.getAttribute("data-lag");
+      if (lag === null) return;
+      function set() {
+        var d = v.duration;
+        if (!d || !isFinite(d)) return;
+        var t = ((performance.now() - t0) / 1000 - Number(lag)) % d;
+        v.currentTime = t < 0 ? t + d : t;
+      }
+      if (v.readyState >= 1) set(); else v.addEventListener("loadedmetadata", set, {once: true});
+    }
+    function start(v) { load(v); beat(v); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
     if (still || !("IntersectionObserver" in window)) {
-      vids.forEach(function (v) { load(v); v.preload = "none"; if (still) v.controls = true; else v.play && v.play(); });
+      vids.forEach(function (v) { load(v); v.preload = "none"; if (still) v.controls = true; else start(v); });
       return;
     }
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
         var v = e.target;
-        if (e.isIntersecting) { load(v); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        if (e.isIntersecting) start(v);
         else if (!v.paused) v.pause();
       });
     }, {rootMargin: "200px 0px", threshold: 0.15});

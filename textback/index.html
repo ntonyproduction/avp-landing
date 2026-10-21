@@ -157,6 +157,26 @@
     letter-spacing:.12em; text-transform:uppercase; color:var(--ink-dim)}
   @media (max-width:560px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}}
 
+  /* ---------------- features: one short loop per part of the app (make_features.js) ---------------- */
+  /* Tellybox's rows (Anthony, 2026-10-21): a loop and its words, alternating sides. Each clip is a real render over the
+     app's checkerboard, silent, and loads and plays only while on screen (script at the end). The reveals run across
+     the column under their words, three columns at a time, so the text stays readable. */
+  .feats{display:grid; gap:clamp(36px,5vw,64px)}
+  /* a vertical clip and its words, centred as a pair: in two halves of the column the words sat far from their clip */
+  .feat{display:grid; grid-template-columns:auto minmax(0,30rem); justify-content:center; gap:clamp(22px,4vw,56px); align-items:center}
+  .feat:nth-child(odd){grid-template-columns:minmax(0,30rem) auto}
+  .feat:nth-child(odd) .loop{order:2}
+  .feat h3{font-size:clamp(1.25rem,2.2vw,1.6rem); margin:8px 0 10px}
+  .feat p{color:var(--ink-dim); max-width:46ch}
+  .loop{position:relative; margin:0; border:1px solid var(--edge); border-radius:6px; overflow:hidden; background:var(--panel)}
+  .loop video{display:block; width:100%; height:100%; object-fit:cover}
+  .tall .loop{aspect-ratio:9/16; width:min(340px,100%)}
+  .feat.wide{grid-template-columns:minmax(0,1fr); gap:18px}
+  .feat.wide .loop{order:2; aspect-ratio:16/9; width:100%}
+  /* the shapes: four FORMATs side by side, a 1920 x 560 strip */
+  .feat.strip .loop{aspect-ratio:24/7}
+  .feat.wide p{max-width:70ch}
+
   /* ---------------- three steps ---------------- */
   .steps{margin:0; padding:0; counter-reset:s; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
   .steps li{counter-increment:s; list-style:none; border:1px solid var(--edge); border-radius:4px; background:var(--panel);
@@ -238,6 +258,10 @@
        the right margin on a 375 px phone */
     .hero .shell,.close .shell,.demo .shell{grid-template-columns:minmax(0,1fr)}
     .short{margin-inline:auto}
+    /* one column, the words first: under its clip, a card's words read as the heading of the next clip down */
+    .feat,.feat:nth-child(odd){grid-template-columns:minmax(0,1fr); gap:16px}
+    .feat .loop,.feat:nth-child(odd) .loop{order:2; justify-self:center}
+    .feat p{max-width:70ch}
     /* on a phone the form is the point, so it comes before the render rather than
        being pushed under a screen-filling image */
     .render{max-width:300px; margin-inline:auto}
@@ -284,27 +308,27 @@
 <section class="demo">
   <div class="shell">
     <div class="head">
-      <p class="tag">A real render <span class="on">&middot;</span> straight out of the app</p>
-      <h2>Bubble by bubble, each with its sound.</h2>
-      <p>A clip RENDER wrote, untouched: a chat typed into Textback, a GIF in its last bubble. It is transparent, so here it plays over the app's checkerboard. On your timeline, your footage shows through. Click it for the sound: every message brings its own.</p>
+      <p class="tag">The tour <span class="on">&middot;</span> under a minute</p>
+      <h2>See the whole app in action.</h2>
+      <p>The whole app in under a minute: pick a style, type the chat, paste in a GIF, press RENDER, and the clip is on the timeline. Captions are on, so it reads with the sound off. Click it for the sound.</p>
     </div>
     <figure class="short sound" id="demoBox">
       <video id="demo" src="demo.mp4" poster="demo.jpg" autoplay muted loop playsinline preload="metadata"
-             aria-label="A Textback clip: an iMessage conversation building up bubble by bubble, with typing dots and a read receipt. A friend asks how the texts were animated, and the chat ends on a GIF of a shocked monkey puppet with a laughing reaction"></video>
+             aria-label="Anthony&#x27;s 58-second tour of Textback, filmed on his screen and captioned: picking a style from the menu, typing a chat message by message, pasting a GIF of a puppet monkey into it, switching light to dark, turning on the message sounds, pressing RENDER and the clip landing on a Resolve timeline, adding reactions, pictures and more people, then the Discord and Terminal styles and the Textback card"></video>
       <button class="tag" type="button" id="soundBtn" aria-pressed="false">Sound off</button>
     </figure>
   </div>
 </section>
 <section class="stylerow">
   <div class="shell">
-    <p class="tag">The same chat <span class="on">&middot;</span> 6 of its 19 styles</p>
+    <p class="tag">One chat <span class="on">&middot;</span> 6 of its 19 styles</p>
     <ul class="tiles">
-      <li><figure><img src="styles/imessage.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s iMessage style"><figcaption>iMessage</figcaption></figure></li>
-      <li><figure><img src="styles/whatsapp.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s WhatsApp style"><figcaption>WhatsApp</figcaption></figure></li>
-      <li><figure><img src="styles/instagram.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Instagram style"><figcaption>Instagram</figcaption></figure></li>
-      <li><figure><img src="styles/discord.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Discord style"><figcaption>Discord</figcaption></figure></li>
-      <li><figure><img src="styles/snapchat.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Snapchat style"><figcaption>Snapchat</figcaption></figure></li>
-      <li><figure><img src="styles/notification.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Lock screen style"><figcaption>Lock screen</figcaption></figure></li>
+      <li><figure><img src="styles/imessage.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s iMessage style"><figcaption>iMessage</figcaption></figure></li>
+      <li><figure><img src="styles/whatsapp.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s WhatsApp style"><figcaption>WhatsApp</figcaption></figure></li>
+      <li><figure><img src="styles/instagram.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Instagram style"><figcaption>Instagram</figcaption></figure></li>
+      <li><figure><img src="styles/discord.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Discord style"><figcaption>Discord</figcaption></figure></li>
+      <li><figure><img src="styles/snapchat.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Snapchat style"><figcaption>Snapchat</figcaption></figure></li>
+      <li><figure><img src="styles/notification.jpg" width="320" height="400" loading="lazy" decoding="async" alt="One chat in Textback&#x27;s Lock screen style"><figcaption>Lock screen</figcaption></figure></li>
     </ul>
   </div>
 </section>
@@ -351,6 +375,7 @@
     </div>
   </div>
 </section>
+
 
 <section>
   <div class="shell">
@@ -452,6 +477,28 @@
     function flip(e) { e.preventDefault(); v.muted = !v.muted; if (v.paused) v.play(); show(); }
     box.addEventListener("click", flip);
     show();
+  })();
+
+  // The feature clips (Tellybox's script): each one loads only when it comes near the screen and plays only while it is
+  // on it, so the page costs a phone nothing it does not scroll to. With reduced motion asked for, the posters show
+  // and each clip gets controls.
+  (function () {
+    var vids = [].slice.call(document.querySelectorAll(".loop video[data-src]"));
+    if (!vids.length) return;
+    var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function load(v) { if (!v.src) { v.src = v.getAttribute("data-src"); } }
+    if (still || !("IntersectionObserver" in window)) {
+      vids.forEach(function (v) { load(v); v.preload = "none"; if (still) v.controls = true; else v.play && v.play(); });
+      return;
+    }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { load(v); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        else if (!v.paused) v.pause();
+      });
+    }, {rootMargin: "200px 0px", threshold: 0.15});
+    vids.forEach(function (v) { io.observe(v); });
   })();
 
   // Tags each signup with where the visitor came from, in Kit's "Source" custom field. Links carry

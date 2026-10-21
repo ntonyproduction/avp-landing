@@ -145,6 +145,18 @@
     border:1px solid var(--edge); border-radius:2px; padding:6px 10px; backdrop-filter:blur(6px); cursor:pointer}
   .short button:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
 
+  /* ---------------- the style row: the demo's chat in six styles (make_sample.js --styles), under the demo ----------
+     Three across, two on a phone; each tile its file's 4:5 at a fixed ratio, so nothing moves as they load */
+  .stylerow{padding-top:0; border-top:0}
+  .stylerow .tag{margin-bottom:16px}
+  .tiles{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:0; padding:0; list-style:none}
+  .tiles figure{margin:0}
+  .tiles img{display:block; width:100%; height:auto; aspect-ratio:4/5; border:1px solid var(--edge); border-radius:6px;
+    background:var(--panel)}
+  .tiles figcaption{margin-top:8px; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; font-weight:600;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--ink-dim)}
+  @media (max-width:560px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}}
+
   /* ---------------- three steps ---------------- */
   .steps{margin:0; padding:0; counter-reset:s; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
   .steps li{counter-increment:s; list-style:none; border:1px solid var(--edge); border-radius:4px; background:var(--panel);
@@ -281,6 +293,19 @@
              aria-label="A Textback clip: an iMessage conversation building up bubble by bubble, with typing dots and a read receipt. A friend asks how the texts were animated, and the chat ends on a GIF of a shocked monkey puppet with a laughing reaction"></video>
       <button class="tag" type="button" id="soundBtn" aria-pressed="false">Sound off</button>
     </figure>
+  </div>
+</section>
+<section class="stylerow">
+  <div class="shell">
+    <p class="tag">The same chat <span class="on">&middot;</span> 6 of its 19 styles</p>
+    <ul class="tiles">
+      <li><figure><img src="styles/imessage.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s iMessage style"><figcaption>iMessage</figcaption></figure></li>
+      <li><figure><img src="styles/whatsapp.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s WhatsApp style"><figcaption>WhatsApp</figcaption></figure></li>
+      <li><figure><img src="styles/instagram.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Instagram style"><figcaption>Instagram</figcaption></figure></li>
+      <li><figure><img src="styles/discord.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Discord style"><figcaption>Discord</figcaption></figure></li>
+      <li><figure><img src="styles/snapchat.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Snapchat style"><figcaption>Snapchat</figcaption></figure></li>
+      <li><figure><img src="styles/notification.jpg" width="320" height="400" loading="lazy" decoding="async" alt="The demo&#x27;s chat in Textback&#x27;s Lock screen style"><figcaption>Lock screen</figcaption></figure></li>
+    </ul>
   </div>
 </section>
 

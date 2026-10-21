@@ -90,6 +90,19 @@ def picture(name):
     return hero
 
 
+def tilted(name, width, left, top, transform):
+    """A close-up on a 3D plane: a transparent PNG of any size, laid out at `width` px from (left, top) in the picture
+    area, turned by a CSS `transform` under one perspective, cropped by the area and faded at its top and foot.
+    Textback ad 3's chat column (textback/marketing/covers/cover.js)."""
+    fade = "linear-gradient(to bottom,transparent 0,#000 10%,#000 86%,transparent 100%)"
+    def hero():
+        return (f'<div style="position:absolute;left:0;top:0;width:1080px;height:980px;overflow:hidden;'
+                f'perspective:1500px;perspective-origin:540px 300px;mask-image:{fade};-webkit-mask-image:{fade}">'
+                f'<img src="{(HERE / name).as_uri()}" style="position:absolute;left:{left}px;top:{top}px;'
+                f'width:{width}px;transform-origin:50% 40%;transform:{transform}" alt=""></div>')
+    return hero
+
+
 # --- the covers: one per posted ad --------------------------------------------------------------
 # slug = <tool>-ad<N>. The headline traces to the ad's own words (its on-screen title, its hook or
 # its voiceover), two or three lines, one phrase in <em> for the house blue. At 110px a line holds
@@ -141,6 +154,11 @@ COVERS = [
     # (textback/marketing/covers/cover.js), not ad 1's phone; the headline is its hook bubble, "how do you make texts
     # pop up like this?". Local until launch.
     dict(slug="textback-ad2", hero=picture("textback-ad2-art.png"), headline="Make texts<br><em>pop up</em><br>like this."),
+    # Textback ad 3 (the whole-app tour, 2026-10-21): a close-up of the ad's chat on a steep 3D plane, each bubble a
+    # different app (textback/marketing/covers/cover.js), Anthony's idea and pick (tilt C of three) over a grid of
+    # eight phones. The headline is its "19 styles in total".
+    dict(slug="textback-ad3", hero=tilted("textback-ad3-bubbles.png", 900, 70, -170, "rotateX(48deg) rotateZ(-26deg)"),
+         headline="19 chat<br>styles.<br><em>One app.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

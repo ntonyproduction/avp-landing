@@ -49,6 +49,17 @@ def phone():
     </div></div>"""
 
 
+def dropdown():
+    """Cropduster ad 6 (the preset montage). Cropduster's own Inspector menu, opened, in front of the phone:
+    every platform it draws, one picked, which is what the ad flicks through. The phone keeps ad 4's
+    green safe box so the two read as the same tool."""
+    names = ["TikTok", "Instagram", "YouTube", "LinkedIn", "Facebook", "X"]
+    items = "".join(f'<li class="{"on" if n == "Instagram" else ""}">{n}</li>' for n in names)
+    return f"""<div class="phone dim"><div class="screen"><div class="safe"></div></div></div>
+      <div class="insp"><div class="field"><span>PLATFORM</span><b>Instagram</b><i></i></div>
+      <ul>{items}</ul></div>"""
+
+
 def skateboard():
     """Shutterdrag. A skateboard caught the way a slow shutter catches it: sharp where it is now,
     smeared along the path it took to get there. Loose light trails were tried first and read as
@@ -159,10 +170,15 @@ COVERS = [
     # eight phones. The headline is its "19 styles in total".
     dict(slug="textback-ad3", hero=tilted("textback-ad3-bubbles.png", 900, 70, -170, "rotateX(48deg) rotateZ(-26deg)"),
          headline="19 chat<br>styles.<br><em>One app.</em>"),
+    # Cropduster ad 6 (the preset montage, 2026-10-25): the ad flicks through every platform with an Inspector-style
+    # Platform/View label, so the cover is that menu opened over ad 4's phone and its green safe box. Anthony picked it
+    # over two frames of the ad itself (Instagram and TikTok moments). The headline says the ad's one point.
+    dict(slug="cropduster-ad6", hero=dropdown, headline="Every app's<br><em>safe zone.</em><br>One effect."),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{{font-family:Montserrat;font-weight:900;src:url({fonts}/montserrat-900.woff2)}}
+@font-face{{font-family:PlexMono;font-weight:600;src:url({fonts}/ibmplexmono-600.woff2)}}
 html,body{{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0A0E12}}
 .cover{{position:relative;width:1080px;height:1920px;overflow:hidden;color:#EAEDF0;font-family:Montserrat,sans-serif;
   background:radial-gradient(1000px 820px at 540px 1260px,rgba(13,85,146,.62),rgba(13,85,146,.18) 55%,rgba(10,14,18,0) 80%),#0A0E12}}
@@ -197,6 +213,21 @@ h1 em{{font-style:normal;color:#62A3DA}}
 .meta b{{width:44px;height:44px;border-radius:50%;background:#8695A2}}
 .meta u{{width:150px;height:16px;border-radius:8px;background:#EAEDF0;opacity:.8}}
 .meta i{{flex-basis:100%;height:14px;border-radius:7px;background:#EAEDF0;opacity:.45}}
+
+.phone.dim{{left:640px;top:40px;transform:translateX(-50%) rotate(6deg);opacity:.9}}
+.insp{{position:absolute;left:96px;top:150px;width:640px;padding:22px 26px;box-sizing:border-box;border-radius:28px;
+  background:rgba(16,22,28,.96);border:2px solid #62A3DA;box-shadow:0 0 60px rgba(98,163,218,.35),0 40px 80px rgba(0,0,0,.6);
+  transform:rotate(-4deg)}}
+.field{{position:relative;display:flex;align-items:center;gap:24px;height:84px}}
+.field span{{font:600 26px/1 PlexMono,monospace;letter-spacing:.14em;color:#8695A2;width:150px}}
+.field b{{flex:1;height:84px;line-height:84px;padding-left:24px;border-radius:14px;background:#0A0E12;border:2px solid #62A3DA;
+  font-size:44px;font-weight:900;letter-spacing:-.01em}}
+.field i{{position:absolute;right:32px;top:26px;width:18px;height:18px;border-right:5px solid #62A3DA;border-bottom:5px solid #62A3DA;
+  transform:rotate(45deg)}}
+.insp ul{{position:absolute;left:200px;right:26px;top:122px;list-style:none;margin:0;padding:10px;border-radius:14px;
+  background:#0A0E12;border:2px solid #24303A;box-shadow:0 30px 60px rgba(0,0,0,.6)}}
+.insp li{{height:76px;line-height:76px;padding-left:22px;border-radius:10px;font-size:40px;font-weight:900;color:#8695A2}}
+.insp li.on{{background:rgba(98,163,218,.28);color:#EAEDF0;box-shadow:inset 0 0 0 2px #62A3DA}}
 </style></head><body><div class="cover">
 {full}<h1>{headline}</h1>
 <div class="hero">{hero}</div>

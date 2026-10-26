@@ -151,6 +151,9 @@ COVERS = [
     # Ad 3 (drag it on, 2026-10-17): its running dog boiled, with a pencil's tip on its outline (Anthony's call, in
     # place of the cursor first drawn there); the headline is the ad's one action.
     dict(slug="flipbook-ad3", hero=picture("flipbook-ad3-art.png"), headline="Hand-drawn<br>in <em>one drag.</em>"),
+    # Ad 4 (the editor's "line boil effect" ad, 2026-10-26): the Ed, Edd n Eddy picture it boils, from his phone footage
+    # of the Resolve viewer; the headline is its on-screen title, "Line boil effect".
+    dict(slug="flipbook-ad4", hero=picture("flipbook-ad4-art.png"), headline="Cartoon<br><em>line boil.</em><br>Free."),
     # Shutterdrag ad 5 (drag it on, full screen, 2026-10-18): its neon dancers, frame 200 of the real Resolve render, sharp
     # with fans of light where their arms swept (shutterdrag/marketing/ad-fullscreen/cover_art.py); the headline is the
     # ad's one action, as Flipbook ad 3's.

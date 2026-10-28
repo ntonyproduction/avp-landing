@@ -60,6 +60,23 @@ def dropdown():
       <ul>{items}</ul></div>"""
 
 
+def covered():
+    """Cropduster ad 7 (the talking-head explainer, "ruining"). The same phone, its caption sitting where
+    it should not: run under the button rail, which now has a dark backing so it visibly sits on top,
+    and the safe box dashed beside it, showing where the text belonged."""
+    icon = 'fill="none" stroke="#EAEDF0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"'
+    return f"""<div class="phone"><div class="screen">
+      <div class="safe ghost"></div>
+      <span class="bad">YOUR TEXT<br>GETS CUT</span>
+      <svg class="rail over" viewBox="0 0 40 260" {icon}>
+        <path d="M20 33s-13-8-13-17a7 7 0 0 1 13-4 7 7 0 0 1 13 4c0 9-13 17-13 17z"/>
+        <path d="M8 82a12 12 0 1 1 5 9l-6 2 1-6z"/>
+        <path d="M34 140 6 152l11 4 4 11z"/><path d="m17 156 6-6"/>
+        <circle cx="20" cy="210" r="2"/><circle cx="20" cy="220" r="2"/><circle cx="20" cy="230" r="2"/></svg>
+      <div class="meta over"><b></b><u></u><i style="max-width:210px"></i><i style="max-width:150px"></i></div>
+    </div></div>"""
+
+
 def skateboard():
     """Shutterdrag. A skateboard caught the way a slow shutter catches it: sharp where it is now,
     smeared along the path it took to get there. Loose light trails were tried first and read as
@@ -177,6 +194,10 @@ COVERS = [
     # Platform/View label, so the cover is that menu opened over ad 4's phone and its green safe box. Anthony picked it
     # over two frames of the ad itself (Instagram and TikTok moments). The headline says the ad's one point.
     dict(slug="cropduster-ad6", hero=dropdown, headline="Every app's<br><em>safe zone.</em><br>One effect."),
+    # Cropduster ad 7 (the editor's talking-head explainer, Ad Production Cropduster2, 2026-10-28): its "ruining" hook,
+    # a caption run under the buttons. Anthony picked it (A) over three phones with their own boxes and the ad's FREE
+    # card with the Premiere Pro / DaVinci Resolve pills.
+    dict(slug="cropduster-ad7", hero=covered, headline="Is the app<br><em>covering</em><br>your text?"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>
@@ -221,6 +242,11 @@ h1 em{{font-style:normal;color:#62A3DA}}
 .insp{{position:absolute;left:96px;top:150px;width:640px;padding:22px 26px;box-sizing:border-box;border-radius:28px;
   background:rgba(16,22,28,.96);border:2px solid #62A3DA;box-shadow:0 0 60px rgba(98,163,218,.35),0 40px 80px rgba(0,0,0,.6);
   transform:rotate(-4deg)}}
+.safe.ghost{{border-style:dashed;opacity:.9}}
+.bad{{position:absolute;left:70px;top:560px;font-weight:900;font-size:78px;line-height:1;letter-spacing:-.02em;color:#fff;white-space:nowrap}}
+.rail.over{{z-index:2;right:10px;width:70px;height:440px;bottom:150px;padding:14px 8px;border-radius:40px;background:rgba(5,8,11,.88);
+  box-shadow:-20px 0 30px rgba(5,8,11,.7)}}
+.meta.over{{z-index:2;background:linear-gradient(transparent,rgba(5,8,11,.85) 30%);padding-top:20px}}
 .field{{position:relative;display:flex;align-items:center;gap:24px;height:84px}}
 .field span{{font:600 26px/1 PlexMono,monospace;letter-spacing:.14em;color:#8695A2;width:150px}}
 .field b{{flex:1;height:84px;line-height:84px;padding-left:24px;border-radius:14px;background:#0A0E12;border:2px solid #62A3DA;

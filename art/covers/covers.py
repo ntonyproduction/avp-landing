@@ -198,6 +198,9 @@ COVERS = [
     # a caption run under the buttons. Anthony picked it (A) over three phones with their own boxes and the ad's FREE
     # card with the Premiere Pro / DaVinci Resolve pills.
     dict(slug="cropduster-ad7", hero=covered, headline="Is the app<br><em>covering</em><br>your text?"),
+    # Tellybox ad 2 (B-roll voiceover, 2026-11-01): the card's TV with its edges faded into the ground, and the ad's own
+    # "filmed off a real screen".
+    dict(slug="tellybox-ad2", hero=picture("tellybox-ad2-art.png"), headline="Looks <em>filmed</em><br>off a real<br>screen."),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

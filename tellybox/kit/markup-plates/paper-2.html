@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#2b2e31;font-family:"Segoe UI",Arial,sans-serif}
+.bar{position:relative;z-index:2;height:56px;background:#3c4043;color:#e8eaed;display:flex;align-items:center;gap:28px;padding:0 28px;font-size:17px;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.bar .file{flex:1}.bar .pg{opacity:.85}.bar .zoom{opacity:.85}
+.page{position:absolute;left:300px;width:1320px;background:#fff;color:#111;box-shadow:0 2px 14px rgba(0,0,0,.5);
+  font-family:"Cambria","Times New Roman",serif}
+</style></head><body><div class="bar"><span>&#9776;</span><span class="file">okafor-brandt-ito-2026-compact-context.pdf</span>
+<span class="pg">9 / 14</span><span class="zoom">&minus; &nbsp; 125% &nbsp; +</span><span>&#8681;</span><span>&#9113;</span></div>
+<div class="page" style="top:-40px;height:1200px;padding:150px 100px 0;box-sizing:border-box;font-size:22px">
+<p style="margin:0 0 10px;font-size:21px;line-height:1.6;color:#222">compares every model at its best window. The 3B model with a 32k window leads on accuracy, and the
+baseline trails on every measure.</p>
+<p style="margin:28px 0 12px;font-size:21px"><b>Table 2.</b> Results on the multi-step benchmark (41,000 problems).</p>
+<table style="border-collapse:collapse;width:1120px;font-size:24px">
+ <thead><tr style="border-top:2px solid #111;border-bottom:1px solid #111">
+  <th style="text-align:left;padding:12px 10px;width:330px">Model</th><th style="text-align:right;padding:12px 10px">Parameters</th>
+  <th style="text-align:right;padding:12px 10px">Context</th><th style="text-align:right;padding:12px 10px">Accuracy</th><th style="text-align:right;padding:12px 10px">Latency*</th></tr></thead>
+ <tbody>
+  <tr><td style="padding:14px 10px" data-mark="cross">Baseline</td><td style="text-align:right;padding:14px 10px">7B</td><td style="text-align:right;padding:14px 10px">4k</td><td style="text-align:right;padding:14px 10px">63.0%</td><td style="text-align:right;padding:14px 10px">410 ms</td></tr>
+  <tr><td style="padding:14px 10px">Compact-1B</td><td style="text-align:right;padding:14px 10px">1B</td><td style="text-align:right;padding:14px 10px">32k</td><td style="text-align:right;padding:14px 10px">71.4%</td><td style="text-align:right;padding:14px 10px">95 ms</td></tr>
+  <tr data-mark="row"><td style="padding:14px 10px;font-weight:700" data-mark="tick">Compact-3B</td><td style="text-align:right;padding:14px 10px">3B</td><td style="text-align:right;padding:14px 10px">32k</td><td style="text-align:right;padding:14px 10px;font-weight:700"><span data-mark="num">84.7%</span></td><td style="text-align:right;padding:14px 10px">180 ms</td></tr>
+  <tr style="border-bottom:2px solid #111"><td style="padding:14px 10px">Compact-3B</td><td style="text-align:right;padding:14px 10px">3B</td><td style="text-align:right;padding:14px 10px">128k</td><td style="text-align:right;padding:14px 10px">84.1%</td><td style="text-align:right;padding:14px 10px"><span data-mark="slow">1,240 ms</span></td></tr>
+ </tbody></table>
+<p style="margin:12px 0 0;font-size:18px;color:#444"><span data-mark="foot">* Latency per problem on one GPU, median of five runs.</span></p>
+<div style="display:grid;grid-template-columns:520px 1fr;gap:60px;margin-top:34px;align-items:start">
+ <div data-mark="bars" style="width:520px;height:250px">
+ <svg width="520" height="250" viewBox="0 0 520 250" style="font-family:'Segoe UI',Arial,sans-serif">
+  <line x1="50" y1="210" x2="510" y2="210" stroke="#222" stroke-width="1.5"/>
+  <g fill="#9bb7e0"><rect x="80" y="182" width="70" height="28"/><rect x="190" y="204" width="70" height="6"/><rect x="300" y="196" width="70" height="14"/></g>
+  <rect x="410" y="22" width="70" height="188" fill="#1f5fbf"/>
+  <g font-size="14" fill="#333" text-anchor="middle"><text x="115" y="232">Baseline</text><text x="225" y="232">1B, 32k</text><text x="335" y="232">3B, 32k</text><text x="445" y="232">3B, 128k</text></g>
+  <g font-size="13" fill="#333" text-anchor="middle"><text x="115" y="174">410</text><text x="225" y="196">95</text><text x="335" y="188">180</text><text x="445" y="14">1,240 ms</text></g>
+ </svg></div>
+ <div style="font-size:21px;line-height:1.6;color:#222"><p style="margin:0 0 10px"><b>Figure 3.</b> Latency per problem.</p>
+ <p style="margin:0">The 128k window costs nearly seven times the latency of 32k for no gain in accuracy, which is why we
+ recommend 32k as the default for compact models.</p></div>
+</div>
+</div></body></html>

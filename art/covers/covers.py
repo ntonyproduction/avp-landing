@@ -201,6 +201,9 @@ COVERS = [
     # Tellybox ad 2 (B-roll voiceover, 2026-11-01): the card's TV with its edges faded into the ground, and the ad's own
     # "filmed off a real screen".
     dict(slug="tellybox-ad2", hero=picture("tellybox-ad2-art.png"), headline="Looks <em>filmed</em><br>off a real<br>screen."),
+    # Tellybox ad 3 (the no-voice retro logo split screen, 2026-11-02): the ad's palm logo through Tellybox itself
+    # (tellybox/marketing/ad3/cover_art.py); the headline is its caption's "turn any graphic into a real CRT screen".
+    dict(slug="tellybox-ad3", hero=picture("tellybox-ad3-art.png"), headline="Any graphic,<br>on a real<br><em>CRT.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

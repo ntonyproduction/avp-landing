@@ -196,6 +196,20 @@
   .reel-ph{display:grid; place-items:center; aspect-ratio:16/9; margin:0 0 26px; border:1px dashed var(--ink-faint);
     border-radius:6px; background:var(--panel); color:var(--ink-faint); text-align:center; padding:20px}
   .uses{margin-top:6px}
+  /* the walkthrough (2026-11-02): its first seconds loop silently; the button swaps in YouTube's player, with sound */
+  .demo{cursor:pointer}
+  .demo iframe{display:block; width:100%; height:100%; border:0}
+  .demo-play{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; align-items:center;
+    gap:12px; padding:12px 20px 12px 14px; border:0; border-radius:999px; background:rgba(10,10,10,.72); color:#fff;
+    font:inherit; font-weight:600; white-space:nowrap; cursor:pointer; backdrop-filter:blur(6px);
+    transition:background .2s, transform .2s}
+  @media (max-width:560px){ .demo-play{gap:8px; padding:8px 14px 8px 8px; font-size:.9rem} .demo-play .on{display:none}
+    .demo-icon{width:28px; height:28px} .demo-icon::after{left:11px; top:8px; border-left-width:10px; border-top-width:6px; border-bottom-width:6px} }
+  .demo:hover .demo-play,.demo-play:focus-visible{background:#e00; transform:translate(-50%,-50%) scale(1.04)}
+  .demo-play .on{opacity:.7; font-weight:400; margin-left:4px}
+  .demo-icon{width:34px; height:34px; border-radius:50%; background:#fff; position:relative; flex:none}
+  .demo-icon::after{content:""; position:absolute; left:13px; top:10px; border-left:12px solid #111;
+    border-top:7px solid transparent; border-bottom:7px solid transparent}
 
   /* ---------------- features: one short loop per part of the look ---------------- */
   /* Rows of a picture and two lines, alternating sides, as ProductionCrate's Perfect Screen page (Anthony, 2026-10-15).
@@ -426,11 +440,11 @@
         <p>Tellybox gives you that shot from the recording itself, with the camera exactly where you want it.</p>
       </div>
     </div>
-    <figure class="loop reel"><video data-src="clips/highlights.mp4?v=1792269527" poster="clips/highlights.jpg?v=1792269527" muted loop playsinline preload="none" aria-label="Tellybox on a market ticker, a chart, a mixer, an explainer page and a map, with the sliders that change each shot"></video></figure>
+    <figure class="loop reel demo" data-youtube="Nd1vId93wIE"><video data-src="clips/walkthrough-intro.mp4?v=1793654070" poster="clips/walkthrough-intro.jpg?v=1793654070" muted loop playsinline preload="none" aria-hidden="true"></video><button type="button" class="demo-play" aria-label="Play the walkthrough with sound, 9 minutes, on YouTube"><span class="demo-icon" aria-hidden="true"></span><span>Watch with sound <span class="on">9 min</span></span></button></figure>
     <dl class="controls uses">
       <div><dt>Any recording with words</dt><dd>Finance, music software, a web page: if the text is the point, Tellybox puts a camera on it.</dd></div>
       <div><dt>Switch the screen</dt><dd>LCD, CRT or a phone's OLED from one menu, and a preset to start a look from.</dd></div>
-      <div><dt>Move one slider, change the shot</dt><dd>Tilt, Lens Bulge, RGB Split, Moire: the video cuts to each slider as it moves.</dd></div>
+      <div><dt>Move one slider, change the shot</dt><dd>Tilt, Lens Bulge, RGB Split, Moire: each one changes the shot as you move it.</dd></div>
     </dl>
   </div>
 </section>
@@ -587,6 +601,23 @@
       });
     }, {rootMargin: "200px 0px", threshold: 0.15});
     vids.forEach(function (v) { io.observe(v); });
+  })();
+
+  // The walkthrough: a click anywhere on the silent loop puts YouTube's player in its place, from the start, with sound.
+  (function () {
+    var fig = document.querySelector(".demo[data-youtube]");
+    if (!fig) return;
+    fig.addEventListener("click", function () {
+      if (fig.querySelector("iframe")) return;
+      var f = document.createElement("iframe");
+      f.src = "https://www.youtube-nocookie.com/embed/" + fig.getAttribute("data-youtube") + "?autoplay=1&start=0&rel=0&playsinline=1";
+      f.title = "Tellybox walkthrough";
+      f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      f.allowFullscreen = true;
+      fig.innerHTML = "";
+      fig.appendChild(f);
+      fig.style.cursor = "auto";
+    });
   })();
 
   // The kit's tabs: one panel open at a time; arrow keys move between tabs, as screen readers expect of a tab list.

@@ -204,8 +204,9 @@ COVERS = [
     # Tellybox ad 3 (the no-voice retro logo split screen, 2026-11-02): the ad's palm logo through Tellybox itself
     # (tellybox/marketing/ad3/cover_art.py); the headline is its caption's "turn any graphic into a real CRT screen".
     dict(slug="tellybox-ad3", hero=picture("tellybox-ad3-art.png"), headline="Any graphic,<br>on a real<br><em>CRT.</em>"),
-    # Tellybox ad 1 (his on-camera CRT how-to, 2026-10-31): the Field Guide test page through Tellybox itself (CRT, Pixel Size 3,
-    # Zoom 1.9, a tilt and Lens Bulge 0.3, edges faded into the ground); the headline is the ad's own hook.
+    # Tellybox ad 1 (his on-camera CRT how-to, 2026-10-31): a frame of the ad's own finished CRT shot, the Olympic page lines,
+    # cropped and faded into the ground. The one cover made from an ad frame, Anthony's pick on 2026-11-03 after four drawn ones:
+    # the frame he chose has no caption and no face, which is what the rule guards. The headline is the ad's own hook.
     dict(slug="tellybox-ad1", hero=picture("tellybox-ad1-art.png"), headline="How to make<br>this <em>CRT</em><br>effect."),
 ]
 

@@ -117,6 +117,26 @@ left, and put `--dry-run` in front of any real post. Every command re-reads the 
 token and **refuses if it is not `audiovisionproductions`**, because this browser profile is signed
 into a personal account too and a post cannot be moved between accounts afterwards.
 
+**Setting it up on a machine (done on this PC 2026-11-03).** The store is
+`%USERPROFILE%\.avp\instagram\credentials.json`, outside every repo, and holds a Page token that
+does not expire. To rebuild it:
+
+1. The Meta app is **AVP Publishing** (developers.facebook.com/apps, under Anthony's own Facebook
+   profile; Development mode is enough). Its App ID and secret are on App settings › Basic; the
+   secret is 32 hex characters and shows only after **Show**.
+2. In the Graph API Explorer, with Meta App = AVP Publishing and User Token, add `pages_show_list`,
+   `instagram_basic`, `instagram_content_publish`, `pages_read_engagement` and `business_management`,
+   then Generate Access Token. In the dialog: current Pages only, tick **Audio Vision Productions**
+   (318088761388460); current Businesses only, tick **Anthony Gagnon** (the portfolio named after
+   him, not Tonydidit). No Instagram screen appears: the account comes through the Page.
+3. Run `auth` in **PowerShell**, not Command Prompt, with the values read at prompts so the secret
+   stays out of the shell history and out of any chat:
+   `$t = Read-Host 'token'; $i = Read-Host 'app id'; $s = Read-Host 'app secret'; py -3 -u "<repo>\scripts\avp_instagram.py" auth --token $t --app-id $i --app-secret $s`.
+   The Explorer token lasts about an hour. "Error validating client secret" means the ID was
+   accepted and the secret was not (the masked dots, or the other app's secret).
+4. `whoami` should print `@audiovisionproductions`, `token: never expires` and the 24-hour quota.
+   If `auth` finds no Page, `doctor --token ... --app-id ... --app-secret ...` shows what the token sees.
+
 **That refusal is the whole reason to prefer the script**, and ad 3 (2026-09-21) proved it the hard
 way. The credential store was missing, restoring it needed a Meta app secret that was not to hand,
 so the reel went up through instagram.com instead. The browser has no such guard, and that profile
@@ -168,7 +188,7 @@ publishing the script reads the reel's `thumbnail_url` back to show which cover 
 failed read only says so; the reel is already live). The cover stays in the
 repo, like any posted image. Release assets were not used for it because they come back as
 `application/octet-stream`, still unproven even for video (below). Added 2026-09-27 and tested with
-dry runs and simulated runs only: this PC has no Instagram credentials, so the first real post with
+dry runs and simulated runs only: until 2026-11-03 this PC had no Instagram credentials, so the first real post with
 `--cover` is also its first live test. Read the `thumbnail_url` line that time.
 
 **`ig-staging` is scratch space, not a release.** Do not delete the tag and do not write release

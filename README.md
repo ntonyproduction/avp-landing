@@ -127,6 +127,14 @@ in Studio, on tiktok.com, or under Studio > Settings, so reaching the right acco
 out and log in. Posting by browser is a fallback, not an equivalent: check the account on screen
 before staging and again immediately before the publish click.
 
+**How a browser post gets the file in (Tellybox ad 1, 2026-11-03).** The Chrome extension's upload
+takes at most 10 MB per call, and instagram.com's content policy blocks fetching from a local server.
+What worked on both instagram.com and TikTok Studio: re-encode the cut to about 60 MB (`-crf 17`,
+audio copied, kept in `AVP Tools\<Tool>\Ads\` as `... (upload).mp4`), split it into 9 MB parts, add a
+hidden `<input type=file>` to the page, upload the parts into it one call at a time, then join them in
+the page (`new File(parts, name)`) and set that file on the site's own input through a `DataTransfer`.
+Paste captions with a synthetic paste event and read them back; typing drops characters.
+
 **Images and carousels** stage into `art/ig/<slug>/`, get committed and pushed, and are served from
 `raw.githubusercontent.com`. They are small and they stay in the repo. How the staging behaves, since
 2026-09-27 (`commit_folder` in the script, shared by `post` and `post-reel --cover`):

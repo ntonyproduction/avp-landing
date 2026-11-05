@@ -65,6 +65,14 @@ Real Canadian and French domains (`hotmail.ca`, `videotron.ca`, `orange.fr`) are
 are never touched. The tag is the last line of each tool's `web/landing.template.html`, so a rebuild keeps
 it; a new tool's template copies it.
 
+
+**Which editor: every thank-you page loads `/editor.js`** (added 2026-11-04). `email-check.js` keeps the
+address that was sent in sessionStorage (`avp_email`); on the thank-you page `editor.js` shows "Which
+editor are you on?" with five buttons and posts the pick to the time-tracker (`/api/kit/editor`), which
+fills Kit's Editor field only when it is blank. No stored address (an update link, another tab): no box.
+The tag is the last line of each tool's `web/thanks.template.html`, so a new tool's template copies it.
+`/editor/` is where the same question's links in welcome email 1 land.
+
 **The thank-you page carries the download itself.** Delivery used to depend entirely on Kit's
 confirmation email, so anyone whose email landed in spam, or who simply never clicked, gave up their
 address and got nothing. The thank-you page now shows a **Download <Tool>** button pointing at the

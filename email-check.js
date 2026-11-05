@@ -63,6 +63,11 @@
     return b;
   }
 
+  /* The address that was sent, for the thank-you page's editor question (editor.js). */
+  function remember(email) {
+    try { sessionStorage.setItem("avp_email", email.trim()); sessionStorage.removeItem("avp_editor_asked"); } catch (e) {}
+  }
+
   var forms = document.querySelectorAll('form[action*="app.kit.com/forms/"]');
   for (var f = 0; f < forms.length; f++) (function (form) {
     var input = form.querySelector('input[name="email_address"]');
@@ -72,6 +77,7 @@
     input.addEventListener("input", clear);
     form.addEventListener("submit", function (e) {
       var typed = input.value.trim(), fix = suggest(typed);
+      remember(typed);
       if (!fix || typed === accepted) return;
       e.preventDefault();
       clear();
@@ -85,7 +91,7 @@
       hint.appendChild(document.createTextNode("? Or "));
       hint.appendChild(no);
       hint.appendChild(document.createTextNode("."));
-      yes.addEventListener("click", function () { input.value = fix; clear(); form.submit(); });
+      yes.addEventListener("click", function () { input.value = fix; remember(fix); clear(); form.submit(); });
       no.addEventListener("click", function () { accepted = typed; clear(); form.submit(); });
       form.parentNode.insertBefore(hint, form.nextSibling);
     });

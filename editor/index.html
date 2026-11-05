@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thanks, noted</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;900&family=IBM+Plex+Mono:wght@600&display=swap">
+<!-- Where a welcome email's "Which editor are you on?" link lands, after the time-tracker saved the
+     answer into Kit (time-tracker README, "Editor Field"). ?e= is the editor they tapped. -->
+<style>
+  :root{--ground:#0A0E12; --brand:#62A3DA; --ink:#EAEDF0; --ink-dim:#9DA9B4; --ink-faint:#70818F}
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--ground); color:var(--ink); font-family:Montserrat,system-ui,sans-serif;
+       font-size:17px; line-height:1.6; min-height:100vh; display:grid; place-items:center; padding:24px 16px}
+  main{max-width:520px}
+  .tag{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; font-weight:600; letter-spacing:.14em;
+       text-transform:uppercase; color:var(--ink-faint); margin:0}
+  h1{font-weight:900; font-size:clamp(2rem,1.4rem + 2.4vw,2.8rem); line-height:1.05; letter-spacing:-.02em; margin:12px 0 14px}
+  p{color:var(--ink-dim); margin:0 0 12px}
+  a{color:var(--brand)}
+</style>
+</head>
+<body>
+<main>
+  <p class="tag">Audio Vision Productions</p>
+  <h1>Thanks, noted.</h1>
+  <p id="line">That helps me send you the right things.</p>
+  <p><a href="https://audiovisionproductions.ca/">See all the tools</a></p>
+</main>
+<script>
+  (function () {
+    var names = {"resolve": "Resolve", "premiere": "Premiere", "final cut": "Final Cut", "capcut": "CapCut", "after effects": "After Effects"};
+    var e = new URLSearchParams(location.search).get("e");
+    if (names[e]) document.getElementById("line").textContent = "You're on " + names[e] + ". That helps me send you the right things.";
+  })();
+</script>
+</body>
+</html>

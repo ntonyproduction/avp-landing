@@ -241,6 +241,9 @@
   }
   .seq span{position:absolute; left:10px; top:10px; background:rgba(13,16,20,.82); border:1px solid var(--edge);
     border-radius:2px; padding:4px 8px; margin:0}
+  /* the screens as a still since 2026-11-05: LCD, CRT and Phone side by side, 4 px apart, a label on each third */
+  .loop.trio span:nth-of-type(2){left:calc((100% + 4px) / 3 + 10px)}
+  .loop.trio span:nth-of-type(3){left:calc((100% + 4px) * 2 / 3 + 10px)}
   /* the phone: a vertical clip, kept to a phone's width so the row stays a row */
   .loop.tall{aspect-ratio:9/16; width:min(340px,100%); justify-self:center}
 
@@ -459,7 +462,7 @@
       <p>A few seconds each, rendered by Tellybox in DaVinci Resolve: the effect's own output, nothing added after.</p>
     </div>
     <div class="feats">
-      <article class="feat full"><figure class="loop seq" data-cuts="0.0000:Original,1.2917:LCD,2.6250:CRT,3.9583:Phone"><video data-src="clips/screens.mp4?v=1793556450" poster="clips/screens.jpg?v=1793556450" muted loop playsinline preload="none" aria-label="Three screens, three kinds of pixel."></video><span class="tag">Original</span></figure><div><p class="tag">Screen</p><h3>Three screens, three kinds of pixel.</h3><p>LCD for a laptop or monitor, CRT for an old TV, Phone for an OLED's tiny dots. The same clip on each, after the original.</p></div></article>
+      <article class="feat full"><figure class="loop seq trio"><img src="clips/screens-split.jpg?v=1793910130" width="728" height="410" loading="lazy" decoding="async" alt="The LCD, CRT and Phone screens up close, side by side"><span class="tag">LCD</span><span class="tag">CRT</span><span class="tag">Phone</span></figure><div><p class="tag">Screen</p><h3>Three screens, three kinds of pixel.</h3><p>LCD for a laptop or monitor, CRT for an old TV, Phone for an OLED's tiny dots. The same recording on each, up close.</p></div></article>
       <article class="feat"><figure class="loop tall"><video data-src="clips/phone.mp4?v=1792202148" poster="clips/phone.jpg?v=1792202164" muted loop playsinline preload="none" aria-label="Vertical recordings, on a phone."></video></figure><div><p class="tag">Phone, Push In, Drift</p><h3>Vertical recordings, on a phone.</h3><p>Set the screen to Phone and a vertical recording looks like a phone filmed up close. Tilt it, set Push In and Drift, and the camera moves on its own. On a 16:9 timeline, Recording Shape keeps the bars off the screen.</p></div></article>
       <article class="feat"><figure class="loop"><video data-src="clips/bulge.mp4?v=1792200011" poster="clips/bulge.jpg?v=1792200061" muted loop playsinline preload="none" aria-label="Curve the glass."></video></figure><div><p class="tag">Lens Bulge</p><h3>Curve the glass.</h3><p>Lens Bulge rounds the screen out like an old TV's, or pulls it the other way. Here with Vignette and Chromatic Aberration darkening and fringing the edges.</p></div></article>
       <article class="feat"><figure class="loop"><video data-src="clips/flicker.mp4?v=1793468868" poster="clips/flicker.jpg?v=1793468868" muted loop playsinline preload="none" aria-label="An old TV's flicker, up to a full glitch."></video></figure><div><p class="tag">Flicker, Flicker Speed</p><h3>An old TV's flicker, up to a full glitch.</h3><p>Flicker makes the screen's brightness waver. Flicker Speed runs from a slow breathing to a random glitch at the top. Flicker Glow Only holds the picture steady and pulses just the glow.</p></div></article>

@@ -306,6 +306,15 @@
     .render{max-width:300px; margin-inline:auto}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+/* Testimonials (2026-11-08) */
+.quotes{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.quote{margin:0;padding:26px 26px 22px;background:var(--panel);border:1px solid var(--edge);border-radius:14px;display:flex;flex-direction:column;gap:18px}
+.quote blockquote{margin:0;font-size:var(--step);line-height:1.45;color:var(--ink)}
+.quote blockquote::before{content:"“";display:block;font:700 3em/1 Georgia,"Times New Roman",serif;height:.55em;margin-bottom:6px;color:var(--brand)}
+.quote .tr{display:block;margin-top:10px;font-size:.78em;color:var(--ink-dim)}
+.quote figcaption{margin-top:auto;font-size:.92rem;color:var(--ink-dim)}
+.quote figcaption b{color:var(--ink);font-weight:600}
+.quotes.one{grid-template-columns:minmax(0,640px)}
 </style>
 
 
@@ -473,6 +482,16 @@
       <div><dt class="tag">Install</dt><dd>Windows + Mac<small>A signed installer for Windows and a notarized app for Apple silicon Macs</small></dd></div>
       <div><dt class="tag">Price</dt><dd>Free<small>And it stays free</small></dd></div>
     </dl>
+  </div>
+</section>
+
+<section class="said">
+  <div class="shell">
+    <div class="head">
+      <p class="tag">From people using it</p>
+      <h2>What editors say.</h2>
+    </div>
+    <div class="quotes "><figure class="quote"><blockquote>It definitely makes this type of effect soooo much easier to do and I love it for that!</blockquote><figcaption><b>David P.</b>, Resolve editor</figcaption></figure><figure class="quote"><blockquote>Love your tool. Super useful and time-saving!</blockquote><figcaption><b>Ben K</b></figcaption></figure><figure class="quote"><blockquote>It's such a time saver, and the options are great ! Everything is really well thought out</blockquote><figcaption><b>Matthews</b>, Resolve editor</figcaption></figure></div>
   </div>
 </section>
 

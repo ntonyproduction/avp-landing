@@ -124,6 +124,28 @@
   .price .ends{margin-left:8px; color:var(--ink-faint); font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
   .price .ends[hidden]{display:none}
 
+  /* editor filter ----------------------------------------------------------- */
+  /* Some tools are Resolve only, so a Premiere or CapCut editor picks theirs and sees only what
+     installs for them (Anthony, 2026-11-07). The script reads each card's editor icons, so a new
+     card needs nothing extra. A companion app shows all four icons and so stays under every editor.
+     ?editor=premiere (resolve, premiere, finalcut, capcut) opens the page already filtered. */
+  .filter{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 20px}
+  .filter .label{
+    font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--ink-faint); margin-right:4px;
+  }
+  .filter button{
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+    font:600 .88rem/1 Montserrat,system-ui,sans-serif; color:var(--ink-dim);
+    background:var(--panel); border:1px solid var(--edge); border-radius:4px; padding:8px 12px;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .filter button img{width:18px; height:18px; object-fit:contain}
+  .filter button:hover{border-color:var(--brand-dim); color:var(--ink)}
+  .filter button[aria-pressed="true"]{border-color:var(--brand); color:var(--ink); background:var(--panel-2)}
+  .filter .n{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint)}
+  .card[hidden]{display:none}
+
   /* footer ------------------------------------------------------------------ */
   footer{border-top:1px solid var(--edge); padding-block:30px 40px; color:var(--ink-faint); font-size:.88rem}
   footer .shell{display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center; justify-content:space-between}
@@ -202,6 +224,14 @@
   </section>
 
   <div class="shell">
+    <div class="filter" role="group" aria-label="Show tools for one editor">
+      <span class="label">Works in</span>
+      <button type="button" data-editor="" aria-pressed="true">All <span class="n"></span></button>
+      <button type="button" data-editor="DaVinci Resolve" data-key="resolve" aria-pressed="false"><img src="art/resolve.png" alt="" width="18" height="18">Resolve <span class="n"></span></button>
+      <button type="button" data-editor="Premiere Pro" data-key="premiere" aria-pressed="false"><img src="art/premiere.svg" alt="" width="18" height="18">Premiere <span class="n"></span></button>
+      <button type="button" data-editor="Final Cut Pro" data-key="finalcut" aria-pressed="false"><img src="art/finalcut.png" alt="" width="18" height="18">Final Cut <span class="n"></span></button>
+      <button type="button" data-editor="CapCut" data-key="capcut" aria-pressed="false"><img src="art/capcut.png" alt="" width="18" height="18">CapCut <span class="n"></span></button>
+    </div>
     <section class="grid">
 
       <a class="card live new" href="tellybox/" data-keep-source>
@@ -347,6 +377,42 @@
       if (!href || /^(https?:|mailto:|#)/.test(href)) continue;
       links[i].setAttribute("href", href + (href.indexOf("?") < 0 ? "?" : "&") + "from=" + encodeURIComponent(tag));
     }
+  })();
+</script>
+
+<script>
+  // Editor filter: a card stays when one of its .for icons has the button's editor as its alt.
+  (function () {
+    var buttons = document.querySelectorAll(".filter button");
+    var cards = document.querySelectorAll(".grid .card");
+    function editors(card) {
+      var out = [], imgs = card.querySelectorAll(".for img");
+      for (var i = 0; i < imgs.length; i++) out.push(imgs[i].getAttribute("alt"));
+      return out;
+    }
+    function pick(btn, keepUrl) {
+      var want = btn.getAttribute("data-editor");
+      for (var i = 0; i < buttons.length; i++) buttons[i].setAttribute("aria-pressed", buttons[i] === btn ? "true" : "false");
+      for (var j = 0; j < cards.length; j++) cards[j].hidden = !!want && editors(cards[j]).indexOf(want) < 0;
+      if (keepUrl) return;
+      try {
+        var q = new URLSearchParams(location.search), key = btn.getAttribute("data-key");
+        if (key) q.set("editor", key); else q.delete("editor");
+        var s = q.toString();
+        history.replaceState(null, "", location.pathname + (s ? "?" + s : "") + location.hash);
+      } catch (e) {}
+    }
+    var start = buttons[0];
+    var asked = "";
+    try { asked = (new URLSearchParams(location.search).get("editor") || "").toLowerCase(); } catch (e) {}
+    for (var i = 0; i < buttons.length; i++) {
+      var b = buttons[i], want = b.getAttribute("data-editor"), n = 0;
+      for (var j = 0; j < cards.length; j++) if (!want || editors(cards[j]).indexOf(want) >= 0) n++;
+      b.querySelector(".n").textContent = n;
+      if (asked && b.getAttribute("data-key") === asked) start = b;
+      b.addEventListener("click", function () { pick(this); });
+    }
+    if (start !== buttons[0]) pick(start, true);
   })();
 </script>
 

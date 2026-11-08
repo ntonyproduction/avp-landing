@@ -89,6 +89,19 @@
     background:var(--brand); color:var(--ground); border-radius:2px; padding:7px 10px 6px;
     box-shadow:0 2px 10px rgba(0,0,0,.45);
   }
+  /* The free tool with the most signups (Anthony, 2026-11-08): the `top` class, on one card only. Signups are Kit's
+     confirmed subscribers per tool tag, and scripts/check_versions.py fails when another free tool passes it, so the
+     label cannot outlive the fact. Outlined, so the filled New stays the louder of the two; on a card that is both, it
+     sits under New. */
+  .card.top .shot{position:relative}
+  .card.top .shot::after{
+    content:"\2605\00a0 Most downloaded"; position:absolute; top:12px; left:12px; z-index:1;
+    font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; line-height:1;
+    background:rgba(10,14,18,.86); color:var(--brand); border:1px solid var(--brand); border-radius:2px;
+    padding:6px 10px 5px; box-shadow:0 2px 10px rgba(0,0,0,.45);
+  }
+  .card.new.top .shot::after{top:46px}
   /* Placeholder for a tool with no render yet: a drawn panel, so an empty card still
      looks deliberate next to one that has artwork. */
   .shot.empty{
@@ -262,7 +275,7 @@
         })();
       </script>
 
-      <a class="card live" href="textback/" data-keep-source>
+      <a class="card live top" href="textback/" data-keep-source>
         <div class="shot"><img src="art/textback.jpg" alt="The Textback tool, drawn as a worn charcoal phone base, a phone standing in it with a chat of amber bubbles and a big amber RENDER key." width="900" height="900"></div>
         <div class="body">
           <div class="name"><h2>Textback</h2><span class="chips"><span class="chip">v1.2</span></span></div>

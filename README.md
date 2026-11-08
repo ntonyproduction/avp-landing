@@ -100,6 +100,15 @@ version its product page shows (Chatterbox 1.0.1 read "v1.0" on the hub until fi
 it off the old one. Two cards reading NEW means neither is, and a badge left behind ends up on a
 tool that is months old.
 
+**The free tool with the most signups wears "★ Most downloaded"** (Anthony, 2026-11-08): the `top`
+class on its card, one card only, outlined so the filled NEW stays the louder badge (on a card that is
+both, it sits under NEW). "Most downloaded" is Kit's confirmed subscribers per tool tag, among the
+cards priced Free; Textback had 1,908 on the day, Trawler 1,035 next. No number goes on the card, so
+it never goes stale. `scripts/check_versions.py` checks it before every push and fails when another
+free tool has passed the badged one; it reads the Kit key from `KIT_API_KEY` or time-tracker's
+`.env.local` beside this repo, and with neither it says "skip" rather than failing. Only these two
+badges: a third kind of label is where the grid starts to look crowded.
+
 The **texture tool** is not on the hub at all. It had a card, the name was settled and briefly
 shipped on it, then the whole card came out on 17 September 2026: the tool moved to the back
 burner and a card reading "Soon" still advertises something. It was removed rather than blanked,

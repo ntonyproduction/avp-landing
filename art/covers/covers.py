@@ -208,6 +208,8 @@ COVERS = [
     # cropped and faded into the ground. The one cover made from an ad frame, Anthony's pick on 2026-11-03 after four drawn ones:
     # the frame he chose has no caption and no face, which is what the rule guards. The headline is the ad's own hook.
     dict(slug="tellybox-ad1", hero=picture("tellybox-ad1-art.png"), headline="How to make<br>this <em>CRT</em><br>effect."),
+    # Velvox ad 1 (Time Tracker ad 14, "You don't need a better mic"): the knob at 65%, made by velvox/marketing/covers/make_cover_art.py
+    dict(slug="velvox-ad1", hero=picture("velvox-ad1-art.png"), headline="You don't need<br>a <em>better mic.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

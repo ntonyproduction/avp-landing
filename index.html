@@ -253,27 +253,9 @@
           <div class="name"><h2>Tellybox</h2><span class="chips"><span class="chip">v1.0</span></span></div>
           <p class="role">Filmed screen look</p>
           <p class="for"><img src="art/resolve.png" alt="DaVinci Resolve" title="DaVinci Resolve" width="26" height="26"><img src="art/premiere.svg" alt="Premiere Pro" title="Premiere Pro" width="26" height="26"></p>
-          <p class="price"><span class="sale">$19</span> <s>$39</s> <span class="ends" data-ends="2026-11-09T04:59:00Z" hidden>ends in <span class="clock"></span></span></p>
+          <p class="price">$39</p>
         </div>
       </a>
-      <script>
-        // Tellybox's launch price countdown, the same end as the banner and the Polar codes; hides itself once it passes.
-        (function () {
-          var ends = document.querySelector(".price .ends");
-          var end = Date.parse(ends.getAttribute("data-ends"));
-          function two(n) { return (n < 10 ? "0" : "") + n; }
-          function tick() {
-            var left = end - Date.now();
-            if (!(left > 0)) { ends.hidden = true; return; }
-            ends.hidden = false;
-            var s = Math.floor(left / 1000), d = Math.floor(s / 86400);
-            ends.querySelector(".clock").textContent = (d ? d + "d " : "") + two(Math.floor(s % 86400 / 3600)) + "h " +
-              two(Math.floor(s % 3600 / 60)) + "m " + two(s % 60) + "s";
-            setTimeout(tick, 1000 - Date.now() % 1000);
-          }
-          tick();
-        })();
-      </script>
 
       <a class="card live top" href="textback/" data-keep-source>
         <div class="shot"><img src="art/textback.jpg" alt="The Textback tool, drawn as a worn charcoal phone base, a phone standing in it with a chat of amber bubbles and a big amber RENDER key." width="900" height="900"></div>

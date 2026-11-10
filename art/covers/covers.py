@@ -188,7 +188,10 @@ COVERS = [
     # Textback ad 3 (the whole-app tour, 2026-10-21): a close-up of the ad's chat on a steep 3D plane, each bubble a
     # different app (textback/marketing/covers/cover.js), Anthony's idea and pick (tilt C of three) over a grid of
     # eight phones. The headline is its "19 styles in total".
-    dict(slug="textback-ad3", hero=tilted("textback-ad3-bubbles.png", 900, 70, -170, "rotateX(48deg) rotateZ(-26deg)"),
+    # Textback ad 5 (the slide-up notifications, 2026-11-09): one phone over a night street, the ad's six notifications
+    # stacked, the newest mid-Pop (textback/marketing/covers/cover.js); the headline is the ad's pitch, no keyframes.
+    dict(slug="textback-ad5", hero=picture("textback-ad5-art.png"), headline="Pop-up texts.<br><em>No keyframes.</em>"),
+    dict(slug="textback-ad3",hero=tilted("textback-ad3-bubbles.png", 900, 70, -170, "rotateX(48deg) rotateZ(-26deg)"),
          headline="19 chat<br>styles.<br><em>One app.</em>"),
     # Cropduster ad 6 (the preset montage, 2026-10-25): the ad flicks through every platform with an Inspector-style
     # Platform/View label, so the cover is that menu opened over ad 4's phone and its green safe box. Anthony picked it

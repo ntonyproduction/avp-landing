@@ -207,6 +207,10 @@ COVERS = [
     # Tellybox ad 3 (the no-voice retro logo split screen, 2026-11-02): the ad's palm logo through Tellybox itself
     # (tellybox/marketing/ad3/cover_art.py); the headline is its caption's "turn any graphic into a real CRT screen".
     dict(slug="tellybox-ad3", hero=picture("tellybox-ad3-art.png"), headline="Any graphic,<br>on a real<br><em>CRT.</em>"),
+    # Shutterdrag ad 7 (the editor's Rap God demo, board #5, Ad Production Shutterdrag5, 2026-11-11): the product card
+    # (shutterdrag/design/card/15-CHOSEN-final.jpg), Anthony's pick (F) over five covers made from the ad's Rap God
+    # frames; the headline is the ad's on-screen opening, "Free + easy slow shutter effect".
+    dict(slug="shutterdrag-ad7", hero=picture("shutterdrag-ad7-art.png"), headline="<em>Free</em> + easy<br>slow shutter<br>effect."),
     # Tellybox ad 1 (his on-camera CRT how-to, 2026-10-31): a frame of the ad's own finished CRT shot, the Olympic page lines,
     # cropped and faded into the ground. The one cover made from an ad frame, Anthony's pick on 2026-11-03 after four drawn ones:
     # the frame he chose has no caption and no face, which is what the rule guards. The headline is the ad's own hook.

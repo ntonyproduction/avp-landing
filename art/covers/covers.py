@@ -217,6 +217,8 @@ COVERS = [
     dict(slug="tellybox-ad1", hero=picture("tellybox-ad1-art.png"), headline="How to make<br>this <em>CRT</em><br>effect."),
     # Velvox ad 1 (Time Tracker ad 14, "You don't need a better mic"): the knob at 65%, made by velvox/marketing/covers/make_cover_art.py
     dict(slug="velvox-ad1", hero=picture("velvox-ad1-art.png"), headline="You don't need<br>a <em>better mic.</em>"),
+    # Velvox ad 2 (Time Tracker ad 15, "If you edit in CapCut, swipe away"): the meter in UPLOAD, made by velvox/marketing/covers/make_cover_art.py
+    dict(slug="velvox-ad2", hero=picture("velvox-ad2-art.png"), headline="It sets your<br>volume <em>by<br>itself.</em>"),
 ]
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>

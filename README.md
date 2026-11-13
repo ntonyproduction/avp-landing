@@ -1,4 +1,4 @@
-# avp-landing
+﻿# avp-landing
 
 The Audio Vision Productions website, served by GitHub Pages at the domain in `CNAME`,
 [audiovisionproductions.ca](https://audiovisionproductions.ca). The repo is public, so **everything
@@ -13,15 +13,15 @@ guessable URL with nothing checking who is asking.
 | Path | What it is |
 |---|---|
 | `index.html` | The tools hub. The site's front page, listing every tool. Written by hand, here. |
-| `tt/`, `yt/`, `ig/`, `threads/`, `facebook/` | **The bio links.** Each redirects to the hub carrying `?from=tiktok`, `?from=youtube`, `?from=instagram`, `?from=threads` or `?from=facebook`. Set once in each profile's bio and never changed; see "The bio link" below. |
-| `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. |
-| `art/youtube-banner/` | The channel banner, one render per tool from `art/`. `python render.py` writes `banner.png` (2560×1440, uploaded to YouTube by hand) and `banner-preview.png` (the desktop, phone and TV crops). Moved here from the Cropduster repo because it covers every tool; fonts are fetched on the first run and not committed. |
-| `art/covers/` | Reel covers for the organic ads, one `<tool>-ad<N>.jpg` each (1080×1920). `python covers.py` renders them and `preview.jpg`; the covers are listed in `COVERS` at the top of the script. See "Reel covers" below. |
+| `tt/`, `yt/`, `ig/`, `threads/`, `facebook/`, `x/` | **The bio links.** Each redirects to the hub carrying `?from=tiktok`, `?from=youtube`, `?from=instagram`, `?from=threads`, `?from=facebook` or `?from=x`. Set once in each profile's bio and never changed; see "The bio link" below. |
+| `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900Ã—900 JPEGs so the cards match. |
+| `art/youtube-banner/` | The channel banner, one render per tool from `art/`. `python render.py` writes `banner.png` (2560Ã—1440, uploaded to YouTube by hand) and `banner-preview.png` (the desktop, phone and TV crops). Moved here from the Cropduster repo because it covers every tool; fonts are fetched on the first run and not committed. |
+| `art/covers/` | Reel covers for the organic ads, one `<tool>-ad<N>.jpg` each (1080Ã—1920). `python covers.py` renders them and `preview.jpg`; the covers are listed in `COVERS` at the top of the script. See "Reel covers" below. |
 | `art/ig/<slug>/` | Carousel and photo posts staged for Instagram to fetch. Written by `scripts/avp_instagram.py`, committed and pushed, because the Graph API reads a public URL rather than taking an upload. Small JPEGs, so they stay. |
 | `cropduster/index.html` | Cropduster's product page. **Generated**, see below. |
 | `cropduster/thanks/index.html` | The page people land on after subscribing. **Generated.** |
 | `cropduster/Cropduster.zip` | The download itself. |
-| `cropduster/demo.mp4`, `demo.jpg` | The page's demo video (a cut of the organic Short, 720×1280, audio in the -16 to -14 LUFS band) and its first frame as poster. Not generated: rendered from Resolve, then copied here. |
+| `cropduster/demo.mp4`, `demo.jpg` | The page's demo video (a cut of the organic Short, 720Ã—1280, audio in the -16 to -14 LUFS band) and its first frame as poster. Not generated: rendered from Resolve, then copied here. |
 | `cd/yt/`, `cd/tt/` | Short links that redirect to the Cropduster page carrying `?from=youtube` and `?from=tiktok`, for pasting into comments. |
 | `chatterbox/index.html` | Chatterbox's product page. **Generated**, see below. |
 | `chatterbox/thanks/index.html` | Where Chatterbox's Kit form sends people after they subscribe. **Generated.** |
@@ -33,7 +33,7 @@ guessable URL with nothing checking who is asking.
 | `sd/yt/`, `sd/tt/` | The same short links for Shutterdrag. |
 | `pixelito/index.html`, `thanks/index.html` | Pixelito's product page and thanks page. **Generated** by the Pixelito repo's `web/build_landing.py`. |
 | `pixelito/Pixelito.zip` | The download: `dist/Pixelito-<version>.zip` from the Pixelito repo's `release.py`, renamed (the Resolve effect, the Premiere presets and an install guide for each editor). |
-| `pixelito/demo.mp4`, `demo.jpg` | Pixelito's silent looping demo, 4:5 (1080×1350), cropped from the Resolve master by the Pixelito repo's `web/make_demo.py`, and its poster. |
+| `pixelito/demo.mp4`, `demo.jpg` | Pixelito's silent looping demo, 4:5 (1080Ã—1350), cropped from the Resolve master by the Pixelito repo's `web/make_demo.py`, and its poster. |
 | `px/yt/`, `px/tt/` | The same short links for Pixelito. |
 | `vx/yt/`, `vx/tt/` | The same short links for Velvox. |
 | `thank-you/index.html` | Where Polar sends a buyer after paying for **any** paid tool. It names no tool, so it can sit in this public repo before a paid tool is announced. It reads `checkout_id` from its URL and points **Get your download** at the relay in the `time-tracker` repo (`DOWNLOAD_ROUTE` in its script), which checks the payment and opens the buyer's Polar download page. It first asks the relay's order route (`ORDER_ROUTE`) what was bought. A download keeps the **Get your download** button. A licence key (Cardwheel Pro) is shown on the page with a Copy button and the steps to unlock; the relay sends each product's steps, so the page still names no tool. If the relay cannot read the order (for example a sandbox checkout while Railway is on production), the page says the receipt email and the Polar page have the download or the key. It strips the session token Polar appends from the address bar. Without a `checkout_id` it shows where to find the receipt. Written by hand, here. |
@@ -89,7 +89,7 @@ included, the logo top left is a link to `/`.
 muted as a preview (browsers only autoplay silent video), and **Play with sound** restarts it from
 0:00 with audio, plays it once, then returns to the muted loop. The markup and script live in the
 tool repo's `web/landing.template.html`; the video files live here, beside the page. To replace
-one, render the new cut, check it passes the loudness gate, encode it to 720×1280 H.264 with
+one, render the new cut, check it passes the loudness gate, encode it to 720Ã—1280 H.264 with
 `-movflags +faststart`, write its first frame as `demo.jpg`, and overwrite both files.
 
 The hub is the exception. It belongs to no single tool, so it is written and edited directly here.
@@ -101,7 +101,7 @@ version its product page shows (Chatterbox 1.0.1 read "v1.0" on the hub until fi
 it off the old one. Two cards reading NEW means neither is, and a badge left behind ends up on a
 tool that is months old.
 
-**The free tool with the most signups wears "★ Most downloaded"** (Anthony, 2026-11-08): the `top`
+**The free tool with the most signups wears "â˜… Most downloaded"** (Anthony, 2026-11-08): the `top`
 class on its card, one card only, outlined so the filled NEW stays the louder badge (on a card that is
 both, it sits under NEW). "Most downloaded" is Kit's confirmed subscribers per tool tag, among the
 cards priced Free; Textback had 1,908 on the day, Trawler 1,035 next. No number goes on the card, so
@@ -140,7 +140,7 @@ into a personal account too and a post cannot be moved between accounts afterwar
 does not expire. To rebuild it:
 
 1. The Meta app is **AVP Publishing** (developers.facebook.com/apps, under Anthony's own Facebook
-   profile; Development mode is enough). Its App ID and secret are on App settings › Basic; the
+   profile; Development mode is enough). Its App ID and secret are on App settings â€º Basic; the
    secret is 32 hex characters and shows only after **Show**.
 2. In the Graph API Explorer, with Meta App = AVP Publishing and User Token, add `pages_show_list`,
    `instagram_basic`, `instagram_content_publish`, `pages_read_engagement` and `business_management`,
@@ -346,7 +346,7 @@ Keep tags short and lowercase, one per place: `tiktok`, `youtube`, `instagram`, 
 
 Every profile's bio points at the hub, never at one tool: `audiovisionproductions.ca/tt` on
 TikTok, `/yt` on YouTube, `/ig` on Instagram. Introduced on 2026-09-26. Threads and the Facebook
-Page joined on 2026-11-13 as `/threads` and `/facebook` (`?from=threads`, `?from=facebook`): full
+Page joined on 2026-11-13 as `/threads` and `/facebook` (`?from=threads`, `?from=facebook`), and X (@audiovisionprod) as `/x`: full
 words, because `/fb/` is Flipbook's slug.
 
 **Why the bio never points at a tool.** A video keeps being watched for months, and "link in bio"

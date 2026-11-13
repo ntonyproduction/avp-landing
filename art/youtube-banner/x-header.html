@@ -36,6 +36,12 @@
   .cta{margin:14px 0 0; font-weight:800; font-size:23px; letter-spacing:-.012em; color:var(--ink)}
   .site{margin:5px 0 0; font-weight:700; font-size:17px; color:var(--ink-dim)}
   .renders{display:grid; grid-template-columns:222px 105px 105px; grid-template-rows:105px 105px; gap:12px}
+  /* X has one header for every device (Anthony asked, 2026-11-13). Desktop shows the full width, so the
+     tile wall carries on past the phone-safe box with four more tools that fade out: on desktop the
+     header reads full, on a phone they are cropped or sit under the search button, and nothing is lost. */
+  .more{position:absolute; left:1202px; top:189px; display:grid; grid-template-columns:105px 105px;
+    grid-template-rows:105px 105px; gap:12px}
+  .more .render:nth-child(odd){opacity:.5} .more .render:nth-child(even){opacity:.22}
   .render{margin:0; border:2px solid var(--edge); border-radius:6px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,.55)}
   .render.big{grid-row:1 / span 2}
   .render img{display:block; width:100%; height:100%}
@@ -62,6 +68,12 @@
     <figure class="render"><img src="../flipbook.jpg" alt=""></figure>
     <figure class="render"><img src="../paperboy.jpg" alt=""></figure>
   </div>
+</div>
+<div class="more">
+  <figure class="render"><img src="../pixelito.jpg" alt=""></figure>
+  <figure class="render"><img src="../trawler.jpg" alt=""></figure>
+  <figure class="render"><img src="../shutterdrag.jpg" alt=""></figure>
+  <figure class="render"><img src="../cropduster.jpg" alt=""></figure>
 </div>
 <!-- render (PowerShell, in this folder):
   & "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=1640,624 --virtual-time-budget=5000 --allow-file-access-from-files --screenshot="$PWD\facebook-cover.png" "file:///$($PWD -replace '\\','/')/facebook-cover.html"

@@ -13,7 +13,7 @@ guessable URL with nothing checking who is asking.
 | Path | What it is |
 |---|---|
 | `index.html` | The tools hub. The site's front page, listing every tool. Written by hand, here. |
-| `tt/`, `yt/`, `ig/` | **The bio links.** Each redirects to the hub carrying `?from=tiktok`, `?from=youtube` or `?from=instagram`. Set once in each profile's bio and never changed; see "The bio link" below. |
+| `tt/`, `yt/`, `ig/`, `threads/`, `facebook/` | **The bio links.** Each redirects to the hub carrying `?from=tiktok`, `?from=youtube`, `?from=instagram`, `?from=threads` or `?from=facebook`. Set once in each profile's bio and never changed; see "The bio link" below. |
 | `art/` | Images the hub uses. Plain files, not inlined. Tool renders are 900×900 JPEGs so the cards match. |
 | `art/youtube-banner/` | The channel banner, one render per tool from `art/`. `python render.py` writes `banner.png` (2560×1440, uploaded to YouTube by hand) and `banner-preview.png` (the desktop, phone and TV crops). Moved here from the Cropduster repo because it covers every tool; fonts are fetched on the first run and not committed. |
 | `art/covers/` | Reel covers for the organic ads, one `<tool>-ad<N>.jpg` each (1080×1920). `python covers.py` renders them and `preview.jpg`; the covers are listed in `COVERS` at the top of the script. See "Reel covers" below. |
@@ -345,7 +345,9 @@ Keep tags short and lowercase, one per place: `tiktok`, `youtube`, `instagram`, 
 ## The bio link
 
 Every profile's bio points at the hub, never at one tool: `audiovisionproductions.ca/tt` on
-TikTok, `/yt` on YouTube, `/ig` on Instagram. Introduced on 2026-09-26.
+TikTok, `/yt` on YouTube, `/ig` on Instagram. Introduced on 2026-09-26. Threads and the Facebook
+Page joined on 2026-11-13 as `/threads` and `/facebook` (`?from=threads`, `?from=facebook`): full
+words, because `/fb/` is Flipbook's slug.
 
 **Why the bio never points at a tool.** A video keeps being watched for months, and "link in bio"
 is only true while the bio still leads to what the video showed. Until this change the bio was

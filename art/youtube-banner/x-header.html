@@ -24,23 +24,26 @@
             mask-image:linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 12%, transparent 30%, transparent 70%, rgba(0,0,0,.55) 88%, #000 100%)}
   /* phone-safe centre: 1110 wide, nudged up a little so nothing sits under the Page's buttons */
   /* zoomed in (Anthony, 2026-11-13): the content fills the phone-safe centre instead of floating in it */
-  /* right of the profile picture (bottom-left, about 300 px wide here), centred in the height */
-  .safe{position:absolute; left:300px; top:0; width:1120px; height:500px;
-    display:grid; grid-template-columns:1fr auto; column-gap:40px; align-items:center;
-    padding:0 10px 0 20px; box-sizing:border-box}
-  h1{margin:0; font-weight:900; font-size:80px; line-height:.95; letter-spacing:-.028em}
+  /* Phone-safe box (Anthony's iPhone, 2026-11-13): the app crops ~125 px off each side, hides the top
+     ~120 px under the status bar, and floats the back and search buttons at mid-height near both edges.
+     On desktop the profile picture covers x < 390 below y 340. So everything sits in x 420-1190,
+     y 130-470. */
+  .safe{position:absolute; left:420px; top:130px; width:770px; height:340px;
+    display:grid; grid-template-columns:1fr auto; column-gap:28px; align-items:center;
+    padding:0; box-sizing:border-box}
+  h1{margin:0; font-weight:900; font-size:58px; line-height:.95; letter-spacing:-.028em}
   h1 em{font-style:normal; color:var(--brand)}
-  .cta{margin:20px 0 0; font-weight:800; font-size:32px; letter-spacing:-.012em; color:var(--ink)}
-  .site{margin:6px 0 0; font-weight:700; font-size:23px; color:var(--ink-dim)}
-  .renders{display:grid; grid-template-columns:290px 139px 139px; grid-template-rows:139px 139px; gap:12px}
+  .cta{margin:14px 0 0; font-weight:800; font-size:23px; letter-spacing:-.012em; color:var(--ink)}
+  .site{margin:5px 0 0; font-weight:700; font-size:17px; color:var(--ink-dim)}
+  .renders{display:grid; grid-template-columns:222px 105px 105px; grid-template-rows:105px 105px; gap:12px}
   .render{margin:0; border:2px solid var(--edge); border-radius:6px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,.55)}
   .render.big{grid-row:1 / span 2}
   .render img{display:block; width:100%; height:100%}
   .new{position:relative}
-  .new::before{content:"New"; position:absolute; top:16px; left:16px; z-index:1;
-    font-family:"IBM Plex Mono",monospace; font-size:26px; font-weight:600; letter-spacing:.16em;
+  .new::before{content:"New"; position:absolute; top:12px; left:12px; z-index:1;
+    font-family:"IBM Plex Mono",monospace; font-size:18px; font-weight:600; letter-spacing:.16em;
     text-transform:uppercase; line-height:1; background:var(--brand); color:var(--ground);
-    border-radius:4px; padding:10px 14px 8px; box-shadow:0 4px 18px rgba(0,0,0,.5)}
+    border-radius:4px; padding:7px 10px 6px; box-shadow:0 4px 18px rgba(0,0,0,.5)}
 </style>
 
 <div class="glow"></div>

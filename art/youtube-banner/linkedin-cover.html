@@ -1,0 +1,65 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AVP LinkedIn cover</title>
+<!-- The LinkedIn company page cover (2026-11-13): the same banner as banner.html, facebook-cover.html and
+     x-header.html, at LinkedIn's 1128x191 (render at 3x). The page logo overlaps the bottom-left corner,
+     so the content starts right of it at x 285. Same tiles as the other three: change all four at each
+     launch. Like X, the tile wall carries on with faded tools that a narrow screen may crop. -->
+<style>
+  @font-face{font-family:"IBM Plex Mono";font-weight:600;src:url(fonts/ibmplexmono-600.woff2) format("woff2")}
+  @font-face{font-family:"Montserrat";font-weight:100 900;src:url(fonts/montserrat-900.woff2) format("woff2")}
+  :root{--ground:#0A0E12; --edge:#24303A; --brand:#62A3DA; --ink:#EAEDF0; --ink-dim:#9DA9B4}
+  html,body{margin:0; width:1128px; height:191px; overflow:hidden; background:var(--ground)}
+  body{position:relative; color:var(--ink); font-family:Montserrat,sans-serif; -webkit-font-smoothing:antialiased}
+  .glow{position:absolute; inset:0;
+    background:
+      radial-gradient(360px 120px at 640px 95px, rgba(98,163,218,.14), transparent 72%),
+      radial-gradient(460px 150px at 330px 95px, rgba(98,163,218,.07), transparent 70%)}
+  .grid{position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(52,68,82,.42) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(52,68,82,.42) 1px, transparent 1px);
+    background-size:32px 32px; background-position:6px 10px;
+    -webkit-mask-image:linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 12%, transparent 30%, transparent 70%, rgba(0,0,0,.55) 88%, #000 100%);
+            mask-image:linear-gradient(90deg, #000 0, rgba(0,0,0,.55) 12%, transparent 30%, transparent 70%, rgba(0,0,0,.55) 88%, #000 100%)}
+  /* the page logo covers x 30-250 from y 64 down (checked as a member, 2026-11-13) */
+  .safe{position:absolute; left:285px; top:0; height:191px; display:flex; align-items:center; gap:28px}
+  h1{margin:0; font-weight:900; font-size:38px; line-height:.95; letter-spacing:-.028em}
+  h1 em{font-style:normal; color:var(--brand)}
+  .cta{margin:8px 0 0; font-weight:800; font-size:15px; letter-spacing:-.012em; color:var(--ink)}
+  .site{margin:2px 0 0; font-weight:700; font-size:11.5px; color:var(--ink-dim)}
+  .renders{display:grid; grid-template-columns:146px 67px 67px 67px 67px; grid-template-rows:67px 67px; gap:8px}
+  .render{margin:0; border:1px solid var(--edge); border-radius:4px; overflow:hidden; box-shadow:0 12px 32px rgba(0,0,0,.55)}
+  .render.big{grid-row:1 / span 2}
+  .render img{display:block; width:100%; height:100%}
+  .fade1{opacity:.5} .fade2{opacity:.22}
+  .new{position:relative}
+  .new::before{content:"New"; position:absolute; top:8px; left:8px; z-index:1;
+    font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; letter-spacing:.16em;
+    text-transform:uppercase; line-height:1; background:var(--brand); color:var(--ground);
+    border-radius:3px; padding:4px 6px 3px; box-shadow:0 3px 10px rgba(0,0,0,.5)}
+</style>
+
+<div class="glow"></div>
+<div class="grid"></div>
+
+<div class="safe">
+  <div>
+    <h1><em>Tools</em><br>for video<br>editors.</h1>
+    <p class="cta">Most of them free.</p>
+    <p class="site">audiovisionproductions.ca</p>
+  </div>
+  <div class="renders">
+    <figure class="render big new"><img src="../velvox.jpg" alt=""></figure>
+    <figure class="render"><img src="../tellybox.jpg" alt=""></figure>
+    <figure class="render"><img src="../textback.jpg" alt=""></figure>
+    <figure class="render fade1"><img src="../pixelito.jpg" alt=""></figure>
+    <figure class="render fade2"><img src="../trawler.jpg" alt=""></figure>
+    <figure class="render"><img src="../flipbook.jpg" alt=""></figure>
+    <figure class="render"><img src="../paperboy.jpg" alt=""></figure>
+    <figure class="render fade1"><img src="../shutterdrag.jpg" alt=""></figure>
+    <figure class="render fade2"><img src="../cropduster.jpg" alt=""></figure>
+  </div>
+</div>
+<!-- render (PowerShell, in this folder): Edge headless as in facebook-cover.html, with
+  --force-device-scale-factor=3 --window-size=1128,191 and linkedin-cover.html / linkedin-cover.png -->

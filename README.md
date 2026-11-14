@@ -229,6 +229,27 @@ One thing still unproven: GitHub serves release assets as `application/octet-str
 `video/mp4`. The URL ends in `.mp4` and Meta appears to go by that and by the bytes, but if a
 container ever comes back `ERROR` with a healthy-looking file, suspect the content type first.
 
+## Posting to Facebook, Threads and X
+
+Added 2026-11-13: every ad goes to Instagram, YouTube, TikTok, Facebook, Threads and X. The
+🔥 cut stays on Instagram (ManyChat runs only there); the other three get the "YouTube TikTok"
+link-in-bio cut. Three scripts, each refusing any account but the brand's:
+
+- `scripts/avp_facebook.py post-reel` posts to the Facebook Page with the same Page token as
+  `avp_instagram.py` (the AVP Publishing app gained `pages_manage_posts`, `read_insights` and
+  `instagram_manage_insights` that day). `--at "YYYY-MM-DD HH:MM"` schedules it on Facebook.
+- `scripts/avp_threads.py post` posts to Threads. Its token lives in `%USERPROFILE%\.avp\threads`,
+  comes from the app's Threads use case › Settings › User Token Generator (the account is a
+  Threads Tester), lasts 60 days and is refreshed by the script after 30.
+- `scripts/avp_x.py post` posts to X (@audiovisionprod) with OAuth 1.0a keys from console.x.com
+  (developer account "AVP Publishing", pay-per-use credits, $0.015 a post). It **refuses a caption
+  with a link**, which X bills at $0.20, and re-encodes masters above 20 Mbit/s to a temp copy.
+
+`scripts/crosspost_queue.py` runs a batch from `Dropbox\AVP Tools\Organic Ads\Cross-post queue.json`:
+`schedule-facebook` uploads every future item to Facebook as a scheduled reel, and `run` posts
+today's item to Threads and X (the desktop task "Cross-post: today's reel to Threads and X" runs
+it daily at 7:30 PM). Both write the post ids into `Organic ads log.csv`.
+
 ## Reel covers
 
 Every organic ad gets a drawn cover from `art/covers/covers.py`. **This is the house style from

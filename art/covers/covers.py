@@ -159,6 +159,10 @@ COVERS = [
     # the app (paperboy/marketing/covers/ad5_cover_art.py); headline from its on-screen "EASY vs HARD mode". Anthony
     # picked it over a lone highlighted page, which was too close to ad 3's.
     dict(slug="paperboy-ad5", hero=picture("paperboy-ad5-art.png"), headline="Match cut.<br><em>Easy</em> mode."),
+    # Ad 7 (the narrated ad, every word a Paperboy page, 2026-11-16): its hook sentence down a film strip, one real page
+    # per phrase (paperboy/marketing/covers/ad7_cover_art.py); the headline is the hook's own words. Anthony picked it (A)
+    # over the Paperboy page ringed by the four editor logos and the second sentence's pages fanned like cards.
+    dict(slug="paperboy-ad7", hero=picture("paperboy-ad7-art.png"), headline="Every word.<br><em>One free</em><br>tool."),
     # Flipbook: each ad's own subject, made in flipbook/marketing/covers/make_cover_art.py. Ad 1: its dog, three
     # drawings stacked. Headline from the on-screen sign of its first draft ("FREE HAND-DRAWN FX"). Ad 2: the sketched
     # beach scene its story ends on; the headline is the end card's "Make anything look hand-drawn", broken to fit.

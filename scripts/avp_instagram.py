@@ -56,6 +56,9 @@ MAX_WIDTH = 1440          # Instagram downscales anything wider, so do it here w
 REEL_TAG = "ig-staging"   # a release that exists only to hand Instagram a public URL
 REEL_MIN_SEC, REEL_MAX_SEC = 3, 15 * 60
 REEL_MAX_BYTES = 1_000_000_000
+# Trial reels (Content Publishing API, `trial_params`): shown to non-followers only.
+# Graduating one to followers is not in the API; MANUAL leaves that to the app.
+TRIAL_STRATEGY = {"manual": "MANUAL", "auto": "SS_PERFORMANCE"}
 COVER_RATIO = 9 / 16      # the Reels tab shows the cover whole; the grid crops its centre to 3:4
 MIN_RATIO, MAX_RATIO = 0.79, 1.91  # 4:5 portrait .. 1.91:1 landscape, with slack:
                                    # a 1080x1350 slide lands exactly on 0.8 and must not
@@ -564,7 +567,11 @@ def cmd_post_reel(args) -> None:
     stem = re.sub(r"[^A-Za-z0-9._-]+", "-", video.stem).strip("-").lower() or "reel"
     slug = args.slug or f"{time.strftime('%Y-%m-%d')}-{stem}"
 
-    print(f"posting a reel to {who}")
+    trial = TRIAL_STRATEGY.get(args.trial) if args.trial else None
+    print(f"posting a {'TRIAL ' if trial else ''}reel to {who}")
+    if trial:
+        print(f"  trial reel: shown to non-followers only; graduation {trial}"
+              + (" (in the app, by hand)" if trial == "MANUAL" else " (Instagram shares it if it does well)"))
     print(f"  {video.name}  ({size / 1048576:.1f} MB)")
     probe_video(video)
     if cover:
@@ -587,6 +594,8 @@ def cmd_post_reel(args) -> None:
         url_live(url)
         print("creating the container ...")
         extra = {"cover_url": cover_url} if cover_url else {}
+        if trial:
+            extra["trial_params"] = json.dumps({"graduation_strategy": trial})
         container = graph("POST", f"{creds['ig_user_id']}/media", media_type="REELS",
                           video_url=url, caption=caption,
                           access_token=creds["page_token"], **extra)["id"]
@@ -757,6 +766,10 @@ def main() -> None:
     rcap.add_argument("--caption-file", help="a UTF-8 file: safest for emoji and hashtags")
     r.add_argument("--cover", help="cover image, .jpg or .png at 9:16, e.g. art/covers/<tool>-ad<N>.jpg")
     r.add_argument("--slug", help="folder under art/ig/ for the cover (default: date + video name)")
+    r.add_argument("--trial", nargs="?", const="manual", choices=sorted(TRIAL_STRATEGY),
+                   help="post as a trial reel (non-followers only). manual (the default) never "
+                        "reaches followers unless graduated in the app; auto lets Instagram share it "
+                        "if it performs")
     r.add_argument("--dry-run", action="store_true", help="show the plan, touch nothing")
     r.add_argument("--keep-asset", action="store_true",
                    help="leave the staged file on the release instead of deleting it")

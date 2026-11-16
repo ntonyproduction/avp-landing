@@ -209,6 +209,24 @@ repo, like any posted image. Release assets were not used for it because they co
 dry runs and simulated runs only: until 2026-11-03 this PC had no Instagram credentials, so the first real post with
 `--cover` is also its first live test. Read the `thumbnail_url` line that time.
 
+**Trial reels (the FR and ES cuts) go through the same command with `--trial`** (added 2026-11-16, so
+nothing is posted from the phone any more). Meta added `trial_params` to the Content Publishing API on
+reel containers: `{"graduation_strategy": "MANUAL"}` or `"SS_PERFORMANCE"`, documented on the
+[IG User Media reference](https://developers.facebook.com/documentation/instagram-platform/instagram-graph-api/reference/ig-user/media.md).
+`--trial` alone is MANUAL, which is what the phone's trial toggle did: shown to non-followers only, and
+it never reaches followers unless someone graduates it in the app. `--trial auto` lets Instagram share
+it with followers if it performs. Cover and caption work exactly as for any reel.
+
+    py -3 -u scripts/avp_instagram.py post-reel "<Dropbox>\AVP Tools\Organic Ads\1 - Ready to post\<Tool> - Organic ad <N> FR - Instagram.mp4" --trial --cover art/covers/<tool>-ad<N>.jpg --caption-file <fr-caption>.txt --dry-run
+
+Drop `--dry-run` to post. What the API does not do: graduate a trial reel, or report whether a published
+reel is still a trial (no field for it). A trial reel is not on the grid, so the script's permalink is
+the way to find it. ManyChat is unchanged: "next post or reel" does not fire for a trial reel, so keep
+the automation STOPPED, post, then attach it to the new reel by hand (tool-launch skill, carousel
+section, "Trial reels are the exception"). No emulator or phone app is involved; none was ever set up.
+Not yet proven live: the first real `--trial` post is its test, so open the permalink and check it says
+trial before treating the route as done.
+
 **`ig-staging` is scratch space, not a release.** Do not delete the tag and do not write release
 notes on it. It should normally hold **zero** assets; an asset sitting there means a publish failed
 after the upload, and the command prints the `gh release delete-asset` line to clear it. Failures

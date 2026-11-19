@@ -14,7 +14,8 @@ Commands
            history or a chat:
              py -3 -u scripts\\avp_x.py auth
   whoami   which account the keys post as
-  post     one video (or text only); --dry-run stops before anything is uploaded
+  post     one video, up to 4 pictures (--image, repeated), or text only; --dry-run stops before anything
+           is uploaded
   verify   read a post back by id
 
 Videos go up through the v2 chunked media upload. X takes up to 512 MB but is fussy about
@@ -171,10 +172,10 @@ def x_copy(video: Path) -> Path:
     return out
 
 
-def upload_video(creds: dict, path: Path) -> str:
+def upload_video(creds: dict, path: Path, media_type: str = "video/mp4", category: str = "tweet_video") -> str:
     size = path.stat().st_size
     init = call(creds, "POST", "media/upload/initialize",
-                json_body={"media_type": "video/mp4", "total_bytes": size, "media_category": "tweet_video"})
+                json_body={"media_type": media_type, "total_bytes": size, "media_category": category})
     mid = init["data"]["id"]
     print(f"  uploading {size / 1048576:.1f} MB in {max(1, -(-size // CHUNK))} parts ...")
     with open(path, "rb") as fh:
@@ -207,7 +208,25 @@ def cmd_post(args) -> None:
     tmp = None
     try:
         body = {"text": text}
-        if args.video:
+        if args.image:
+            # up to 4 pictures in one post, shown as X's grid (2026-11-19, the Titulo carousel's 4 slides)
+            pics = [Path(f) for f in args.image]
+            if len(pics) > 4:
+                sys.exit(f"X takes at most 4 pictures in a post, got {len(pics)}")
+            for f in pics:
+                if not f.is_file():
+                    sys.exit(f"no such file: {f}")
+                if f.stat().st_size > 5 * 1048576:
+                    sys.exit(f"{f.name} is over X's 5 MB picture limit")
+            if args.dry_run:
+                print(f"dry run: would post {len(pics)} picture(s) to @{me['username']}: "
+                      + ", ".join(f.name for f in pics))
+                print(text)
+                return
+            kinds = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
+            body["media"] = {"media_ids": [upload_video(creds, f, kinds[f.suffix.lower()], "tweet_image")
+                                           for f in pics]}
+        elif args.video:
             video = Path(args.video)
             if not video.is_file():
                 sys.exit(f"no such file: {video}")
@@ -240,6 +259,7 @@ def main() -> None:
     sub.add_parser("whoami").set_defaults(fn=cmd_whoami)
     p = sub.add_parser("post")
     p.add_argument("--video")
+    p.add_argument("--image", action="append", help="a picture, repeated in order, up to 4")
     p.add_argument("--text")
     p.add_argument("--caption-file")
     p.add_argument("--dry-run", action="store_true")

@@ -295,6 +295,8 @@ def collect(args) -> list[Path]:
         files = [Path(f) for f in args.images]
     if not files:
         sys.exit("give me image paths or --folder")
+    if any(f.suffix.lower() == ".mp4" for f in files) and len(files) < 2:
+        sys.exit("a lone .mp4 is a reel: use post-reel")
     for f in files:
         if not f.is_file():
             sys.exit(f"no such file: {f}")
@@ -666,8 +668,30 @@ def cmd_post(args) -> None:
 
     if not args.no_push:          # --no-push commits nothing; stage() checks its commit is on GitHub
         require_main()
-    urls = stage(files, slug, push=not args.no_push)
-    wait_for(urls)
+    # Carousel items may be videos (2026-11-19, the Titulo carousel): an .mp4 is staged like a reel, as a release
+    # asset, and goes in as a VIDEO child; the pictures are staged and pinned as before, in their own order.
+    images = [f for f in files if f.suffix.lower() != ".mp4"]
+    img_urls = iter(stage(images, slug, push=not args.no_push)) if images else iter(())
+    items, assets = [], []
+    for f in files:
+        if f.suffix.lower() == ".mp4":
+            probe_video(f)
+            url, asset = stage_reel(f)
+            assets.append(asset)
+            url_live(url)
+            items.append(("video", url))
+        else:
+            items.append(("image", next(img_urls)))
+    wait_for([u for k, u in items if k == "image"])
+    urls = [u for _, u in items]
+    try:
+        _post_containers(args, creds, items, urls, caption)
+    finally:
+        for a in assets:
+            unstage_reel(a)
+
+
+def _post_containers(args, creds: dict, items: list, urls: list, caption: str) -> None:
 
     ig = creds["ig_user_id"]
     if len(urls) == 1:
@@ -676,13 +700,13 @@ def cmd_post(args) -> None:
                        access_token=creds["page_token"])["id"]
     else:
         children = []
-        for i, url in enumerate(urls, 1):
-            print(f"creating container {i}/{len(urls)} ...")
-            children.append(graph("POST", f"{ig}/media", image_url=url,
-                                  is_carousel_item="true",
-                                  access_token=creds["page_token"])["id"])
+        for i, (kind, url) in enumerate(items, 1):
+            print(f"creating container {i}/{len(urls)} ({kind}) ...")
+            media = {"media_type": "VIDEO", "video_url": url} if kind == "video" else {"image_url": url}
+            children.append(graph("POST", f"{ig}/media", is_carousel_item="true",
+                                  access_token=creds["page_token"], **media)["id"])
         for cid in children:
-            container_ready(creds, cid)
+            container_ready(creds, cid, timeout=900)
         print("creating the carousel ...")
         parent = graph("POST", f"{ig}/media", media_type="CAROUSEL",
                        children=",".join(children), caption=caption,

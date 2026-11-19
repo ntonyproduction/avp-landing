@@ -13,7 +13,8 @@ Commands
               $t = Read-Host 'token'; py -3 -u scripts\\avp_threads.py auth --token $t
   whoami    which profile the token posts as, its age, and a refresh when it is due
   refresh   trade the token for a fresh 60-day one (needs to be at least 24 h old)
-  post      one video (or text only) with a caption; --dry-run stops before publishing
+  post      one video (or text only) with a caption, or --item ... for a carousel of pictures and videos;
+            --dry-run stops before publishing
   verify    read a published thread back by id
 
 Threads takes the video as a public URL, never the bytes, so `post` stages the file as a
@@ -148,6 +149,8 @@ def cmd_post(args) -> None:
     text = Path(args.caption_file).read_text(encoding="utf-8").strip() if args.caption_file else (args.text or "")
     if len(text) > TEXT_MAX:
         sys.exit(f"the caption is {len(text)} characters; Threads allows {TEXT_MAX}.")
+    if args.item:
+        return post_carousel(args, creds, me, text)
     asset = None
     try:
         if args.video:
@@ -177,6 +180,61 @@ def cmd_post(args) -> None:
             ig.unstage_reel(asset)
 
 
+def post_carousel(args, creds: dict, me: dict, text: str) -> None:
+    """A carousel of 2 to 20 pictures and videos, in order (2026-11-19, the Titulo carousel). Every item is staged as a
+    release asset like a video (Threads, like Instagram, fetches a public URL), made an is_carousel_item container,
+    waited on, then joined in one CAROUSEL container with the caption."""
+    files = [Path(f) for f in args.item]
+    if not 2 <= len(files) <= 20:
+        sys.exit(f"a Threads carousel takes 2 to 20 items, got {len(files)}")
+    for f in files:
+        if not f.is_file():
+            sys.exit(f"no such file: {f}")
+        if f.suffix.lower() == ".mp4":
+            ig.probe_video(f)
+    print(f"carousel of {len(files)} to @{me['username']}:")
+    for i, f in enumerate(files, 1):
+        print(f"  {i}. {f.name}")
+    if args.dry_run:
+        print("dry run: would post it with:")
+        print(text)
+        return
+    # pictures: committed and pinned exactly as avp_instagram stages a carousel (same --slug folder, so the two
+    # posts share one copy); videos: release assets, as for a reel
+    images = [f for f in files if f.suffix.lower() != ".mp4"]
+    slug = args.slug or f"{time.strftime('%Y-%m-%d')}-{files[0].parent.name.replace(' ', '-').lower()}"
+    if images:
+        ig.require_main()
+    img_urls = ig.stage(images, slug, push=True) if images else []
+    if img_urls:
+        ig.wait_for(img_urls)
+    img_urls = iter(img_urls)
+    assets = []
+    try:
+        children = []
+        for i, f in enumerate(files, 1):
+            if f.suffix.lower() == ".mp4":
+                url, asset = ig.stage_reel(f)
+                assets.append(asset)
+                ig.url_live(url)
+                media = {"media_type": "VIDEO", "video_url": url}
+            else:
+                media = {"media_type": "IMAGE", "image_url": next(img_urls)}
+            print(f"  item {i}/{len(files)} ...")
+            children.append(call("POST", f"{me['id']}/threads", creds["token"], is_carousel_item="true", **media)["id"])
+        for cid in children:
+            wait_ready(creds["token"], cid)
+        cid = call("POST", f"{me['id']}/threads", creds["token"], media_type="CAROUSEL",
+                   children=",".join(children), text=text)["id"]
+        wait_ready(creds["token"], cid)
+        post_id = call("POST", f"{me['id']}/threads_publish", creds["token"], creation_id=cid)["id"]
+        print(f"published: {post_id}")
+        show(creds["token"], post_id)
+    finally:
+        for a in assets:
+            ig.unstage_reel(a)
+
+
 def show(token: str, post_id: str) -> None:
     p = call("GET", post_id, token, fields="id,permalink,media_type,timestamp,username")
     print(f"  @{p.get('username')}  {p.get('media_type')}  {p.get('timestamp')}\n  {p.get('permalink')}")
@@ -194,6 +252,8 @@ def main() -> None:
     sub.add_parser("refresh").set_defaults(fn=cmd_refresh)
     p = sub.add_parser("post")
     p.add_argument("--video")
+    p.add_argument("--item", action="append", help="a carousel item (picture or .mp4), repeated in order")
+    p.add_argument("--slug", help="carousel pictures' folder under art/ig/ (use the Instagram post's, to share it)")
     p.add_argument("--text")
     p.add_argument("--caption-file")
     p.add_argument("--dry-run", action="store_true")

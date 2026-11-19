@@ -253,9 +253,29 @@
           <div class="name"><h2>Titulo</h2><span class="chips"><span class="chip">v1.0</span></span></div>
           <p class="role">Animated title presets</p>
           <p class="for"><img src="art/resolve.png" alt="DaVinci Resolve" title="DaVinci Resolve" width="26" height="26"><img src="art/premiere.svg" alt="Premiere Pro" title="Premiere Pro" width="26" height="26"></p>
-          <p class="price">Free + Pro $29</p>
+          <p class="price" id="titulo-price" data-after="Free + Pro $29">Free + Pro <span class="sale">$15</span> <s>$29</s> <span class="ends" data-ends="2026-11-27T05:00:00Z" hidden>ends in <span class="clock"></span></span></p>
         </div>
       </a>
+      <script>
+        // Titulo's launch price countdown: the same end as the launch bar, the page and Polar's TITULO15. Once it passes,
+        // the card turns itself into the regular price (Tellybox's card kept $19 after its week and confused buyers).
+        (function () {
+          var price = document.getElementById("titulo-price");
+          var ends = price.querySelector(".ends");
+          var end = Date.parse(ends.getAttribute("data-ends"));
+          function two(n) { return (n < 10 ? "0" : "") + n; }
+          function tick() {
+            var left = end - Date.now();
+            if (!(left > 0)) { price.textContent = price.getAttribute("data-after"); return; }
+            ends.hidden = false;
+            var s = Math.floor(left / 1000), d = Math.floor(s / 86400);
+            ends.querySelector(".clock").textContent = (d ? d + "d " : "") + two(Math.floor(s % 86400 / 3600)) + "h " +
+              two(Math.floor(s % 3600 / 60)) + "m " + two(s % 60) + "s";
+            setTimeout(tick, 1000 - Date.now() % 1000);
+          }
+          tick();
+        })();
+      </script>
 
       <a class="card live" href="velvox/" data-keep-source>
         <div class="shot"><img src="art/velvox.jpg" alt="The Velvox tool, drawn as a small brass and steel desk unit with red velvet sides, one big knob and a lit VU meter reading ready to upload." width="900" height="900"></div>

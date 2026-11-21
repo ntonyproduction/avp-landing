@@ -628,6 +628,39 @@ def cmd_post_reel(args) -> None:
             print(f"remove it with:  gh release delete-asset {REEL_TAG} {asset} --yes")
 
 
+def cmd_post_story(args) -> None:
+    """One vertical video as a story (24 h, no caption: the API takes none for stories). Staged and
+    removed exactly like a reel. Added 2026-11-21 for the release stories (CLAUDE.md, "Every release
+    gets announced")."""
+    creds = load()
+    who = "@" + account(creds)["username"]
+    video = Path(args.video)
+    if not video.is_file():
+        sys.exit(f"no such file: {video}")
+    print(f"posting a STORY to {who}")
+    print(f"  {video.name}  ({video.stat().st_size / 1048576:.1f} MB)")
+    probe_video(video)
+    if args.dry_run:
+        print("--dry-run: stopping before anything is uploaded or published")
+        return
+    url, asset = stage_reel(video)
+    published = False
+    try:
+        url_live(url)
+        container = graph("POST", f"{creds['ig_user_id']}/media", media_type="STORIES",
+                          video_url=url, access_token=creds["page_token"])["id"]
+        print(f"  container {container}; Instagram is transcoding ...")
+        container_ready(creds, container, timeout=args.timeout)
+        media = publish(creds, container)
+        published = True
+        print(f"story published: {media}")
+    finally:
+        if published:
+            unstage_reel(asset)
+        else:
+            print(f"\nleaving {asset} staged so you can retry without re-uploading.")
+
+
 # --------------------------------------------------------------------------- publish
 
 def container_ready(creds: dict, cid: str, timeout: int = 300) -> None:
@@ -802,6 +835,12 @@ def main() -> None:
     r.add_argument("--timeout", type=int, default=900,
                    help="seconds to wait for Instagram to transcode (default 900)")
     r.set_defaults(func=cmd_post_reel)
+
+    st = sub.add_parser("post-story", help="publish one vertical video as a story")
+    st.add_argument("video", help="path to the .mp4")
+    st.add_argument("--dry-run", action="store_true", help="show the plan, touch nothing")
+    st.add_argument("--timeout", type=int, default=900)
+    st.set_defaults(func=cmd_post_story)
 
     pb = sub.add_parser("publish", help="publish a container left by --stop-before-publish")
     pb.add_argument("container")

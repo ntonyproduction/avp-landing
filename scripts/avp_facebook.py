@@ -97,6 +97,37 @@ def cmd_post_reel(args) -> None:
     show(creds, vid)
 
 
+def cmd_post_story(args) -> None:
+    """One vertical video as a Page story (video_stories: start, the file URL, finish). Added 2026-11-21
+    for the release stories."""
+    creds = ig.load()
+    p = page(creds)
+    video = Path(args.video)
+    if not video.is_file():
+        sys.exit(f"no such file: {video}")
+    ig.probe_video(video)
+    if args.dry_run:
+        print(f"dry run: would post {video.name} as a story on the Page {p['name']!r}")
+        return
+    start = ig.graph("POST", f"{p['id']}/video_stories", upload_phase="start", access_token=creds["page_token"])
+    vid = start["video_id"]
+    url, asset = ig.stage_reel(video)
+    try:
+        ig.url_live(url)
+        r = requests.post(start["upload_url"], timeout=120,
+                          headers={"Authorization": f"OAuth {creds['page_token']}", "file_url": url})
+        if not r.ok:
+            sys.exit(f"Facebook refused the file URL: {r.status_code} {r.text[:300]}")
+        wait_uploaded(creds, vid)
+    finally:
+        ig.unstage_reel(asset)
+    done = ig.graph("POST", f"{p['id']}/video_stories", upload_phase="finish", video_id=vid,
+                    access_token=creds["page_token"])
+    if not done.get("success"):
+        sys.exit(f"finish did not succeed: {done}")
+    print(f"story published: video {vid}, post {done.get('post_id')}")
+
+
 def show(creds: dict, vid: str) -> None:
     v = ig.try_graph("GET", vid, fields="id,permalink_url,status,created_time,scheduled_publish_time,published",
                      access_token=creds["page_token"]) or {}
@@ -120,6 +151,10 @@ def main() -> None:
     p.add_argument("--at")
     p.add_argument("--dry-run", action="store_true")
     p.set_defaults(fn=cmd_post_reel)
+    s = sub.add_parser("post-story")
+    s.add_argument("video")
+    s.add_argument("--dry-run", action="store_true")
+    s.set_defaults(fn=cmd_post_story)
     v = sub.add_parser("verify"); v.add_argument("id"); v.set_defaults(fn=cmd_verify)
     args = ap.parse_args()
     args.fn(args)

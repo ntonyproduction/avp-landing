@@ -407,7 +407,13 @@
     }
     if (!b) return;
     function show() { b.textContent = v.muted ? "Sound off" : "Sound on"; b.setAttribute("aria-pressed", String(!v.muted)); }
-    function flip(e) { e.preventDefault(); v.muted = !v.muted; if (v.paused) v.play(); show(); }
+    function flip(e) {
+      e.preventDefault();
+      if (v.muted) v.currentTime = 0;   // sound on: from the first word (Anthony, 2026-11-21)
+      v.muted = !v.muted;
+      if (v.paused) v.play();
+      show();
+    }
     box.addEventListener("click", flip);
     show();
   })();
